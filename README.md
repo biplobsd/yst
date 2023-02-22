@@ -1,14 +1,6 @@
-# Svelte Typescript Chrome Extension Boilerplate
+# Facebook stories auto react tool
 
-> Boilerplate for Chrome Extension Svelte Typescript project
-
-## Features
-
--   [Svelte](https://svelte.dev/)
--   [TypeScript](https://www.typescriptlang.org/)
--   [Vite](https://vitejs.dev/)
--   [CRXJS Vite Plugin](https://github.com/crxjs/chrome-extension-tools/blob/main/packages/vite-plugin/README.md)
--   [Chrome Extensions Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro/)
+Automatically react to stories on Facebook without having to manually click on any reaction icons. This Chrome extension that can help you do just that. With this extension, you can effortlessly add reactions to stories without any extra effort.
 
 ## Development
 
