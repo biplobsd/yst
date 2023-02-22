@@ -2,6 +2,9 @@
 
 Automatically react to stories on Facebook without having to manually click on any reaction icons. This Chrome extension that can help you do just that. With this extension, you can effortlessly add reactions to stories without any extra effort.
 
+![preview](https://user-images.githubusercontent.com/43641536/220672563-f23a25eb-62ea-4fa7-b9bd-af3f20d62bd8.gif)
+
+
 ## Development
 
 ```bash
