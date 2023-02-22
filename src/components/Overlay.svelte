@@ -1,8 +1,9 @@
 <script lang="ts">
   import { delay } from "src/content";
   import "src/content/styles.css";
+  import { storage } from "src/storage";
   import { REACTS_ARIA_LABELS } from "src/utils/constants";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import Footer from "./Footer.svelte";
 
   let countdown = 5;
@@ -17,6 +18,7 @@
   let isWindowOpen = false;
   let closeIsloading = false;
   let reactAmount = 1;
+  let storageRemoveListener: () => void;
 
   const getTooltipPosition = ({ clientX, clientY }: MouseEvent) => {
     xPosition = clientX;
@@ -129,20 +131,17 @@
       return;
     }
     closeIsloading = true;
-    chrome.storage.sync.set({ isWindowOpen: false }, function () {
-      closeIsloading = false;
-    });
+    storage.set({ isWindowOpen: false });
+    closeIsloading = false;
   }
 
   onMount(() => {
-    chrome.storage.onChanged.addListener(function (changes, namespace) {
-      for (let key in changes) {
-        if (key === "isWindowOpen") {
-          isWindowOpen = changes[key].newValue;
-        }
-      }
+    storageRemoveListener = storage.addListener((change) => {
+      isWindowOpen = change.isWindowOpen;
     });
   });
+
+  onDestroy(storageRemoveListener);
 </script>
 
 {#if isWindowOpen}

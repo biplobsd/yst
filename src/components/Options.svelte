@@ -10,8 +10,9 @@
   import { onMount } from "svelte";
   import { STORIES_URL } from "src/utils/constants";
   import Footer from "./Footer.svelte";
+  import { storage } from "src/storage";
 
-  export let isWindowOpen: Boolean;
+  export let isWindowOpen: boolean;
   let isLoading = false;
   let isStoriesSite = false;
 
@@ -21,9 +22,8 @@
     }
     isLoading = true;
     isWindowOpen = !isWindowOpen;
-    chrome.storage.sync.set({ isWindowOpen }, function () {
-      isLoading = false;
-    });
+    await storage.set({ isWindowOpen });
+    isLoading = false;
   }
 
   function isStoresSite(url: string) {
