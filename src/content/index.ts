@@ -1,4 +1,4 @@
-import Overlay from "../components/Overlay.svelte";
+import Overlay from "../components/overlay/Overlay.svelte";
 import { storage } from "../storage";
 
 // // Some global styles on the page
