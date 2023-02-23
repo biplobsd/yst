@@ -1,13 +1,18 @@
 <script lang="ts">
   import { delay } from "src/content";
   import "src/content/styles.css";
-  import { REACTS_ARIA_LABELS } from "src/utils/constants";
+  import { DEFAULT_STATUS_MSG, REACTS_ARIA_LABELS } from "src/utils/constants";
 
   let countdown = 5;
   let isNotrunning = true;
   let countDowning = false;
   let breakRunning = false;
   let reactAmount = 1;
+  let statusMsg = DEFAULT_STATUS_MSG;
+
+  function setStatusMsg(msg = DEFAULT_STATUS_MSG) {
+    statusMsg = msg;
+  }
 
   async function runCound() {
     if (!isNotrunning || countDowning) {
@@ -18,21 +23,25 @@
     countdown = 5;
     countDowning = true;
     for (countdown; countdown > 0; countdown--) {
+      setStatusMsg(`Start in ${countdown}s`);
       await delay(1000);
     }
     countDowning = false;
 
     try {
       isNotrunning = false;
+
       await addReact();
     } finally {
       countdown = 5;
       isNotrunning = true;
       breakRunning = false;
+      setStatusMsg();
     }
   }
 
   function getLeftRight() {
+    setStatusMsg("Searching left & right arrows...");
     const arraw = document.evaluate(
       '//div[@style="height: 100%; width: 50%;"]/div',
       document,
@@ -50,6 +59,7 @@
   }
 
   function reactNode(ariaLabel: string) {
+    setStatusMsg(`Searching ${ariaLabel} react buttons...`);
     const dom = document.evaluate(
       `//div[@aria-label="${ariaLabel}"]`,
       document,
@@ -65,6 +75,7 @@
   }
 
   function getAllReact() {
+    setStatusMsg("Searching react buttons...");
     const listReacts = [];
     for (let ariaLabel of REACTS_ARIA_LABELS) {
       console.log(ariaLabel);
@@ -81,16 +92,21 @@
     while (true) {
       const l = getAllReact();
       if (l.length > 0) {
+        setStatusMsg("Clicking react buttons...");
         for (let ll of l) {
-          for (let index = 0; index < reactAmount; index++) {
+          for (let index = 1; index <= reactAmount; index++) {
+            setStatusMsg(`Clicking react buttons... ${index}x`);
             ll.click();
             await delay(150);
           }
         }
       }
+
+      setStatusMsg(`Next stories >>>`);
       await delay(1000 * 3);
       node = getLeftRight();
       if (node && !breakRunning) {
+        setStatusMsg(`Next stories >>> right arrow...`);
         node.right.click();
       } else {
         break;
@@ -140,20 +156,26 @@
       >
     </div>
   </div>
-  <div class="h-9 w-full">
-    {#if countDowning}
-      <p class="text-red-300 text-center my-2 ">Start in {countdown}</p>
-    {/if}
+  <div class="text-xs font-semibold text-slate-100/50 tracking-wider mt-4">
+    Status
+  </div>
+  <div
+    class="h-9 w-full rounded-xl ring-1 ring-slate-200/10 my-2 mb-4 flex justify-center items-center"
+  >
+    <p class="text-slate-200/50 text-center">{statusMsg}</p>
   </div>
   {#if !breakRunning && isNotrunning}
     <button class="btn w-full" disabled={countDowning} on:click={runCound}
       >Start</button
     >
-  {:else if breakRunning}
-    <span class=" text-yellow-200">Stopping...</span>
   {:else}
-    <button class="btn w-full" on:click={() => (breakRunning = true)}
-      >Stop</button
+    <button
+      disabled={breakRunning}
+      class="btn w-full"
+      on:click={() => {
+        breakRunning = true;
+        setStatusMsg("Stopping ...");
+      }}>Stop</button
     >
   {/if}
 </div>
