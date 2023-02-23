@@ -2,6 +2,7 @@
   import { delay } from "src/content";
   import "src/content/styles.css";
   import { DEFAULT_STATUS_MSG, REACTS_ARIA_LABELS } from "src/utils/constants";
+  import { isXPathExpressionExists } from "src/utils/helper";
 
   let countdown = 5;
   let isNotrunning = true;
@@ -12,6 +13,45 @@
 
   function setStatusMsg(msg = DEFAULT_STATUS_MSG) {
     statusMsg = msg;
+  }
+
+  async function setStatusMsgAsync(
+    msg = DEFAULT_STATUS_MSG,
+    delayMs: number = 500
+  ) {
+    statusMsg = msg;
+    await delay(delayMs);
+  }
+
+  async function isCardOpen() {
+    await setStatusMsgAsync("Checking... is story open.");
+
+    if (isXPathExpressionExists('//span[text()="Select a story to open."]')) {
+      await setStatusMsgAsync("Story is not open.");
+      await setStatusMsgAsync("Checking... is any story card in this page.");
+      const storieElements = document.evaluate(
+        "//div[@title]/div/div",
+        document,
+        null,
+        XPathResult.ANY_TYPE,
+        null
+      );
+
+      const firstStoryCardElement = storieElements.iterateNext();
+      if (firstStoryCardElement instanceof HTMLElement) {
+        await setStatusMsgAsync("Click... first story");
+        firstStoryCardElement.click();
+        await setStatusMsgAsync("Waiting for stories card open...", 1000);
+        await setStatusMsgAsync("Checking... is story open.");
+        if (
+          isXPathExpressionExists('//span[text()="Select a story to open."]')
+        ) {
+          await setStatusMsgAsync("Error story not opening...");
+          breakRunning = true;
+          await setStatusMsgAsync("Stopping ...");
+        }
+      }
+    }
   }
 
   async function runCound() {
@@ -30,7 +70,7 @@
 
     try {
       isNotrunning = false;
-
+      await isCardOpen();
       await addReact();
     } finally {
       countdown = 5;
