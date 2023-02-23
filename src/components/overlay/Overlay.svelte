@@ -53,7 +53,7 @@
 
 {#if isWindowOpen}
   <div
-    class="fixed w-96 h-fit bg-transparent backdrop-blur ring-2 rounded-md"
+    class="fixed w-96 h-fit bg-transparent backdrop-blur-md ring-2 rounded-md transition-colors duration-500  ease-in-out"
     style="left: {xPosition - offsetX}px; top: {yPosition - offsetY}px;"
   >
     <div class="flex justify-between">
