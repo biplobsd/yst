@@ -135,7 +135,7 @@
 
   function getAllReact() {
     setStatusMsg("Searching react buttons...");
-    const listReacts = [];
+    const listReacts: HTMLElement[] = [];
     for (let ariaLabel of REACTS_ARIA_LABELS) {
       const reactEle = reactNode(ariaLabel);
       if (reactEle) {
@@ -163,13 +163,13 @@
         );
         break;
       }
-      const l = getAllReact();
-      if (l.length > 0) {
+      const reactNodes = getAllReact();
+      if (reactNodes.length > 0) {
         await setStatusMsgAsync("Clicking react buttons...");
-        for (let ll of l) {
+        for (let reactNode of reactNodes) {
           for (let index = 1; index <= reactAmount; index++) {
-            await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 50);
-            ll.click();
+            await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 100);
+            reactNode.click();
           }
         }
       }

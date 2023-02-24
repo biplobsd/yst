@@ -8,7 +8,7 @@
       class="link link-hover"
       target="_blank"
       rel="noreferrer"
-      href="https://github.com/biplobsd">Developer by Biplob Sutradhar</a
+      href="https://github.com/biplobsd">Developed by Biplob Sutradhar</a
     >
   </p>
   <div class="flex items-center text-slate-100/50 gap-2 justify-center">
