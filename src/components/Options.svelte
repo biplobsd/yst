@@ -11,6 +11,7 @@
   import { STORIES_URL } from "src/utils/constants";
   import Footer from "./Footer.svelte";
   import { storage } from "src/storage";
+  import { isStorySite } from "src/utils/helper";
 
   export let isWindowOpen: boolean;
   let isLoading = false;
@@ -26,14 +27,8 @@
     isLoading = false;
   }
 
-  function isStoresSite(url: string) {
-    isStoriesSite = STORIES_URL.includes(url.slice(0, 33));
-  }
-
   onMount(async () => {
-    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-      isStoresSite(tabs[0].url);
-    });
+    isStoriesSite = await isStorySite();
   });
 </script>
 

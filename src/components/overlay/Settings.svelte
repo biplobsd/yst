@@ -2,7 +2,14 @@
   import { delay } from "src/content";
   import "src/content/styles.css";
   import { DEFAULT_STATUS_MSG, REACTS_ARIA_LABELS } from "src/utils/constants";
-  import { isXPathExpressionExists } from "src/utils/helper";
+  import { isStorySite, isXPathExpressionExists } from "src/utils/helper";
+  import {
+    STORY_ARRAW,
+    STORY_LIST,
+    STORY_LOAD,
+    STORY_REACTIONS,
+    STORY_TO_OPEN,
+  } from "src/utils/xpaths";
 
   let countdown = 5;
   let isNotrunning = true;
@@ -23,14 +30,28 @@
     await delay(delayMs);
   }
 
+  async function isStoryLoaded() {
+    for (let index = 1; index <= 10; index++) {
+      await setStatusMsgAsync(`Waiting for story load... T-${index}`, 500);
+      if (
+        !isXPathExpressionExists(STORY_LOAD) &&
+        isXPathExpressionExists(STORY_REACTIONS) &&
+        isXPathExpressionExists(STORY_ARRAW)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   async function isCardOpen() {
     await setStatusMsgAsync("Checking... is story open.");
 
-    if (isXPathExpressionExists('//span[text()="Select a story to open."]')) {
+    if (isXPathExpressionExists(STORY_TO_OPEN)) {
       await setStatusMsgAsync("Story is not open.");
       await setStatusMsgAsync("Checking... is any story card in this page.");
       const storieElements = document.evaluate(
-        "//div[@title]/div/div",
+        STORY_LIST,
         document,
         null,
         XPathResult.ANY_TYPE,
@@ -41,11 +62,9 @@
       if (firstStoryCardElement instanceof HTMLElement) {
         await setStatusMsgAsync("Click... first story");
         firstStoryCardElement.click();
-        await setStatusMsgAsync("Waiting for stories card open...", 1000);
+        await setStatusMsgAsync("Waiting for stories card open...", 1000 * 2);
         await setStatusMsgAsync("Checking... is story open.");
-        if (
-          isXPathExpressionExists('//span[text()="Select a story to open."]')
-        ) {
+        if (isXPathExpressionExists(STORY_TO_OPEN)) {
           await setStatusMsgAsync("Error story not opening...");
           breakRunning = true;
           await setStatusMsgAsync("Stopping ...");
@@ -71,7 +90,7 @@
     try {
       isNotrunning = false;
       await isCardOpen();
-      await addReact();
+      await addReactLoop();
     } finally {
       countdown = 5;
       isNotrunning = true;
@@ -83,7 +102,7 @@
   function getLeftRight() {
     setStatusMsg("Searching left & right arrows...");
     const arraw = document.evaluate(
-      '//div[@style="height: 100%; width: 50%;"]/div',
+      STORY_ARRAW,
       document,
       null,
       XPathResult.ANY_TYPE,
@@ -118,7 +137,6 @@
     setStatusMsg("Searching react buttons...");
     const listReacts = [];
     for (let ariaLabel of REACTS_ARIA_LABELS) {
-      console.log(ariaLabel);
       const reactEle = reactNode(ariaLabel);
       if (reactEle) {
         listReacts.push(reactEle);
@@ -127,26 +145,40 @@
     return listReacts;
   }
 
-  async function addReact() {
+  async function addReactLoop() {
     let node = getLeftRight();
     while (true) {
+      if (!(await isStorySite(false))) {
+        await setStatusMsgAsync(
+          "Error page url changed... Stoping...",
+          1000 * 2
+        );
+        break;
+      }
+
+      if (!(await isStoryLoaded())) {
+        await setStatusMsgAsync(
+          "Error story not opened... Stoping...",
+          1000 * 2
+        );
+        break;
+      }
       const l = getAllReact();
       if (l.length > 0) {
-        setStatusMsg("Clicking react buttons...");
+        await setStatusMsgAsync("Clicking react buttons...");
         for (let ll of l) {
           for (let index = 1; index <= reactAmount; index++) {
-            setStatusMsg(`Clicking react buttons... ${index}x`);
+            await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 50);
             ll.click();
-            await delay(150);
           }
         }
       }
 
-      setStatusMsg(`Next stories >>>`);
-      await delay(1000 * 3);
+      await setStatusMsgAsync(`Next stories >>>`);
+      // await delay(1000 * 3);
       node = getLeftRight();
       if (node && !breakRunning) {
-        setStatusMsg(`Next stories >>> right arrow...`);
+        await setStatusMsgAsync(`Next stories >>> right arrow...`);
         node.right.click();
       } else {
         break;
