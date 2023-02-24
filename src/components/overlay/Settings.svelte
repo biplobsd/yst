@@ -166,11 +166,9 @@
       const reactNodes = getAllReact();
       if (reactNodes.length > 0) {
         await setStatusMsgAsync("Clicking react buttons...");
-        for (let reactNode of reactNodes) {
-          for (let index = 1; index <= reactAmount; index++) {
-            await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 100);
-            reactNode.click();
-          }
+        for (let index = 1; index <= reactAmount; index++) {
+          await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 100);
+          reactNodes[0].click();
         }
       }
 
