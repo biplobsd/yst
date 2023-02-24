@@ -224,7 +224,8 @@
         /></svg
       >
       <span class="text-slate-100/70"
-        >After start button click then point your mouse to react icon.</span
+        >After clicking the start button, please point your mouse to the any
+        reaction icon (👍💖😀😲🥲😒)</span
       >
     </div>
   </div>
