@@ -18,6 +18,10 @@ Click the START button, and then point your mouse pointer to any reaction icon (
 
 When you want to stop reacting, simply click the stop button.
 
+Youtube video usage preview below.
+
+[![Preview](http://img.youtube.com/vi/V9LMkKN5jFQ/0.jpg)](http://www.youtube.com/watch?v=V9LMkKN5jFQ)
+
 ## Development
 
 ```bash
