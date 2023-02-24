@@ -1,6 +1,7 @@
 <script lang="ts">
   import { delay } from "src/content";
   import "src/content/styles.css";
+  import { storage } from "src/storage";
   import { DEFAULT_STATUS_MSG, REACTS_ARIA_LABELS } from "src/utils/constants";
   import { isStorySite, isXPathExpressionExists } from "src/utils/helper";
   import {
@@ -10,6 +11,7 @@
     STORY_REACTIONS,
     STORY_TO_OPEN,
   } from "src/utils/xpaths";
+  import { onDestroy, onMount } from "svelte";
 
   let countdown = 5;
   let isNotrunning = true;
@@ -17,6 +19,8 @@
   let breakRunning = false;
   let reactAmount = 1;
   let statusMsg = DEFAULT_STATUS_MSG;
+  let isWindowOpen = true;
+  let storageRemoveListener: () => void;
 
   function setStatusMsg(msg = DEFAULT_STATUS_MSG) {
     statusMsg = msg;
@@ -175,7 +179,7 @@
       await setStatusMsgAsync(`Next stories >>>`);
       // await delay(1000 * 3);
       node = getLeftRight();
-      if (node && !breakRunning) {
+      if (node && !breakRunning && isWindowOpen) {
         await setStatusMsgAsync(`Next stories >>> right arrow...`);
         node.right.click();
       } else {
@@ -183,6 +187,17 @@
       }
     }
   }
+
+  onMount(() => {
+    storageRemoveListener = storage.addListener((change) => {
+      isWindowOpen = change.isWindowOpen;
+    });
+  });
+
+  onDestroy(() => {
+    storage.set({ isWindowOpen: false });
+    storageRemoveListener();
+  });
 </script>
 
 <div class="mx-5 my-2">
