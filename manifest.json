@@ -11,7 +11,10 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://www.facebook.com/stories/*"],
+            "matches": [
+                "https://www.facebook.com/stories/*", 
+                "https://web.facebook.com/stories/*"
+            ],
             "js": ["src/content/index.ts"]
         }
     ],

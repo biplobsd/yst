@@ -27,7 +27,7 @@
   }
 
   function isStoresSite(url: string) {
-    isStoriesSite = url.slice(0, 33) === STORIES_URL;
+    isStoriesSite = STORIES_URL.includes(url.slice(0, 33));
   }
 
   onMount(async () => {
@@ -65,7 +65,7 @@
           class="link link-hover text-blue-500"
           target="_blank"
           rel="noreferrer"
-          href={STORIES_URL}>Open stories page</a
+          href={STORIES_URL[0]}>Open stories page</a
         >
       </div>
     {/if}
