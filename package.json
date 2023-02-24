@@ -1,10 +1,10 @@
 {
-    "name": "chrome-extension-svelte-typescript-boilerplate",
-    "version": "3.0.0",
+    "name": "facebook-stories-auto-react-tool",
+    "version": "1.0.1",
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "https://github.com/nekitcorp/chrome-extension-svelte-typescript-boilerplate.git"
+        "url": "https://github.com/biplobsd/alrsf.git"
     },
     "scripts": {
         "dev": "vite",
