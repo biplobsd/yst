@@ -39,7 +39,6 @@
       await setStatusMsgAsync(`Waiting for story load... T-${index}`, 500);
       if (
         !isXPathExpressionExists(STORY_LOAD) &&
-        isXPathExpressionExists(STORY_REACTIONS) &&
         isXPathExpressionExists(STORY_ARRAW)
       ) {
         return true;
@@ -167,13 +166,17 @@
         );
         break;
       }
-      const reactNodes = getAllReact();
-      if (reactNodes.length > 0) {
-        await setStatusMsgAsync("Clicking react buttons...");
-        for (let index = 1; index <= reactAmount; index++) {
-          await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 100);
-          reactNodes[0].click();
+      if (isXPathExpressionExists(STORY_REACTIONS)) {
+        const reactNodes = getAllReact();
+        if (reactNodes.length > 0) {
+          await setStatusMsgAsync("Clicking react buttons...");
+          for (let index = 1; index <= reactAmount; index++) {
+            await setStatusMsgAsync(`Clicking react buttons... ${index}x`, 100);
+            reactNodes[0].click();
+          }
         }
+      } else {
+        await setStatusMsgAsync("No reaction penal");
       }
 
       await setStatusMsgAsync(`Next stories >>>`);
