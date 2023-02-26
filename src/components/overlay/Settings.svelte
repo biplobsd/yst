@@ -15,6 +15,7 @@
   import {
     STORY_ARRAW,
     STORY_LIST,
+    STORY_LOADING,
     STORY_PERSON_NAME,
     STORY_REACTIONS,
     STORY_TO_OPEN,
@@ -55,7 +56,12 @@
   async function isStoryLoaded() {
     for (let index = 1; index <= 10; index++) {
       await setStatusMsgAsync(`Waiting for story load... T-${index}`, 500);
-      if (!isClickOpen() && isXPathExpressionExists(STORY_ARRAW)) {
+      if (
+        !isClickOpen() &&
+        !isXPathExpressionExists(STORY_LOADING) &&
+        isXPathExpressionExists(STORY_ARRAW) &&
+        isXPathExpressionExists(STORY_PERSON_NAME)
+      ) {
         return true;
       }
     }
@@ -219,6 +225,7 @@
         `//span[text()="${personName}"]/../../../../following::div/div/div`
       );
       if (nextStoryElement) {
+        nextStoryElement.scrollIntoView();
         nextStoryElement.click();
         return true;
       }
