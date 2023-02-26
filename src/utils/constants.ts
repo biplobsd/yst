@@ -6,4 +6,4 @@ export const REACTS_ARIA_LABELS = ['Like', 'Love', 'Care', 'Haha', 'Wow', 'Sad',
 export const DEFAULT_STATUS_MSG = 'Ready for react';
 export const STORY_OPENS = ['Select a story to open.', 'Click to view story'];
 export const APP_NAME = 'Facebook stories auto react tool';
-export const VERSION = 'v1.2';
+export const VERSION = 'v1.3';
