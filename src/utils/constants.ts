@@ -4,3 +4,4 @@ export const STORIES_URL = [
 ];
 export const REACTS_ARIA_LABELS = ['Like', 'Love', 'Care', 'Haha', 'Wow', 'Sad', 'Angry'];
 export const DEFAULT_STATUS_MSG = 'Ready for react';
+export const STORY_OPENS = ['Select a story to open.', 'Click to view story'];

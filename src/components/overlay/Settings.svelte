@@ -2,7 +2,11 @@
   import { delay } from "src/content";
   import "src/content/styles.css";
   import { storage } from "src/storage";
-  import { DEFAULT_STATUS_MSG, REACTS_ARIA_LABELS } from "src/utils/constants";
+  import {
+    DEFAULT_STATUS_MSG,
+    REACTS_ARIA_LABELS,
+    STORY_OPENS,
+  } from "src/utils/constants";
   import { isStorySite, isXPathExpressionExists } from "src/utils/helper";
   import {
     STORY_ARRAW,
@@ -34,13 +38,19 @@
     await delay(delayMs);
   }
 
+  function isClickOpen() {
+    for (let xpath of STORY_OPENS) {
+      if (isXPathExpressionExists(`//span[text()="${xpath}"]`)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   async function isStoryLoaded() {
     for (let index = 1; index <= 10; index++) {
       await setStatusMsgAsync(`Waiting for story load... T-${index}`, 500);
-      if (
-        !isXPathExpressionExists(STORY_LOAD) &&
-        isXPathExpressionExists(STORY_ARRAW)
-      ) {
+      if (!isClickOpen() && isXPathExpressionExists(STORY_ARRAW)) {
         return true;
       }
     }
@@ -50,7 +60,7 @@
   async function isCardOpen() {
     await setStatusMsgAsync("Checking... is story open.");
 
-    if (isXPathExpressionExists(STORY_TO_OPEN)) {
+    if (isClickOpen()) {
       await setStatusMsgAsync("Story is not open.");
       await setStatusMsgAsync("Checking... is any story card in this page.");
       const storieElements = document.evaluate(
