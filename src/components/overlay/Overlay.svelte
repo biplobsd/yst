@@ -12,6 +12,7 @@
   let isMoving = false;
   let isWindowOpen = false;
   let closeIsloading = false;
+  let isNotrunning = true;
   let storageRemoveListener: () => void;
 
   const getTooltipPosition = ({ clientX, clientY }: MouseEvent) => {
@@ -54,82 +55,99 @@
 
 {#if isWindowOpen}
   <div
-    class="fixed w-96 h-fit bg-transparent backdrop-blur-md ring-2 rounded-md transition-colors duration-500  ease-in-out"
+    class="overflow-hidden fixed w-96 h-fit bg-transparent backdrop-blur-md ring-2 rounded-md transition-colors duration-500  ease-in-out"
     style="left: {xPosition - offsetX}px; top: {yPosition - offsetY}px;"
   >
-    <div class="flex justify-between items-center">
-      <div class="flex items-center">
-        <span class="tooltip tooltip-right" data-tip="Move window">
-          <button
-            on:mousedown={addListener}
-            on:mouseup={removeListener}
-            class="btn btn-ghost btn-circle text-slate-100/50 ml-1 "
-          >
-            {#if isMoving}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"
-                />
-              </svg>
-            {:else}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-5 h-5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
-                />
-              </svg>
-            {/if}
-          </button>
-        </span>
-        <span class="text-slate-100/70">
-          <span class="tracking-wider font-semibold text-sm">
-            {APP_NAME}
-          </span>
-          <span class="text-xs">{VERSION}</span>
-        </span>
-      </div>
-      <span class="tooltip tooltip-left" data-tip="Close">
-        <button
-          on:click={closeHandeler}
-          class="{closeIsloading
-            ? 'loading'
-            : ''} btn btn-ghost btn-circle text-slate-100/50 ml-1"
+    <div class="relative">
+      {#if !isNotrunning}
+        <div
+          class="-z-50 absolute flex items-center justify-center w-full h-full animate-bounce opacity-20"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-      </span>
+          <div class="animate-spin scale-[3]">
+            <div class="animate-bounce">
+              <div
+                class="h-40 overflow-hidden w-36 animate-ping bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
+              />
+            </div>
+          </div>
+        </div>
+      {/if}
+      <div>
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <span class="tooltip tooltip-right" data-tip="Move window">
+              <button
+                on:mousedown={addListener}
+                on:mouseup={removeListener}
+                class="btn btn-ghost btn-circle text-slate-100/50 ml-1 "
+              >
+                {#if isMoving}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"
+                    />
+                  </svg>
+                {:else}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
+                    />
+                  </svg>
+                {/if}
+              </button>
+            </span>
+            <span class="text-slate-100/70">
+              <span class="tracking-wider font-semibold text-sm">
+                {APP_NAME}
+              </span>
+              <span class="text-xs">{VERSION}</span>
+            </span>
+          </div>
+          <span class="tooltip tooltip-left" data-tip="Close">
+            <button
+              on:click={closeHandeler}
+              class="{closeIsloading
+                ? 'loading'
+                : ''} btn btn-ghost btn-circle text-slate-100/50 ml-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </span>
+        </div>
+        <Settings bind:isWindowOpen bind:isNotrunning />
+        <Footer />
+      </div>
     </div>
-    <Settings />
-    <Footer />
   </div>
 {/if}
