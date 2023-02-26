@@ -7,11 +7,15 @@
     REACTS_ARIA_LABELS,
     STORY_OPENS,
   } from "src/utils/constants";
-  import { isStorySite, isXPathExpressionExists } from "src/utils/helper";
+  import {
+    getXpathFromElement,
+    isStorySite,
+    isXPathExpressionExists,
+  } from "src/utils/helper";
   import {
     STORY_ARRAW,
     STORY_LIST,
-    STORY_LOAD,
+    STORY_PERSON_NAME,
     STORY_REACTIONS,
     STORY_TO_OPEN,
   } from "src/utils/xpaths";
@@ -24,6 +28,7 @@
   let reactAmount = 1;
   let statusMsg = DEFAULT_STATUS_MSG;
   let isWindowOpen = true;
+  let onlyOneCard = false;
   let storageRemoveListener: () => void;
 
   function setStatusMsg(msg = DEFAULT_STATUS_MSG) {
@@ -132,18 +137,7 @@
 
   function reactNode(ariaLabel: string) {
     setStatusMsg(`Searching ${ariaLabel} react buttons...`);
-    const dom = document.evaluate(
-      `//div[@aria-label="${ariaLabel}"]`,
-      document,
-      null,
-      XPathResult.ANY_TYPE,
-      null
-    );
-    const reactNode = dom.iterateNext();
-    if (reactNode instanceof HTMLElement) {
-      return reactNode;
-    }
-    return undefined;
+    return getXpathFromElement(`//div[@aria-label="${ariaLabel}"]`);
   }
 
   function getAllReact() {
@@ -160,6 +154,7 @@
 
   async function addReactLoop() {
     let node = getLeftRight();
+    let personName = "";
     while (true) {
       if (!(await isStorySite(false))) {
         await setStatusMsgAsync(
@@ -176,6 +171,7 @@
         );
         break;
       }
+
       if (isXPathExpressionExists(STORY_REACTIONS)) {
         const reactNodes = getAllReact();
         if (reactNodes.length > 0) {
@@ -189,16 +185,45 @@
         await setStatusMsgAsync("No reaction penal");
       }
 
-      await setStatusMsgAsync(`Next stories >>>`);
+      await setStatusMsgAsync(`Next >>>`);
       // await delay(1000 * 3);
       node = getLeftRight();
       if (node && !breakRunning && isWindowOpen) {
-        await setStatusMsgAsync(`Next stories >>> right arrow...`);
-        node.right.click();
+        if (onlyOneCard) {
+          await setStatusMsgAsync(`Next stories >>>`);
+          if (nextPersonStory()) {
+            continue;
+          } else {
+            await setStatusMsgAsync(
+              "Unable to next person story trying.. next card >>>"
+            );
+            node.right.click();
+          }
+        } else {
+          await setStatusMsgAsync(`Next card >>> right arrow...`);
+          node.right.click();
+        }
       } else {
+        await setStatusMsgAsync("Story left right arrow not found. Stoping...");
         break;
       }
     }
+  }
+
+  function nextPersonStory() {
+    const nameElement = getXpathFromElement(STORY_PERSON_NAME);
+
+    if (nameElement) {
+      const personName = nameElement.innerText;
+      const nextStoryElement = getXpathFromElement(
+        `//span[text()="${personName}"]/../../../../following::div/div/div`
+      );
+      if (nextStoryElement) {
+        nextStoryElement.click();
+        return true;
+      }
+    }
+    return false;
   }
 
   onMount(() => {
@@ -216,8 +241,8 @@
 <div class="mx-5 my-2">
   <div class="text-slate-200 text-xl">Options</div>
   <div class="divider my-1" />
-  <div class="text-slate-200 tracking-wider flex items-center">
-    <span>React amount: {reactAmount + "x"}</span>
+  <div class="text-slate-200 tracking-wider flex items-center label">
+    <span class="label-text">React amount: {reactAmount + "x"}</span>
     <div class="mx-2 space-x-1">
       <button
         disabled={!isNotrunning || countDowning}
@@ -233,6 +258,17 @@
         class="btn btn-circle btn-sm ">-</button
       >
     </div>
+  </div>
+  <div class="form-control">
+    <label class="label cursor-pointer">
+      <span class="label-text font-normal">Only one card</span>
+      <input
+        disabled={!isNotrunning || countDowning}
+        type="checkbox"
+        bind:checked={onlyOneCard}
+        class="checkbox bg-transparent"
+      />
+    </label>
   </div>
   <div class="divider mt-5" />
   <div class="alert shadow-lg bg-slate-700/25">

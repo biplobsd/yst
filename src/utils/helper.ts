@@ -21,3 +21,19 @@ export async function isStorySite(isOptions = true) {
     }
     return STORIES_URL.includes(url.slice(0, 33));
 }
+
+export function getXpathFromElement(xpath: string) {
+    const dom = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.ANY_TYPE,
+        null
+    );
+    const reactNode = dom.iterateNext();
+    if (reactNode && reactNode instanceof HTMLElement) {
+        return reactNode;
+    } else {
+        return undefined;
+    }
+}
