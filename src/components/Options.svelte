@@ -8,7 +8,7 @@
   import sad from "src/assets/fb_react/sad.png";
   import angry from "src/assets/fb_react/angry.png";
   import { onMount } from "svelte";
-  import { STORIES_URL } from "src/utils/constants";
+  import { APP_NAME, STORIES_URL, VERSION } from "src/utils/constants";
   import Footer from "./Footer.svelte";
   import { storage } from "src/storage";
   import { isStorySite } from "src/utils/helper";
@@ -34,8 +34,9 @@
 
 <div class="w-48 pt-4 px-2 items-center flex flex-col justify-center gap-2">
   <p class="mb-3 tracking-wider font-extrabold text-xl">
-    Facebook stories auto react tool
+    {APP_NAME} <span class="text-xs">{VERSION}</span>
   </p>
+
   <div class="my-2 flex gap-1">
     <img class="w-5 h-5" src={like} alt="Like" />
     <img class="w-5 h-5" src={love} alt="Love" />

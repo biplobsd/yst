@@ -16,7 +16,7 @@
       class="link link-hover link-info"
       target="_blank"
       rel="noreferrer"
-      href="https://github.com/biplobsd/alrsf">Fork now</a
+      href="https://github.com/biplobsd/alrsf">Fork</a
     >
   </div>
 </div>
