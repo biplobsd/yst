@@ -1,7 +1,7 @@
 {
     "name": "facebook-stories-auto-react-tool",
     "description": "Automatically react to stories on Facebook without having to manually click on any reaction icons.",
-    "version": "1.3", 
+    "version": "1.4", 
     "manifest_version": 3,
     "icons": {
         "16": "src/assets/icons/icon16.png",
