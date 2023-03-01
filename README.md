@@ -1,3 +1,5 @@
+![logo](/src/assets/icons/icon128.png)
+
 # Facebook stories auto react tool
 
 Automatically react to stories on Facebook without having to manually click on any reaction icons. This Chrome extension can help you do just that. With this extension, you can effortlessly add reactions to stories without any extra effort.
