@@ -18,6 +18,8 @@
     SUB_CHANNELS_EXPENDED_ITEMS,
     SUB_CHANNELS_ITEMS,
     THREE_LINES,
+    UNSUB1,
+    UNSUB2,
   } from "src/utils/xpaths";
   import { onDestroy, onMount } from "svelte";
 
@@ -274,6 +276,49 @@
     await readySignalSend();
   }
 
+  async function unSubSubNow() {
+    if (isXPathExpressionExists(SUBSCRIBE_BTN)) {
+      await readySignalSend();
+      return;
+    }
+
+    const unSubButton = getXpathFromElement(ALREADY_SUBSCRIBE);
+    if (unSubButton) {
+      unSubButton.click();
+      await delay(50);
+      for (let index = 0; index < 3; index++) {
+        const unSub1 = getXpathFromElement(UNSUB1);
+        if (unSub1) {
+          unSub1.click();
+          await delay(50);
+          for (let index = 0; index < 5; index++) {
+            const unSub2 = getXpathFromElement(UNSUB2);
+            if (unSub2) {
+              unSub2.click();
+              return await readySignalSend();
+            }
+
+            await delay(500);
+          }
+        }
+
+        await delay(500);
+      }
+    }
+
+    runtime.send({
+      context: {
+        actionType: "status",
+        data: {
+          status: {
+            msg: "Unable to action unsub",
+            code: "error",
+          },
+        },
+      },
+    });
+  }
+
   function parseData(dataLocal: IStorage) {
     if (dataLocal.context.actionType === "status") {
       switch (dataLocal.context.data.status.code) {
@@ -300,6 +345,13 @@
             return;
           }
           subSubNow();
+          break;
+        case "unsubscribe":
+          if (isLoading) {
+            alert("Changing page...");
+            return;
+          }
+          unSubSubNow();
           break;
         case "stop":
           isLoading = false;

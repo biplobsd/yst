@@ -7,3 +7,5 @@ export const THREE_LINES = '//yt-icon-button[@id="guide-button"]';
 export const DRAWER_OPENED = '//div[@id="contentContainer" and @opened]';
 export const ALREADY_SUBSCRIBE = '//div[@id="inner-header-container"]/div/div/ytd-subscribe-button-renderer/div[@id="notification-preference-button" and not(@hidden)]/ytd-subscription-notification-toggle-button-renderer-next/yt-button-shape/button/div/span[text()="Subscribed"]';
 export const SUBSCRIBE_BTN = '//div[@id="inner-header-container"]/div/div[@id="subscribe-button"]/ytd-subscribe-button-renderer/yt-button-shape[not(@hidden)]/button';
+export const UNSUB1 = '//yt-formatted-string[text()="Unsubscribe"]'
+export const UNSUB2 = '//button[@aria-label="Unsubscribe"]'

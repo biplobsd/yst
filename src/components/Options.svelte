@@ -44,16 +44,134 @@
     });
   }
 
+  async function collectAndwait() {
+    await collectSubs();
+    for (let index = 0; index < 30; index++) {
+      await delay(500);
+      if (!isLoading) {
+        return true;
+      }
+    }
+    setStatus("Unable to get sub list from content client", true);
+    return false;
+  }
+
   async function filterSubs() {
     const currentSubs = channelPaths;
-    await collectSubs();
-    while (isLoading) {
-      await delay(500);
+    if (!(await collectAndwait())) {
+      return;
     }
     const notFoundList = currentSubs.filter(
       (elem) => !channelPaths.includes(elem)
     );
     saveChannelsIds(notFoundList);
+  }
+
+  async function filterUnSubs() {
+    const currentSubs = channelPaths;
+    if (!(await collectAndwait())) {
+      return;
+    }
+    const foundList = currentSubs.filter((elem) => channelPaths.includes(elem));
+    saveChannelsIds(foundList);
+  }
+
+  async function unsubscribe() {
+    if (isLoading) {
+      return;
+    }
+
+    try {
+      setStatus("Getting current channels");
+      await filterUnSubs();
+
+      setStatus("Staring unsubscribe channel");
+      for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
+        await runtime.send({
+          context: {
+            actionType: "status",
+            data: {
+              status: { msg: channelPaths[indexMain], code: "changepage" },
+            },
+          },
+        });
+
+        let timeout = true;
+        for (let index = 0; index < 10; index++) {
+          setStatus(
+            "Wating for ready signal:" + channelPaths[indexMain] + " T-" + index
+          );
+          if (ready) {
+            timeout = false;
+            break;
+          }
+          if (isStop) {
+            return;
+          }
+          await delay(1000);
+        }
+        if (isStop) {
+          return;
+        }
+
+        if (timeout) {
+          break;
+        }
+
+        await runtime.send({
+          context: {
+            actionType: "status",
+            data: {
+              status: { msg: "Unsubscribe now", code: "unsubscribe" },
+            },
+          },
+        });
+
+        let timeoutSub = true;
+        for (let index = 0; index < 10; index++) {
+          setStatus(
+            "Wating for subscribe signal: " +
+              channelPaths[indexMain] +
+              " T-" +
+              index
+          );
+          if (ready) {
+            timeoutSub = false;
+            break;
+          }
+          if (isStop) {
+            return;
+          }
+          await delay(1000);
+        }
+        if (isStop) {
+          return;
+        }
+
+        if (timeoutSub) {
+          break;
+        }
+
+        const sCList = channelPathsText.split(", ");
+        sCList.splice(0, 1);
+
+        const l = channelsIdsParse(sCList);
+
+        await storage.set({
+          context: {
+            actionType: "save",
+            data: {
+              channelPaths: l,
+            },
+          },
+        });
+      }
+    } finally {
+      setStatus("Done");
+      isSubLoading = false;
+      isLoading = false;
+      channelsIdsStringSave();
+    }
   }
 
   async function subscribe() {
@@ -189,6 +307,10 @@
           isLoading = true;
           ready = false;
           return;
+        case "unsubscribe":
+          isLoading = true;
+          ready = false;
+          return;
         case "error":
           setStatus(msg, true);
           isLoading = false;
@@ -289,47 +411,51 @@
   <p class="mb-3 tracking-wider font-extrabold text-xl">
     {APP_NAME} <span class="text-xs">{VERSION}</span>
   </p>
-
-  <div class="mb-4">
-    <div
-      class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
-    >
-      <input type="checkbox" class="peer" />
-      <div class="collapse-title text-sm bg-success/70 text-white/80">
-        Subscriptions: {channelPathsCount}
-      </div>
-      <div class="collapse-content bg-success/60 peer-checked:py-2">
-        <span class="text-xs text-slate-200"
-          >Enter only ids. Ids start with <span class="text-red-100 font-bold"
-            >@</span
+  {#if isStoriesSite}
+    <div class="mb-4">
+      <div class="mb-1"><span class="font-bold">Data</span></div>
+      <div
+        class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
+      >
+        <input type="checkbox" class="peer" />
+        <div class="collapse-title text-sm bg-success/70 text-white/80">
+          Subscriptions: {channelPathsCount}
+        </div>
+        <div class="collapse-content bg-success/60 peer-checked:py-2">
+          <span class="text-xs text-slate-200"
+            >Enter only ids. Ids start with <span class="text-red-100 font-bold"
+              >@</span
+            >
+            symbol. Example
+            <span class="text-red-200 font-bold">@youtube</span>,
+            <span class="text-red-200 font-bold">@google</span></span
           >
-          symbol. Example
-          <span class="text-red-200 font-bold">@youtube</span>,
-          <span class="text-red-200 font-bold">@google</span></span
-        >
-        <form
-          on:submit={(e) => {
-            e.preventDefault();
-            saveError = false;
-            channelsIdsStringSave();
-          }}
-        >
-          <textarea
-            bind:value={channelPathsText}
-            class="textarea textarea-accent w-full text-xs"
-            placeholder="@google, @youtube"
-            required
-          />
-          {#if saveError}
-            <div class="alert alert-error shadow-lg mb-4 ">
-              <span>Make sure your input channels is start with @</span>
-            </div>
-          {/if}
-          <button class="btn w-full">Save</button>
-        </form>
+          <form
+            on:submit={(e) => {
+              e.preventDefault();
+              saveError = false;
+              channelsIdsStringSave();
+            }}
+          >
+            <textarea
+              bind:value={channelPathsText}
+              class="textarea textarea-accent w-full text-xs"
+              placeholder="@google, @youtube"
+              required
+            />
+            {#if saveError}
+              <div class="alert alert-error shadow-lg mb-4 ">
+                <span>Make sure your input channels is start with @</span>
+              </div>
+            {/if}
+            <button disabled={!ready || isSubLoading} class="btn w-full"
+              >Save</button
+            >
+          </form>
+        </div>
       </div>
     </div>
-  </div>
+  {/if}
 
   <div class="flex flex-col items-center gap-1 w-full">
     {#if isStoriesSite}
@@ -362,10 +488,11 @@
         >
       {/if}
 
-      <div class="flex space-x-2">
+      <div class="w-[17rem] space-y-2">
+        <div><span class="font-bold">Actions</span></div>
         <button
           disabled={!isStoriesSite || !ready || isSubLoading}
-          class="btn btn-success"
+          class="btn btn-success w-full"
           on:click={collectSubs}
           >{!ready && !isSubLoading ? "Not ready yet" : "Collect subs"}</button
         >
@@ -373,9 +500,17 @@
           disabled={(channelPaths.length ? false : true) ||
             isSubLoading ||
             !ready}
-          class="btn btn-ghost bg-slate-100 text-slate-900 rounded-full hover:rounded-lg hover:bg-slate-100/80 tsd"
+          class="w-full btn btn-ghost bg-slate-100 text-slate-900 rounded-full hover:rounded-lg hover:bg-slate-100/80 tsd"
           on:click={subscribe}
           >{!ready && !isSubLoading ? "Not ready yet" : "Subscribe"}</button
+        >
+        <button
+          disabled={(channelPaths.length ? false : true) ||
+            isSubLoading ||
+            !ready}
+          class="w-full btn btn-ghost bg-slate-700/80 text-slate-300/80 rounded-full hover:rounded-lg hover:bg-slate-500/80 tsd"
+          on:click={unsubscribe}
+          >{!ready && !isSubLoading ? "Not ready yet" : "Unsubscribe"}</button
         >
       </div>
     {/if}

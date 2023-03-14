@@ -1,6 +1,6 @@
 
 type ActionType = 'option' | 'content' | 'status' | 'none' | 'save';
-type StatusCode = 'loading' | 'collecting' | 'subscribe' | 'changepage' | 'error' | 'stop' | 'ready';
+type StatusCode = 'loading' | 'collecting' | 'subscribe' | 'unsubscribe' | 'changepage' | 'error' | 'stop' | 'ready';
 
 type Data = {
     status?: { msg: string, code: StatusCode },
