@@ -1,35 +1,32 @@
 {
-    "name": "facebook-stories-auto-react-tool",
-    "description": "Automatically react to stories on Facebook without having to manually click on any reaction icons.",
-    "version": "1.4", 
-    "manifest_version": 3,
-    "icons": {
-        "16": "src/assets/icons/icon16.png",
-        "32": "src/assets/icons/icon32.png",
-        "48": "src/assets/icons/icon48.png",
-        "128": "src/assets/icons/icon128.png"
-    },
-    "content_scripts": [
-        {
-            "matches": [
-                "https://www.facebook.com/stories/*", 
-                "https://web.facebook.com/stories/*"
-            ],
-            "js": ["src/content/index.ts"]
-        }
-    ],
-    "options_ui": {
-        "page": "src/options/options.html",
-        "open_in_tab": false
-    },
-    "action": {
-        "default_popup": "src/popup/popup.html",
-        "default_icon": {
-            "16": "src/assets/icons/icon16.png",
-            "32": "src/assets/icons/icon32.png",
-            "48": "src/assets/icons/icon48.png",
-            "128": "src/assets/icons/icon128.png"
-        }
-    },
-    "permissions": ["storage", "tabs"]
+  "name": "youtube-subscriptions-transfer",
+  "description": "Youtube subscriptions transfer",
+  "version": "1.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "src/assets/icons/icon16.png",
+    "32": "src/assets/icons/icon32.png",
+    "48": "src/assets/icons/icon48.png",
+    "128": "src/assets/icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["src/content/index.ts"]
+    }
+  ],
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": false
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "src/assets/icons/icon16.png",
+      "32": "src/assets/icons/icon32.png",
+      "48": "src/assets/icons/icon48.png",
+      "128": "src/assets/icons/icon128.png"
+    }
+  },
+  "permissions": ["storage", "tabs"]
 }
