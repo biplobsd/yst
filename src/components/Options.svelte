@@ -460,11 +460,6 @@
   <div class="flex flex-col items-center gap-1 w-full">
     {#if isStoriesSite}
       {#if status.msg}
-        <div
-          class={`${
-            (!isStoriesSite || !ready) && !isSubLoading && " opacity-30"
-          }`}
-        >
           <div class="font-bold flex items-center gap-1 w-[17rem] ">
             Status
             {#if isLoading || !ready || isSubLoading}
@@ -480,7 +475,6 @@
               } text-xs tracking-wider mb-2 w-full`}>{status.msg}</span
             >
           </div>
-        </div>
       {/if}
       {#if !ready && !isSubLoading}
         <span class="animate-bounce text-xs tracking-wider"
