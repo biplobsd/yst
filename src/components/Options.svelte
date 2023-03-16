@@ -56,136 +56,41 @@
     return false;
   }
 
-  async function filterSubs() {
-    const currentSubs = channelPaths;
+  async function filterUnSubs(mode = true) {
+    const currentSubs: string[] = channelPaths;
     if (!(await collectAndwait())) {
       return;
     }
-    const notFoundList = currentSubs.filter(
-      (elem) => !channelPaths.includes(elem)
-    );
-    saveChannelsIds(notFoundList);
-  }
-
-  async function filterUnSubs() {
-    const currentSubs = channelPaths;
-    if (!(await collectAndwait())) {
-      return;
-    }
-    const foundList = currentSubs.filter((elem) => channelPaths.includes(elem));
-    saveChannelsIds(foundList);
-  }
-
-  async function unsubscribe() {
-    if (isLoading) {
-      return;
-    }
-
-    try {
-      setStatus("Getting current channels");
-      await filterUnSubs();
-
-      setStatus("Staring unsubscribe channel");
-      for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
-        await runtime.send({
-          context: {
-            actionType: "status",
-            data: {
-              status: { msg: channelPaths[indexMain], code: "changepage" },
-            },
-          },
-        });
-
-        let timeout = true;
-        for (let index = 0; index < 10; index++) {
-          setStatus(
-            "Wating for ready signal:" + channelPaths[indexMain] + " T-" + index
-          );
-          if (ready) {
-            timeout = false;
-            break;
-          }
-          if (isStop) {
-            return;
-          }
-          await delay(1000);
-        }
-        if (isStop) {
-          return;
-        }
-
-        if (timeout) {
-          break;
-        }
-
-        await runtime.send({
-          context: {
-            actionType: "status",
-            data: {
-              status: { msg: "Unsubscribe now", code: "unsubscribe" },
-            },
-          },
-        });
-
-        let timeoutSub = true;
-        for (let index = 0; index < 10; index++) {
-          setStatus(
-            "Wating for subscribe signal: " +
-              channelPaths[indexMain] +
-              " T-" +
-              index
-          );
-          if (ready) {
-            timeoutSub = false;
-            break;
-          }
-          if (isStop) {
-            return;
-          }
-          await delay(1000);
-        }
-        if (isStop) {
-          return;
-        }
-
-        if (timeoutSub) {
-          break;
-        }
-
-        const sCList = channelPathsText.split(", ");
-        sCList.splice(0, 1);
-
-        const l = channelsIdsParse(sCList);
-
-        await storage.set({
-          context: {
-            actionType: "save",
-            data: {
-              channelPaths: l,
-            },
-          },
-        });
+    if (channelPaths !== currentSubs) {
+      let notFoundList: string[];
+      if (mode) {
+        notFoundList = currentSubs.filter(
+          (elem) => !channelPaths.includes(elem)
+        );
+      } else {
+        notFoundList = currentSubs.filter((elem) =>
+          channelPaths.includes(elem)
+        );
       }
-    } finally {
-      setStatus("Done");
-      isSubLoading = false;
-      isLoading = false;
-      channelsIdsStringSave();
+
+      saveChannelsIds(notFoundList);
     }
+    return;
   }
 
-  async function subscribe() {
+  async function subUnSub(mode = true) {
+    const un = !mode && "un";
     if (isLoading) {
       return;
     }
     try {
       setStatus("Getting current channels");
-      await filterSubs();
+      await filterUnSubs(mode);
 
       isLoading = true;
       isSubLoading = true;
 
-      setStatus("Staring subscribe channel");
+      setStatus(`Staring ${un}subscribe channel`);
       for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
         await runtime.send({
           context: {
@@ -222,7 +127,10 @@
           context: {
             actionType: "status",
             data: {
-              status: { msg: "Subscribe now", code: "subscribe" },
+              status: {
+                msg: `${un}subscribe now`,
+                code: `${un}subscribe`,
+              },
             },
           },
         });
@@ -230,7 +138,7 @@
         let timeoutSub = true;
         for (let index = 0; index < 10; index++) {
           setStatus(
-            "Wating for subscribe signal: " +
+            `Wating for ${un}subscribe signal: ` +
               channelPaths[indexMain] +
               " T-" +
               index
@@ -314,6 +222,7 @@
         case "error":
           setStatus(msg, true);
           isLoading = false;
+          ready = true;
           return;
         default:
           isLoading = false;
@@ -375,9 +284,9 @@
     });
   }
 
-  function readySignalSend() {
+  async function readySignalSend() {
     // Ready signal
-    runtime.send({
+    await runtime.send({
       context: {
         actionType: "content",
         data: {
@@ -397,7 +306,7 @@
     isStoriesSite = await isRightSite();
     storageRemoveListener = runtime.addListener(parseData);
 
-    readySignalSend();
+    await readySignalSend();
 
     channelsIdsParse(channelPaths);
   });
@@ -493,19 +402,19 @@
             : "Collect channel"}</button
         >
         <button
-          disabled={(channelPaths.length ? false : true) ||
+          disabled={(channelPathsCount ? false : true) ||
             isSubLoading ||
             !ready}
           class="w-full btn btn-ghost bg-slate-100 text-slate-900 rounded-full hover:rounded-lg hover:bg-slate-100/80 tsd"
-          on:click={subscribe}
+          on:click={() => subUnSub(true)}
           >{!ready && !isSubLoading ? "Not ready yet" : "Subscribe"}</button
         >
         <button
-          disabled={(channelPaths.length ? false : true) ||
+          disabled={(channelPathsCount ? false : true) ||
             isSubLoading ||
             !ready}
           class="w-full btn btn-ghost bg-slate-700/80 text-slate-300/80 rounded-full hover:rounded-lg hover:bg-slate-500/80 tsd"
-          on:click={unsubscribe}
+          on:click={() => subUnSub(false)}
           >{!ready && !isSubLoading ? "Not ready yet" : "Unsubscribe"}</button
         >
       </div>

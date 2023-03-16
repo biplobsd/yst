@@ -342,6 +342,7 @@
   }
 
   function parseData(dataLocal: IStorage) {
+    console.log("Raw", dataLocal);
     if (dataLocal.context.actionType === "status") {
       switch (dataLocal.context.data.status.code) {
         case "loading":
@@ -399,6 +400,7 @@
         }
       } else {
         data = dataLocal;
+        console.log("Data found", data);
       }
     } else if (dataLocal.context.actionType === "option") {
       isLoading = false;
