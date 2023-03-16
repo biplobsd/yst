@@ -12,7 +12,8 @@
     ALREADY_SUBSCRIBE,
     DRAWER_OPENED,
     EXPENDED_ITEM_BUTTON,
-    GET_CHANNELS,
+    GET_CHANNELS_IN_EXPEND,
+    GET_CHANNELS_WITHOUT_EXPEND,
     IS_EXPENDEDABLE,
     SUBSCRIBE_BTN,
     SUB_CHANNELS_EXPENDED_ITEMS,
@@ -188,7 +189,6 @@
 
       if (!(await checking())) {
         return false;
-        1;
       }
 
       if (isStoping()) {
@@ -226,10 +226,20 @@
   }
 
   function parseHref() {
-    const rawChannels = getXpathFromElements(GET_CHANNELS);
-    if (rawChannels) {
+    const rawChannelsWithoutExpend = getXpathFromElements(
+      GET_CHANNELS_WITHOUT_EXPEND
+    );
+
+    if (rawChannelsWithoutExpend) {
+      let rawChannelsWithExpend: HTMLElement[] = [];
+      const rawcwe = getXpathFromElements(GET_CHANNELS_IN_EXPEND);
+      if (isXPathExpressionExists(IS_EXPENDEDABLE) && rawcwe) {
+        rawChannelsWithExpend = rawcwe;
+      }
+
       const channelsPaths: string[] = [];
-      for (let l of rawChannels) {
+      const fullEle = rawChannelsWithoutExpend.concat(rawChannelsWithExpend);
+      for (let l of fullEle) {
         if (isStoping()) {
           return undefined;
         }

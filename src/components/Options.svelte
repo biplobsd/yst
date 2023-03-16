@@ -460,21 +460,21 @@
   <div class="flex flex-col items-center gap-1 w-full">
     {#if isStoriesSite}
       {#if status.msg}
-          <div class="font-bold flex items-center gap-1 w-[17rem] ">
-            Status
-            {#if isLoading || !ready || isSubLoading}
-              <button class="btn btn-xs" on:click={stop}
-                ><div class="btn btn-xs loading pr-1">Stop</div></button
-              >
-            {/if}
-          </div>
-          <div class="ring w-full py-2 px-2 my-2 rounded-md">
-            <span
-              class={`${status.isError && "text-red-500"} ${
-                isLoading && "animate-bounce"
-              } text-xs tracking-wider mb-2 w-full`}>{status.msg}</span
+        <div class="font-bold flex items-center gap-1 w-[17rem] ">
+          Status
+          {#if isLoading || !ready || isSubLoading}
+            <button class="btn btn-xs" on:click={stop}
+              ><div class="btn btn-xs loading pr-1">Stop</div></button
             >
-          </div>
+          {/if}
+        </div>
+        <div class="ring w-full py-2 px-2 my-2 rounded-md">
+          <span
+            class={`${status.isError && "text-red-500"} ${
+              isLoading && "animate-bounce"
+            } text-xs tracking-wider mb-2 w-full`}>{status.msg}</span
+          >
+        </div>
       {/if}
       {#if !ready && !isSubLoading}
         <span class="animate-bounce text-xs tracking-wider"
@@ -488,7 +488,9 @@
           disabled={!isStoriesSite || !ready || isSubLoading}
           class="btn btn-success w-full"
           on:click={collectSubs}
-          >{!ready && !isSubLoading ? "Not ready yet" : "Collect subs"}</button
+          >{!ready && !isSubLoading
+            ? "Not ready yet"
+            : "Collect channel"}</button
         >
         <button
           disabled={(channelPaths.length ? false : true) ||

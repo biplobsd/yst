@@ -1,4 +1,5 @@
-export const GET_CHANNELS = '//ytd-guide-entry-renderer/a[@href]';
+export const GET_CHANNELS_WITHOUT_EXPEND = '//yt-formatted-string[text()="Subscriptions"]/../../div/ytd-guide-entry-renderer/a[@href]';
+export const GET_CHANNELS_IN_EXPEND = '//yt-formatted-string[text()="Subscriptions"]/../../div/ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer/a[@href]';
 export const SUB_CHANNELS_ITEMS = '//yt-formatted-string[text()="Subscriptions"]/../../../../../div[@id="items"]';
 export const SUB_CHANNELS_EXPENDED_ITEMS = '//div[@id="expandable-items"]/ytd-guide-entry-renderer';
 export const IS_EXPENDEDABLE = '//a[@title="Show less"]';
