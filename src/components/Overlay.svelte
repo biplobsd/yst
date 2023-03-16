@@ -206,6 +206,18 @@
             },
           },
         });
+      } else {
+        runtime.send({
+          context: {
+            actionType: "status",
+            data: {
+              status: {
+                msg: "Channels unable to be detected",
+                code: "error",
+              },
+            },
+          },
+        });
       }
 
       return false;
