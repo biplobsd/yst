@@ -18,6 +18,11 @@ export async function isRightSite(isOptions = true) {
     } else {
         url = window.location.href;
     }
+
+    if (url.length === 0) {
+        return false;
+    }
+
     return SELECTED_URLS.includes(url.slice(0, 24));
 }
 

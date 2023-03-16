@@ -9,7 +9,7 @@
   export let channelPaths: string[] = [];
   let isLoading = true;
   let ready = false;
-  let isStoriesSite = false;
+  let isRightSiteNow = false;
   let status: { isError: boolean; msg?: string } = { isError: false };
   let storageRemoveListener: () => void;
   let channelPathsText = "";
@@ -17,6 +17,7 @@
   let isStop = false;
   let isSubLoading = false;
   let channelPathsCount = 0;
+  let darkMode = true;
 
   async function stop() {
     isStop = true;
@@ -61,6 +62,7 @@
     if (!(await collectAndwait())) {
       return;
     }
+
     if (channelPaths !== currentSubs) {
       let notFoundList: string[];
       if (mode) {
@@ -83,6 +85,7 @@
     if (isLoading) {
       return;
     }
+    reset();
     try {
       setStatus("Getting current channels");
       await filterUnSubs(mode);
@@ -129,7 +132,7 @@
             data: {
               status: {
                 msg: `${un}subscribe now`,
-                code: `${un}subscribe`,
+                code: mode ? "subscribe" : "unsubscribe",
               },
             },
           },
@@ -186,6 +189,12 @@
     status = { isError, msg };
   }
 
+  function reset() {
+    isLoading = false;
+    isStop = false;
+    isSubLoading = false;
+  }
+
   function parseData(dataLocal: IStorage) {
     setStatus("...");
     if (dataLocal.context.actionType === "status") {
@@ -193,15 +202,11 @@
       setStatus(msg);
       switch (dataLocal.context.data.status.code) {
         case "loading":
-          isLoading = true;
-          return;
         case "collecting":
           isLoading = true;
           return;
         case "stop":
-          isLoading = false;
-          isStop = false;
-          isSubLoading = false;
+          reset();
           return;
         case "ready":
           isLoading = false;
@@ -212,9 +217,6 @@
           ready = false;
           return;
         case "subscribe":
-          isLoading = true;
-          ready = false;
-          return;
         case "unsubscribe":
           isLoading = true;
           ready = false;
@@ -226,6 +228,7 @@
           return;
         default:
           isLoading = false;
+          ready = true;
           return;
       }
     } else if (dataLocal.context.actionType === "option") {
@@ -303,7 +306,7 @@
     runtime.fromOption = true;
     runtime.selfParseData = parseData;
 
-    isStoriesSite = await isRightSite();
+    isRightSiteNow = await isRightSite();
     storageRemoveListener = runtime.addListener(parseData);
 
     await readySignalSend();
@@ -320,24 +323,30 @@
   <p class="mb-3 tracking-wider font-extrabold text-xl">
     {APP_NAME} <span class="text-xs">{VERSION}</span>
   </p>
-  {#if isStoriesSite}
+  {#if isRightSiteNow}
     <div class="mb-4">
       <div class="mb-1"><span class="font-bold">Data</span></div>
       <div
         class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
       >
         <input type="checkbox" class="peer" />
-        <div class="collapse-title text-sm bg-success/70 text-white/80">
+        <div
+          class="collapse-title text-sm bg-success/70 dark:text-white/80 text-slate-700/80 font-sans"
+        >
           Subscriptions: {channelPathsCount}
         </div>
         <div class="collapse-content bg-success/60 peer-checked:py-2">
-          <span class="text-xs text-slate-200"
-            >Enter only ids. Ids start with <span class="text-red-100 font-bold"
-              >@</span
+          <span class="text-xs dark:text-slate-200 text-slate-700/80"
+            >Enter only ids. Ids start with <span
+              class="dark:text-red-100 text-red-800/60 font-bold">@</span
             >
             symbol. Example
-            <span class="text-red-200 font-bold">@youtube</span>,
-            <span class="text-red-200 font-bold">@google</span></span
+            <span class="dark:text-red-200 text-red-800/60 font-bold"
+              >@youtube</span
+            >,
+            <span class="dark:text-red-200 text-red-800/60 font-bold"
+              >@google</span
+            ></span
           >
           <form
             on:submit={(e) => {
@@ -367,7 +376,7 @@
   {/if}
 
   <div class="flex flex-col items-center gap-1 w-full">
-    {#if isStoriesSite}
+    {#if isRightSiteNow}
       {#if status.msg}
         <div class="font-bold flex items-center gap-1 w-[17rem] ">
           Status
@@ -394,8 +403,8 @@
       <div class="w-[17rem] space-y-2">
         <div><span class="font-bold">Actions</span></div>
         <button
-          disabled={!isStoriesSite || !ready || isSubLoading}
-          class="btn btn-success w-full"
+          disabled={!isRightSiteNow || !ready || isSubLoading}
+          class="btn btn-success w-full rounded-full"
           on:click={collectSubs}
           >{!ready && !isSubLoading
             ? "Not ready yet"
@@ -405,7 +414,7 @@
           disabled={(channelPathsCount ? false : true) ||
             isSubLoading ||
             !ready}
-          class="w-full btn btn-ghost bg-slate-100 text-slate-900 rounded-full hover:rounded-lg hover:bg-slate-100/80 tsd"
+          class="w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd"
           on:click={() => subUnSub(true)}
           >{!ready && !isSubLoading ? "Not ready yet" : "Subscribe"}</button
         >
@@ -413,13 +422,13 @@
           disabled={(channelPathsCount ? false : true) ||
             isSubLoading ||
             !ready}
-          class="w-full btn btn-ghost bg-slate-700/80 text-slate-300/80 rounded-full hover:rounded-lg hover:bg-slate-500/80 tsd"
+          class="w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd"
           on:click={() => subUnSub(false)}
           >{!ready && !isSubLoading ? "Not ready yet" : "Unsubscribe"}</button
         >
       </div>
     {/if}
-    {#if !isStoriesSite}
+    {#if !isRightSiteNow}
       <div>
         This page is not facebook stories page. <a
           class="link link-hover text-blue-500"
