@@ -1,6 +1,6 @@
 {
-  "name": "youtube-subscriptions-transfer",
-  "description": "Youtube subscriptions transfer",
+  "name": "Youtube Subscriptions Transfer",
+  "description": "Transferring subscriptions from one YouTube account to another",
   "version": "1.0",
   "manifest_version": 3,
   "icons": {
