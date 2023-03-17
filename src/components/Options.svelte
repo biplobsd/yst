@@ -5,6 +5,7 @@
   import Footer from "./Footer.svelte";
   import { delay, isRightSite } from "src/utils/helper";
   import { runtime, storage, type IStorage } from "src/storage";
+  import Header from "./Header.svelte";
 
   export let channelPaths: string[] = [];
   let isLoading = true;
@@ -320,9 +321,7 @@
 </script>
 
 <div class="w-72 pt-4 px-2 items-center flex flex-col justify-center gap-2">
-  <p class="mb-3 tracking-wider font-extrabold text-xl">
-    {APP_NAME} <span class="text-xs">{VERSION}</span>
-  </p>
+  <Header />
   {#if isRightSiteNow}
     <div class="mb-4">
       <div class="mb-1"><span class="font-bold">Data</span></div>
@@ -429,14 +428,13 @@
       </div>
     {/if}
     {#if !isRightSiteNow}
-      <div>
-        This page is not facebook stories page. <a
-          class="link link-hover text-blue-500"
-          target="_blank"
-          rel="noreferrer"
-          href={STORIES_URL[0]}>Open stories page</a
-        >
-      </div>
+      <div>This page is not Youtube page.</div>
+      <a
+        class="link link-hover text-blue-500 btn"
+        target="_blank"
+        rel="noreferrer"
+        href={STORIES_URL[0]}>Open Youtube</a
+      >
     {/if}
   </div>
   <Footer />
