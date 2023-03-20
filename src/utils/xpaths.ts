@@ -1,9 +1,11 @@
-export const GET_CHANNELS_WITHOUT_EXPEND = '//yt-formatted-string[text()="Subscriptions"]/../../div/ytd-guide-entry-renderer/a[@href]';
-export const GET_CHANNELS_IN_EXPEND = '//yt-formatted-string[text()="Subscriptions"]/../../div/ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer/a[@href]';
-export const SUB_CHANNELS_ITEMS = '//yt-formatted-string[text()="Subscriptions"]/../../../../../div[@id="items"]';
-export const SUB_CHANNELS_EXPENDED_ITEMS = '//div[@id="expandable-items"]/ytd-guide-entry-renderer';
-export const IS_EXPENDEDABLE = '//a[@title="Show less"]';
-export const EXPENDED_ITEM_BUTTON = '//ytd-guide-entry-renderer[@id="expander-item"]';
+export const SUBSCRIPTIONS_SECTION = "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']";
+export const GET_CHANNELS_WITHOUT_EXPEND = `${SUBSCRIPTIONS_SECTION}/ytd-guide-entry-renderer/a[@href]`;
+export const KEY_GET_CHANNELS_IN_EXPEND = `ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer`;
+export const SUB_CHANNELS_EXPENDED_ITEMS = `${SUBSCRIPTIONS_SECTION}/${KEY_GET_CHANNELS_IN_EXPEND}`;
+export const GET_CHANNELS_IN_EXPEND = `${SUB_CHANNELS_EXPENDED_ITEMS}/a[@href]`;
+export const IS_EXPENDEDABLE = `${SUBSCRIPTIONS_SECTION}/ytd-guide-collapsible-entry-renderer`;
+export const IS_EXPENDEDABLE_EXPENDED = `${IS_EXPENDEDABLE}[@expanded]`;
+export const IS_EXPENDEDABLE_EXPENDED_BUTTON = `${IS_EXPENDEDABLE}/ytd-guide-entry-renderer`;
 export const THREE_LINES = '//yt-icon-button[@id="guide-button"]';
 export const DRAWER_OPENED = '//div[@id="contentContainer" and @opened]';
 export const ALREADY_SUBSCRIBE = '//div[@id="inner-header-container"]/div/div/ytd-subscribe-button-renderer/div[@id="notification-preference-button" and not(@hidden)]/ytd-subscription-notification-toggle-button-renderer-next/yt-button-shape/button/div/span[text()="Subscribed"]';

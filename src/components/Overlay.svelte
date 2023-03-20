@@ -11,13 +11,14 @@
   import {
     ALREADY_SUBSCRIBE,
     DRAWER_OPENED,
-    EXPENDED_ITEM_BUTTON,
     GET_CHANNELS_IN_EXPEND,
     GET_CHANNELS_WITHOUT_EXPEND,
     IS_EXPENDEDABLE,
+    IS_EXPENDEDABLE_EXPENDED,
+    IS_EXPENDEDABLE_EXPENDED_BUTTON,
     SUBSCRIBE_BTN,
     SUB_CHANNELS_EXPENDED_ITEMS,
-    SUB_CHANNELS_ITEMS,
+    SUBSCRIPTIONS_SECTION,
     THREE_LINES,
     UNSUB1,
     UNSUB2,
@@ -53,12 +54,24 @@
     return true;
   }
 
-  function expendedButtonClick() {
-    if (isXPathExpressionExists(IS_EXPENDEDABLE)) {
-      const expendedItemButton = getXpathFromElement(EXPENDED_ITEM_BUTTON);
+  async function expendedButtonClick() {
+    const isAlreadyExpended = isXPathExpressionExists(IS_EXPENDEDABLE_EXPENDED);
+    if (isXPathExpressionExists(IS_EXPENDEDABLE) && !isAlreadyExpended) {
+      const expendedItemButton = getXpathFromElement(
+        IS_EXPENDEDABLE_EXPENDED_BUTTON
+      );
       if (expendedItemButton) {
         expendedItemButton.click();
       }
+      await delay(1000);
+      if (isXPathExpressionExists(SUB_CHANNELS_EXPENDED_ITEMS)) {
+        return true;
+      }
+      return false;
+    } else if (
+      isAlreadyExpended &&
+      isXPathExpressionExists(SUB_CHANNELS_EXPENDED_ITEMS)
+    ) {
       return true;
     }
     return false;
@@ -70,11 +83,7 @@
         return false;
       }
       // checking expentedable
-      if (!expendedButtonClick()) {
-        return true;
-      }
-      await delay(1000);
-      if (isXPathExpressionExists(SUB_CHANNELS_EXPENDED_ITEMS)) {
+      if (expendedButtonClick()) {
         return true;
       }
     }
@@ -131,7 +140,7 @@
     }
 
     // checking is there found subscriptions section
-    if (!isXPathExpressionExists(SUB_CHANNELS_ITEMS)) {
+    if (!isXPathExpressionExists(SUBSCRIPTIONS_SECTION)) {
       runtime.send({
         context: {
           actionType: "status",
