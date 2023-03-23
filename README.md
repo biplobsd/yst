@@ -3,8 +3,14 @@
 
 YouTube Subscriptions Transfer is a browser extension that allows you to transfer subscriptions from one account to another without using any API. The extension collects a list of channels and enables you to subscribe or unsubscribe to each channel. It interacts with the DOM using xpath.
 
+
+
 ## Installation 
-Get the built zip from the [release](https://github.com/biplobsd/yst/releases/latest) tab. Then follow the instructions in the [Load unpacked extensions](#load-unpacked-extensions) section. The ***/dist*** folder should be considered as the unpacked zip files.
+<a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj">
+  <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get YST on Microsoft Edge" width="224px">
+</a>
+
+Or get the built zip from the [release](https://github.com/biplobsd/yst/releases/latest) tab. Then follow the instructions in the [Load unpacked extensions](#load-unpacked-extensions) section. The ***/dist*** folder should be considered as the unpacked zip files.
 
 ## Usages 
 To use the extension, open the Y (yst) icon from the extension panel. If you are not on the https://www.youtube.com page, click the Open YouTube button.
