@@ -294,14 +294,21 @@
   }
 
   async function subSubNow() {
-    if (isXPathExpressionExists(ALREADY_SUBSCRIBE)) {
-      await readySignalSend();
-      return;
+    for (let index = 0; index < 2; index++) {
+      if (isXPathExpressionExists(ALREADY_SUBSCRIBE)) {
+        await readySignalSend();
+        return;
+      }
+      await delay(500);
     }
 
-    const subButton = getXpathFromElement(SUBSCRIBE_BTN);
-    if (subButton) {
-      subButton.click();
+    for (let index = 0; index < 2; index++) {
+      const subButton = getXpathFromElement(SUBSCRIBE_BTN);
+      if (subButton) {
+        subButton.click();
+        break;
+      }
+      await delay(500);
     }
 
     await readySignalSend();
