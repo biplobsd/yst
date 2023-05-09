@@ -1,16 +1,17 @@
 <script lang="ts">
-  import { GITHUBLOGO } from "src/utils/large_strings";
+  import { REPO_URL } from "src/utils/constants";
+  import { GITHUB_LOGO } from "src/utils/large_strings";
 </script>
 
 <div class="my-2">
   <div
-    class="mt-5 flex items-center dark:text-slate-100/50 text-slate-700/50  gap-2 justify-center"
+    class="mt-5 flex items-center dark:text-slate-100/50 text-slate-700/50 gap-2 justify-center"
   >
-    <img class="w-5 h-5" src={GITHUBLOGO} alt="Github logo" /><a
+    <img class="w-5 h-5" src={GITHUB_LOGO} alt="Github logo" /><a
       class="link link-hover link-info"
       target="_blank"
       rel="noreferrer"
-      href="https://github.com/biplobsd/yst">Fork now</a
+      href={REPO_URL}>Fork now</a
     >
   </div>
   <p class="text-xs mb-1 dark:text-slate-100/50 text-slate-700/50 text-center">
