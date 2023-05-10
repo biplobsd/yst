@@ -7,33 +7,20 @@
     getXpathFromElements,
     isXPathExpressionExists,
   } from "src/utils/helper";
+  import type { XPathModel } from "src/utils/xpaths";
 
-  import {
-    ALREADY_SUBSCRIBE,
-    DRAWER_OPENED,
-    GET_CHANNELS_IN_EXPEND,
-    GET_CHANNELS_WITHOUT_EXPEND,
-    IS_EXPENDEDABLE,
-    IS_EXPENDEDABLE_EXPENDED,
-    IS_EXPENDEDABLE_EXPENDED_BUTTON,
-    SUBSCRIBE_BTN,
-    SUB_CHANNELS_EXPENDED_ITEMS,
-    SUBSCRIPTIONS_SECTION,
-    THREE_LINES,
-    UNSUB1,
-    UNSUB2,
-  } from "src/utils/xpaths";
   import { onDestroy, onMount } from "svelte";
 
   let storageRemoveListener: () => void;
   let isLoading: boolean = false;
   let stop: boolean = false;
   let data: IStorage;
+  let xpathValues: XPathModel;
 
   function isDrawerOpened() {
-    if (!isXPathExpressionExists(DRAWER_OPENED)) {
+    if (!isXPathExpressionExists(xpathValues.DRAWER_OPENED)) {
       // Try opening drawer
-      const threeLines = getXpathFromElement(THREE_LINES);
+      const threeLines = getXpathFromElement(xpathValues.THREE_LINES);
       if (!threeLines) {
         runtime.send({
           context: {
@@ -55,22 +42,27 @@
   }
 
   async function expendedButtonClick() {
-    const isAlreadyExpended = isXPathExpressionExists(IS_EXPENDEDABLE_EXPENDED);
-    if (isXPathExpressionExists(IS_EXPENDEDABLE) && !isAlreadyExpended) {
+    const isAlreadyExpended = isXPathExpressionExists(
+      xpathValues.IS_EXPENDEDABLE_EXPENDED
+    );
+    if (
+      isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) &&
+      !isAlreadyExpended
+    ) {
       const expendedItemButton = getXpathFromElement(
-        IS_EXPENDEDABLE_EXPENDED_BUTTON
+        xpathValues.IS_EXPENDEDABLE_EXPENDED_BUTTON
       );
       if (expendedItemButton) {
         expendedItemButton.click();
       }
       await delay(1000);
-      if (isXPathExpressionExists(SUB_CHANNELS_EXPENDED_ITEMS)) {
+      if (isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)) {
         return true;
       }
       return false;
     } else if (
       isAlreadyExpended &&
-      isXPathExpressionExists(SUB_CHANNELS_EXPENDED_ITEMS)
+      isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)
     ) {
       return true;
     }
@@ -140,7 +132,7 @@
     }
 
     // checking is there found subscriptions section
-    if (!isXPathExpressionExists(SUBSCRIPTIONS_SECTION)) {
+    if (!isXPathExpressionExists(xpathValues.SUBSCRIPTIONS_SECTION)) {
       runtime.send({
         context: {
           actionType: "status",
@@ -248,13 +240,13 @@
 
   function parseHref() {
     const rawChannelsWithoutExpend = getXpathFromElements(
-      GET_CHANNELS_WITHOUT_EXPEND
+      xpathValues.GET_CHANNELS_WITHOUT_EXPEND
     );
 
     if (rawChannelsWithoutExpend) {
       let rawChannelsWithExpend: HTMLElement[] = [];
-      const rawcwe = getXpathFromElements(GET_CHANNELS_IN_EXPEND);
-      if (isXPathExpressionExists(IS_EXPENDEDABLE) && rawcwe) {
+      const rawcwe = getXpathFromElements(xpathValues.GET_CHANNELS_IN_EXPEND);
+      if (isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) && rawcwe) {
         rawChannelsWithExpend = rawcwe;
       }
 
@@ -295,7 +287,7 @@
 
   async function subSubNow() {
     for (let index = 0; index < 2; index++) {
-      if (isXPathExpressionExists(ALREADY_SUBSCRIBE)) {
+      if (isXPathExpressionExists(xpathValues.ALREADY_SUBSCRIBE)) {
         await readySignalSend();
         return;
       }
@@ -303,7 +295,7 @@
     }
 
     for (let index = 0; index < 2; index++) {
-      const subButton = getXpathFromElement(SUBSCRIBE_BTN);
+      const subButton = getXpathFromElement(xpathValues.SUBSCRIBE_BTN);
       if (subButton) {
         subButton.click();
         break;
@@ -315,22 +307,22 @@
   }
 
   async function unSubSubNow() {
-    if (isXPathExpressionExists(SUBSCRIBE_BTN)) {
+    if (isXPathExpressionExists(xpathValues.SUBSCRIBE_BTN)) {
       await readySignalSend();
       return;
     }
 
-    const unSubButton = getXpathFromElement(ALREADY_SUBSCRIBE);
+    const unSubButton = getXpathFromElement(xpathValues.ALREADY_SUBSCRIBE);
     if (unSubButton) {
       unSubButton.click();
       await delay(50);
       for (let index = 0; index < 3; index++) {
-        const unSub1 = getXpathFromElement(UNSUB1);
+        const unSub1 = getXpathFromElement(xpathValues.UNSUB1);
         if (unSub1) {
           unSub1.click();
           await delay(50);
           for (let index = 0; index < 5; index++) {
-            const unSub2 = getXpathFromElement(UNSUB2);
+            const unSub2 = getXpathFromElement(xpathValues.UNSUB2);
             if (unSub2) {
               unSub2.click();
               return await readySignalSend();
@@ -411,6 +403,8 @@
           case "ready":
             readySignalSend();
             break;
+          case "xpath":
+            xpathValues = dataLocal.context.data.xpathValues;
           default:
             break;
         }

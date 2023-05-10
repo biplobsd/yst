@@ -2,12 +2,13 @@
   import "src/options/styles.css";
   import { onDestroy, onMount } from "svelte";
   import { STORIES_URL } from "src/utils/constants";
-  import Footer from "../Footer.svelte";
   import { delay, isRightSite } from "src/utils/helper";
   import { runtime, storage, type IStorage } from "src/storage";
-  import Header from "../Header.svelte";
+  import type { XPathModel } from "src/utils/xpaths";
 
-  export let channelPaths: string[] = [];
+  let channelPaths: string[] = [];
+  let xpathValues: XPathModel;
+
   let isLoading = true;
   let ready = false;
   let isRightSiteNow = false;
@@ -18,7 +19,6 @@
   let isStop = false;
   let isSubLoading = false;
   let channelPathsCount = 0;
-  let darkMode = true;
 
   async function stop() {
     isStop = true;
@@ -212,6 +212,7 @@
         case "ready":
           isLoading = false;
           ready = true;
+          xpathSignalSend();
           return;
         case "changepage":
           isLoading = true;
@@ -303,7 +304,27 @@
     });
   }
 
+  async function xpathSignalSend() {
+    // Ready signal
+    await runtime.send({
+      context: {
+        actionType: "content",
+        data: {
+          xpathValues,
+          status: {
+            msg: "Sending xpath values",
+            code: "xpath",
+          },
+        },
+      },
+    });
+  }
+
   onMount(async () => {
+    const iStorage: IStorage = await storage.get();
+    channelPaths = iStorage.context.data.channelPaths;
+    xpathValues = iStorage.context.data.xpathValues;
+
     runtime.fromOption = true;
     runtime.selfParseData = parseData;
 
