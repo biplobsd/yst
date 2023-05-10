@@ -10,6 +10,7 @@ type StatusCode =
   | "error"
   | "stop"
   | "ready"
+  | "accept"
   | "xpath";
 
 type Data = {

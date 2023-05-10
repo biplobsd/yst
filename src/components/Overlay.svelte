@@ -281,6 +281,21 @@
     });
   }
 
+  async function acceptSignalSend() {
+    // Ready signal
+    await runtime.send({
+      context: {
+        actionType: "status",
+        data: {
+          status: {
+            msg: "Ready for accept request",
+            code: "accept",
+          },
+        },
+      },
+    });
+  }
+
   function newPage(path: string) {
     window.location.href = "https://youtube.com/" + path;
   }
@@ -405,6 +420,8 @@
             break;
           case "xpath":
             xpathValues = dataLocal.context.data.xpathValues;
+            acceptSignalSend();
+            break;
           default:
             break;
         }
