@@ -1,0 +1,15 @@
+{
+  "SUBSCRIPTIONS_SECTION": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']",
+  "GET_CHANNELS_WITHOUT_EXPEND": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-entry-renderer/a[@href]",
+  "SUB_CHANNELS_EXPENDED_ITEMS": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer",
+  "GET_CHANNELS_IN_EXPEND": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer/a[@href]",
+  "IS_EXPENDEDABLE": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer",
+  "IS_EXPENDEDABLE_EXPENDED": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/[@expanded]",
+  "IS_EXPENDEDABLE_EXPENDED_BUTTON": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/ytd-guide-entry-renderer",
+  "THREE_LINES": "//yt-icon-button[@id='guide-button']",
+  "DRAWER_OPENED": "//div[@id='contentContainer' and @opened]",
+  "ALREADY_SUBSCRIBE": "//div[@id='inner-header-container']//div[@id='notification-preference-button' and not(@hidden)]//span[text()='Subscribed']",
+  "SUBSCRIBE_BTN": "//div[@id='inner-header-container']/div/div[@id='subscribe-button']/ytd-subscribe-button-renderer/yt-smartimation/yt-button-shape[not(@hidden)]/button",
+  "UNSUB1": "//yt-formatted-string[text()='Unsubscribe']",
+  "UNSUB2": "//button[@aria-label='Unsubscribe']"
+}
