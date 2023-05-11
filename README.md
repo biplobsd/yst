@@ -40,6 +40,13 @@ In the Data section, you can see how many subscriptions the extension has collec
  
 ![Actions active](https://user-images.githubusercontent.com/43641536/225979057-af78429a-d0a1-40d2-9704-ba2f9ec66ec8.png)
 
+## Configuration 
+### Disable auto XPath remote update
+  Add `REMOTE_DISABLE: true` to the Setting/XPath text box and save to disable auto-updating of XPath at the extension popup when opened.
+
+### Update XPath value
+  If the YouTube website updates its site and any XPath value is broken, you can easily update that value by going to the "Settings" tab and selecting the "XPath" option. Now update the XPath values as json format. You need to add `REMOTE_DISABLE: true` for disabling auto update from project xpath value. Now click save.
+
 ## Development
 
 ```bash
