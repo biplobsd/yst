@@ -54,7 +54,10 @@
         return true;
       }
     }
-    setStatus("Unable to get sub list from content client", true);
+    setStatus(
+      "Unable to get the subscriptions list from the content client",
+      true
+    );
     return false;
   }
 
@@ -94,7 +97,7 @@
       isLoading = true;
       isSubLoading = true;
 
-      setStatus(`Staring ${un}subscribe channel`);
+      setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
         await runtime.send({
           context: {
@@ -108,7 +111,10 @@
         let timeout = true;
         for (let index = 0; index < 10; index++) {
           setStatus(
-            "Wating for ready signal:" + channelPaths[indexMain] + " T-" + index
+            "Waiting for the ready signal:" +
+              channelPaths[indexMain] +
+              " T-" +
+              index
           );
           if (ready) {
             timeout = false;
@@ -142,7 +148,7 @@
         let timeoutSub = true;
         for (let index = 0; index < 10; index++) {
           setStatus(
-            `Wating for ${un}subscribe signal: ` +
+            `Waiting for the ${un}subscribe signal: ` +
               channelPaths[indexMain] +
               " T-" +
               index
@@ -234,7 +240,7 @@
           return;
       }
     } else if (dataLocal.context.actionType === "option") {
-      setStatus("Data collect successfully");
+      setStatus("Data collected successfully");
       isLoading = false;
       saveChannelsIds(dataLocal.context.data.channelPaths);
     }
@@ -296,7 +302,7 @@
         actionType: "content",
         data: {
           status: {
-            msg: "Is content script ready",
+            msg: "Is the content script ready?",
             code: "ready",
           },
         },
@@ -305,14 +311,13 @@
   }
 
   async function xpathSignalSend() {
-    // Ready signal
     await runtime.send({
       context: {
         actionType: "content",
         data: {
           xpathValues,
           status: {
-            msg: "Sending xpath values",
+            msg: "Sending XPath values",
             code: "xpath",
           },
         },
@@ -355,18 +360,23 @@
           Subscriptions: {channelPathsCount}
         </div>
         <div class="collapse-content bg-success/60 peer-checked:py-2">
-          <span class="text-xs dark:text-slate-200 text-slate-700/80"
-            >Enter only ids. Ids start with <span
-              class="dark:text-red-100 text-red-800/60 font-bold">@</span
-            >
-            symbol. Example
-            <span class="dark:text-red-200 text-red-800/60 font-bold"
-              >@youtube</span
-            >,
-            <span class="dark:text-red-200 text-red-800/60 font-bold"
-              >@google</span
-            ></span
-          >
+          <span class="text-xs dark:text-slate-200 text-slate-700/80 space-y-2">
+            <p>
+              Enter only channel IDs. Channel IDs start with the <span
+                class="dark:text-red-100 text-red-800/60 font-bold">@</span
+              >
+              symbol.
+            </p>
+            <p>
+              Example:
+              <span class="dark:text-red-200 text-red-800/60 font-bold"
+                >@youtube</span
+              >,
+              <span class="dark:text-red-200 text-red-800/60 font-bold"
+                >@google</span
+              >
+            </p>
+          </span>
           <form
             on:submit={(e) => {
               e.preventDefault();
@@ -382,7 +392,7 @@
             />
             {#if saveError}
               <div class="alert alert-error shadow-lg mb-4">
-                <span>Make sure your input channels is start with @</span>
+                <span>Make sure your input channels start with @</span>
               </div>
             {/if}
             <button disabled={!ready || isSubLoading} class="btn w-full"
@@ -415,7 +425,7 @@
       {/if}
       {#if !ready && !isSubLoading}
         <span class="animate-bounce text-xs tracking-wider"
-          >Wait for content script ready signal...</span
+          >Waiting for the content scripts ready signal ...</span
         >
       {/if}
 
@@ -448,7 +458,7 @@
       </div>
     {/if}
     {#if !isRightSiteNow}
-      <div>This page is not Youtube page.</div>
+      <div>This page is not a YouTube page</div>
       <a
         class="link link-hover text-blue-500 btn"
         target="_blank"
