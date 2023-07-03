@@ -3,11 +3,22 @@
   import { onDestroy, onMount } from "svelte";
   import { STORIES_URL } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
-  import { runtime, storage, type IStorage } from "src/storage";
+  import {
+    runtime,
+    runtimeMessageSchema,
+    type RuntimeMessage,
+  } from "src/utils/communication";
   import type { XPathModel } from "src/utils/xpaths";
+  import {
+    channelPathsSchema,
+    channelPathsWritable,
+    xPathValuesWritable,
+  } from "src/utils/storage";
+  import { get } from "svelte/store";
 
   let channelPaths: string[] = [];
-  let xpathValues: XPathModel;
+  let xpathValues: XPathModel | undefined = undefined;
+  let lastStatusData: RuntimeMessage | undefined = undefined;
 
   let isLoading = true;
   let ready = false;
@@ -23,31 +34,30 @@
   async function stop() {
     isStop = true;
     await runtime.send({
-      context: {
-        actionType: "content",
-        data: {
-          status: { msg: "Stop", code: "stop" },
-        },
-      },
+      type: "status",
+      status: { msg: "Stop signal sended", code: "stop" },
     });
   }
 
   async function collectSubs() {
     if (isLoading) {
-      return;
+      return false;
     }
-    await runtime.send({
-      context: {
-        actionType: "status",
-        data: {
-          status: { msg: "Collecting links", code: "collecting" },
-        },
-      },
+    const isRequestSent = await runtime.send({
+      type: "status",
+      status: { msg: "Collecting links", code: "collecting" },
     });
+    if (isRequestSent) {
+      return true;
+    } else {
+      setStatus("Unable to sent collect signal to the content script", true);
+      return false;
+    }
   }
 
-  async function collectAndwait() {
+  async function collectAndWait() {
     await collectSubs();
+
     for (let index = 0; index < 30; index++) {
       await delay(500);
       if (!isLoading) {
@@ -63,7 +73,7 @@
 
   async function filterUnSubs(mode = true) {
     const currentSubs: string[] = channelPaths;
-    if (!(await collectAndwait())) {
+    if (!(await collectAndWait())) {
       return;
     }
 
@@ -73,15 +83,49 @@
         notFoundList = currentSubs.filter(
           (elem) => !channelPaths.includes(elem)
         );
+
+        if (notFoundList.length === 0) {
+          setStatus(
+            "Already all those channel are subscribed! No need to again subscribe"
+          );
+        }
       } else {
         notFoundList = currentSubs.filter((elem) =>
           channelPaths.includes(elem)
         );
+
+        if (notFoundList.length === 0) {
+          setStatus(
+            "No channel match with your current subscriptions channel list! NO need to unsubscribe"
+          );
+        }
       }
 
       saveChannelsIds(notFoundList);
     }
     return;
+  }
+
+  async function waitingForResponse(msg: string, sec = 10, delaySec = 1000) {
+    let timeoutSub = true;
+    ready = false;
+    for (let index = 0; index < sec; index++) {
+      setStatus(msg + " T-" + index);
+      if (ready) {
+        timeoutSub = false;
+        break;
+      }
+      if (isStop) {
+        return true;
+      }
+      await delay(delaySec);
+    }
+
+    if (!ready) {
+      await readySignalSend();
+    }
+
+    return timeoutSub || isStop;
   }
 
   async function subUnSub(mode = true) {
@@ -94,101 +138,67 @@
       setStatus("Getting current channels");
       await filterUnSubs(mode);
 
+      if (channelPaths.length === 0) {
+        return;
+      }
+
       isLoading = true;
       isSubLoading = true;
 
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
+        // Sending webpage change action
         await runtime.send({
-          context: {
-            actionType: "status",
-            data: {
-              status: { msg: channelPaths[indexMain], code: "changepage" },
-            },
-          },
+          type: "status",
+          status: { msg: channelPaths[indexMain], code: "changePage" },
         });
 
-        let timeout = true;
-        for (let index = 0; index < 10; index++) {
-          setStatus(
-            "Waiting for the ready signal:" +
-              channelPaths[indexMain] +
-              " T-" +
-              index
-          );
-          if (ready) {
-            timeout = false;
-            break;
-          }
-          if (isStop) {
-            return;
-          }
-          await delay(1000);
-        }
-        if (isStop) {
+        if (
+          await waitingForResponse(
+            `Waiting for the ready signal: ` + channelPaths[indexMain]
+          )
+        ) {
           return;
         }
+        // ------------------------------------
 
-        if (timeout) {
-          break;
-        }
-
+        // Sending subscribe, unsubscribe action
         await runtime.send({
-          context: {
-            actionType: "status",
-            data: {
-              status: {
-                msg: `${un}subscribe now`,
-                code: mode ? "subscribe" : "unsubscribe",
-              },
-            },
+          type: "statusContent",
+          status: {
+            msg: channelPaths[indexMain],
+            code: mode ? "subscribe" : "unsubscribe",
           },
         });
-
-        let timeoutSub = true;
-        for (let index = 0; index < 10; index++) {
-          setStatus(
-            `Waiting for the ${un}subscribe signal: ` +
-              channelPaths[indexMain] +
-              " T-" +
-              index
-          );
-          if (ready) {
-            timeoutSub = false;
-            break;
-          }
-          if (isStop) {
-            return;
-          }
-          await delay(1000);
-        }
-        if (isStop) {
+        if (
+          await waitingForResponse(
+            `Waiting for the ${un}subscribe signal: ` + channelPaths[indexMain]
+          )
+        ) {
           return;
         }
+        // ------------------------------------
 
-        if (timeoutSub) {
-          break;
+        // Checking is subscribe, unsubscribe action successful
+        if (
+          lastStatusData &&
+          lastStatusData.status.code ===
+            (mode ? "subscribeSuccessful" : "unsubscribeSuccessful")
+        ) {
+          const sCList = channelPathsText.split(", ");
+          sCList.splice(0, 1);
+
+          const l = channelsIdsParse(sCList);
+          const parsedChannelPaths = await channelPathsSchema.parseAsync(l);
+          channelPathsWritable.set(parsedChannelPaths);
         }
-
-        const sCList = channelPathsText.split(", ");
-        sCList.splice(0, 1);
-
-        const l = channelsIdsParse(sCList);
-
-        await storage.set({
-          context: {
-            actionType: "save",
-            data: {
-              channelPaths: l,
-            },
-          },
-        });
       }
-    } finally {
+
       setStatus("Done");
+    } finally {
       isSubLoading = false;
       isLoading = false;
-      channelsIdsStringSave();
+      // channelsIdsStringSave();
     }
   }
 
@@ -202,12 +212,28 @@
     isSubLoading = false;
   }
 
-  function parseData(dataLocal: IStorage) {
+  async function parseData(dataLocal: RuntimeMessage) {
     setStatus("...");
-    if (dataLocal.context.actionType === "status") {
-      const msg = dataLocal.context.data.status.msg;
-      setStatus(msg);
-      switch (dataLocal.context.data.status.code) {
+
+    const validationResult = await runtimeMessageSchema.safeParseAsync(
+      dataLocal
+    );
+
+    if (!validationResult.success) {
+      setStatus("Error when parsing data", true);
+      lastStatusData = undefined;
+      return;
+    }
+
+    lastStatusData = validationResult.data;
+
+    if (
+      lastStatusData.type === "status" ||
+      lastStatusData.type === "statusOption"
+    ) {
+      const status = lastStatusData.status;
+      setStatus(status.msg);
+      switch (status.code) {
         case "loading":
         case "collecting":
           isLoading = true;
@@ -216,52 +242,40 @@
           reset();
           return;
         case "ready":
-          isLoading = false;
           ready = true;
-          xpathSignalSend();
+          await xpathSignalSend();
           return;
-        case "changepage":
-          isLoading = true;
-          ready = false;
-          return;
-        case "subscribe":
-        case "unsubscribe":
-          isLoading = true;
-          ready = false;
+        case "unsubscribeSuccessful":
+        case "subscribeSuccessful":
+        case "accept":
+          ready = true;
+          isLoading = false;
           return;
         case "error":
-          setStatus(msg, true);
+          setStatus(status.msg, true);
           isLoading = false;
           ready = true;
           return;
         default:
-          isLoading = false;
-          ready = true;
           return;
       }
-    } else if (dataLocal.context.actionType === "option") {
-      setStatus("Data collected successfully");
+    } else if (dataLocal.type === "dataOption") {
       isLoading = false;
-      saveChannelsIds(dataLocal.context.data.channelPaths);
+      setStatus("Data collected successfully");
+      saveChannelsIds(dataLocal.channelPaths);
     }
-  }
-
-  function saveChannelsIds(list?: string[]) {
-    channelsIdsString(list);
-    channelPaths = list;
-    storage.set({
-      context: {
-        actionType: "save",
-        data: {
-          channelPaths: list,
-        },
-      },
-    });
   }
 
   function channelsIdsString(listStr: string[]) {
     channelPathsText = listStr.join(", ");
     channelPathsCount = listStr.length;
+  }
+
+  function saveChannelsIds(list: string[]) {
+    channelsIdsString(list);
+    channelPaths = list;
+
+    channelPathsWritable.set(list);
   }
 
   function channelsIdsParse(listStr: string[]) {
@@ -284,61 +298,55 @@
 
   function channelsIdsStringSave(listStr: string = channelPathsText) {
     const l = channelsIdsParse(listStr.split(","));
+    if (l === undefined) {
+      setStatus("Unable to channels IDs string saving...", true);
+      return;
+    }
     channelPaths = l;
-    storage.set({
-      context: {
-        actionType: "save",
-        data: {
-          channelPaths: l,
-        },
-      },
-    });
+    channelPathsWritable.set(l);
   }
 
   async function readySignalSend() {
     // Ready signal
     await runtime.send({
-      context: {
-        actionType: "content",
-        data: {
-          status: {
-            msg: "Is the content script ready?",
-            code: "ready",
-          },
-        },
+      type: "statusContent",
+      status: {
+        msg: "Is the content script ready?",
+        code: "ready",
       },
     });
   }
 
   async function xpathSignalSend() {
+    if (!xpathValues) {
+      setStatus(
+        "Unable to send xPathValue signal to the content script...",
+        true
+      );
+      return;
+    }
     await runtime.send({
-      context: {
-        actionType: "content",
-        data: {
-          xpathValues,
-          status: {
-            msg: "Sending XPath values",
-            code: "xpath",
-          },
-        },
+      type: "dataContent",
+      status: {
+        msg: "Sending XPath values",
+        code: "xpath",
       },
+      xpathValues,
     });
   }
 
   onMount(async () => {
-    const iStorage: IStorage = await storage.get();
-    channelPaths = iStorage.context.data.channelPaths;
-    xpathValues = iStorage.context.data.xpathValues;
+    xpathValues = get(xPathValuesWritable);
+    const storedChannelPaths = get(channelPathsWritable);
+    channelPaths = storedChannelPaths;
+    channelsIdsParse(storedChannelPaths);
 
-    runtime.fromOption = true;
-    runtime.selfParseData = parseData;
-
-    isRightSiteNow = await isRightSite();
     storageRemoveListener = runtime.addListener(parseData);
 
-    await readySignalSend();
-
-    channelsIdsParse(channelPaths);
+    isRightSiteNow = await isRightSite();
+    if (isRightSiteNow) {
+      await readySignalSend();
+    }
   });
 
   onDestroy(() => {

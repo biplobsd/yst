@@ -1,19 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { XPathModel } from "src/utils/xpaths";
-  import { type IStorage, storage } from "src/storage";
   import { addDate, fetchXPathUpdate } from "src/utils/helper";
+  import { xPathValuesWritable } from "src/utils/storage";
+  import { get } from "svelte/store";
   let xpathValuesString: string = "";
   let isLoading = false;
   let isError = false;
 
   async function saveXPathHandler() {
     const xpathValues = addDate(JSON.parse(xpathValuesString) as XPathModel);
-    await storage.update({
-      context: {
-        data: { xpathValues },
-      },
-    });
+    xPathValuesWritable.set(xpathValues);
     updateXpathValueString(xpathValues);
   }
 
@@ -34,10 +31,8 @@
   }
 
   onMount(async () => {
-    const iStorage: IStorage = await storage.get();
-    const xpathValues = iStorage.context.data.xpathValues;
-
-    updateXpathValueString(xpathValues);
+    const storedXPathValues = get(xPathValuesWritable);
+    updateXpathValueString(storedXPathValues);
   });
 </script>
 

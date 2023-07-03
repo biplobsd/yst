@@ -1,6 +1,6 @@
 {
   "name": "youtube-subscriptions-transfer",
-  "version": "1.2.0",
+  "version": "1.2.1-dev",
   "type": "module",
   "repository": {
     "type": "git",
@@ -18,13 +18,16 @@
     "@types/chrome": "0.0.239",
     "autoprefixer": "^10.4.14",
     "daisyui": "^3.1.7",
+    "pino": "^8.14.1",
+    "pino-pretty": "^10.0.0",
     "postcss": "^8.4.24",
     "svelte": "^4.0.1",
     "svelte-check": "3.4.4",
     "svelte-preprocess": "5.0.4",
     "tailwindcss": "^3.3.2",
     "tslib": "2.6.0",
-    "typescript": "5.1.6",
-    "vite": "^4.3.9"
+    "typescript": "5.0.4",
+    "vite": "^4.3.9",
+    "zod": "^3.21.4"
   }
 }

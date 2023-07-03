@@ -1,8 +1,22 @@
 {
-    "json.schemas": [
-        {
-            "fileMatch": ["manifest.json"],
-            "url": "https://json.schemastore.org/chrome-manifest.json"
-        }
-    ]
+  "json.schemas": [
+    {
+      "fileMatch": ["manifest.json"],
+      "url": "https://json.schemastore.org/chrome-manifest.json"
+    }
+  ],
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "cSpell.words": [
+    "changepage",
+    "crxjs",
+    "daisyui",
+    "EXPENDEDABLE",
+    "pino",
+    "rawcwe",
+    "smartimation",
+    "tailwindcss",
+    "UNSUB",
+    "webext",
+    "xpaths"
+  ]
 }

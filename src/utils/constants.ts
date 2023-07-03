@@ -6,3 +6,6 @@ export const VERSION = "v1.2";
 export const REPO_URL = "https://github.com/biplobsd/yst";
 export const XPATH_URL =
   "https://raw.githubusercontent.com/biplobsd/yst/main/data/xpath.json";
+
+export const CHANNEL_PATHS_KEY = "channelPaths";
+export const XPATH_VALUES_KEY = "xpathValues";

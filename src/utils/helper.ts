@@ -1,6 +1,6 @@
-import { storage } from "src/storage";
 import { STORIES_URL as SELECTED_URLS, XPATH_URL } from "./constants";
 import type { XPathModel } from "./xpaths";
+import { xPathValuesWritable } from "./storage";
 
 export function isXPathExpressionExists(expression: string): boolean {
   const result = document.evaluate(
@@ -20,11 +20,15 @@ export async function delay(ms: number) {
 export async function isRightSite(isOptions = true) {
   let url: string;
   if (isOptions) {
-    const tabs = await chrome.tabs.query({
+    const [tab] = await chrome.tabs.query({
       active: true,
       lastFocusedWindow: true,
     });
-    url = tabs[0].url;
+    if (tab && tab.url) {
+      url = tab.url;
+    } else {
+      url = "";
+    }
   } else {
     url = window.location.href;
   }
@@ -82,12 +86,10 @@ export async function fetchXPathUpdate(): Promise<XPathModel | undefined> {
     const resJson = await (await fetch(XPATH_URL)).json();
 
     const xpathValues = addDate(resJson);
-    await storage.update({
-      context: {
-        data: { xpathValues },
-      },
-    });
 
+    xPathValuesWritable.update((current) => {
+      return { ...current, ...xpathValues };
+    });
     return xpathValues;
   } catch (e) {
     return undefined;
