@@ -8,10 +8,17 @@ const srcDir = resolve(__dirname, "src");
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [svelte(), crx({ manifest })],
-    resolve: {
-        alias: {
-            src: srcDir,
-        },
+  plugins: [svelte(), crx({ manifest })],
+  resolve: {
+    alias: {
+      src: srcDir,
     },
+  },
+  server: {
+    port: 5173,
+    strictPort: true,
+    hmr: {
+      clientPort: 5173,
+    },
+  },
 });
