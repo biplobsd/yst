@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import { get } from "svelte/store";
+  import toast from "svelte-french-toast";
 
   let isXPathUpdating = false;
 
@@ -27,7 +28,7 @@
     transition:slide
     class="h-fit py-1 w-full flex justify-center items-center gap-1"
   >
-      <span class="loading loading-ring h-full"></span>
-      <span class="animate-pulse">Updating xpath</span>
+    <span class="loading loading-ring h-full" />
+    <span class="animate-pulse">Updating xpath</span>
   </div>
 {/if}

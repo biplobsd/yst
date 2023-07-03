@@ -4,7 +4,7 @@ import { z } from "zod";
 import log from "./logger";
 import { XPathModelSchema, xpathValues } from "./xpaths";
 
-async function promisedParseJSON(json: string | null): Promise<any> {
+export async function promisedParseJSON(json: string | null): Promise<any> {
   if (!json) {
     return null;
   }
@@ -17,10 +17,10 @@ async function promisedParseJSON(json: string | null): Promise<any> {
   });
 }
 
-async function promisedStringifyJSON(value: any) {
+export async function promisedStringifyJSON(value: any) {
   return new Promise((resolve, reject) => {
     try {
-      resolve(JSON.stringify(value));
+      resolve(JSON.stringify(value, null, 2));
     } catch (e) {
       reject(e);
     }

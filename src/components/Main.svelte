@@ -3,6 +3,7 @@
   import Home from "src/components/pages/Home.svelte";
   import About from "src/components/pages/About.svelte";
   import type { TabName } from "../utils/types";
+  import { fade, fly, slide } from "svelte/transition";
 
   let tabName: TabName = "Home";
 </script>
@@ -28,17 +29,17 @@
   </div>
   <div class="my-2 w-full">
     {#if tabName === "Home"}
-      <div>
+      <div in:fade>
         <Home />
       </div>
     {/if}
     {#if tabName === "Settings"}
-      <div class="w-full">
+      <div class="w-full" in:fade>
         <Settings />
       </div>
     {/if}
     {#if tabName === "About"}
-      <div>
+      <div in:fade>
         <About />
       </div>
     {/if}

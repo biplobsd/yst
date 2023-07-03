@@ -1,5 +1,5 @@
 import { STORIES_URL as SELECTED_URLS, XPATH_URL } from "./constants";
-import type { XPathModel } from "./xpaths";
+import { XPathModelSchema, type XPathModel } from "./xpaths";
 import { xPathValuesWritable } from "./storage";
 
 export function isXPathExpressionExists(expression: string): boolean {
@@ -85,7 +85,9 @@ export async function fetchXPathUpdate(): Promise<XPathModel | undefined> {
   try {
     const resJson = await (await fetch(XPATH_URL)).json();
 
-    const xpathValues = addDate(resJson);
+    const xPathValueValidated = await XPathModelSchema.parseAsync(resJson);
+
+    const xpathValues = addDate(xPathValueValidated);
 
     xPathValuesWritable.update((current) => {
       return { ...current, ...xpathValues };

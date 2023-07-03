@@ -6,6 +6,7 @@
   import Update_XPath from "src/components/Update_XPath.svelte";
   import { onMount } from "svelte";
   import { runtime } from "src/utils/communication";
+  import { Toaster } from "svelte-french-toast";
 
   onMount(() => {
     runtime.isOptionsPage = true;
@@ -14,7 +15,7 @@
 
 <Update_XPath />
 <div
-  class="w-72 h-fit mt-4 mx-3 px-1 items-center overflow-hidden justify-between flex flex-col gap-2 tracking-wider"
+  class="w-72 h-full mt-4 mx-3 px-1 items-center overflow-hidden justify-between flex flex-col gap-2 tracking-wider"
 >
   <div>
     <Header />
@@ -22,3 +23,9 @@
   </div>
   <Footer />
 </div>
+<Toaster
+  toastOptions={{
+    className:
+      "ring ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content",
+  }}
+/>

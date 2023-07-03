@@ -1,33 +1,65 @@
 <script lang="ts">
+  import { slide } from "svelte/transition";
   import { onMount } from "svelte";
-  import type { XPathModel } from "src/utils/xpaths";
+  import { XPathModelSchema, type XPathModel } from "src/utils/xpaths";
   import { addDate, fetchXPathUpdate } from "src/utils/helper";
-  import { xPathValuesWritable } from "src/utils/storage";
+  import {
+    promisedParseJSON,
+    xPathValuesWritable,
+    promisedStringifyJSON,
+  } from "src/utils/storage";
   import { get } from "svelte/store";
+  import log from "src/utils/logger";
+  import toast from "svelte-french-toast";
   let xpathValuesString: string = "";
-  let isLoading = false;
-  let isError = false;
+  let isLoadingSave = false;
+  let isErrorSave = false;
+
+  let isLoadingFetch = false;
+  let isErrorFetch = false;
 
   async function saveXPathHandler() {
-    const xpathValues = addDate(JSON.parse(xpathValuesString) as XPathModel);
-    xPathValuesWritable.set(xpathValues);
-    updateXpathValueString(xpathValues);
+    isLoadingSave = true;
+    isErrorSave = false;
+    isErrorFetch = false;
+    try {
+      const xPathValueResult = await XPathModelSchema.safeParseAsync(
+        await promisedParseJSON(xpathValuesString)
+      );
+      if (xPathValueResult.success) {
+        const xpathValues = addDate(xPathValueResult.data);
+        xPathValuesWritable.set(xpathValues);
+        await updateXpathValueString(xpathValues);
+        toast.success("Save success");
+      } else {
+        isErrorSave = true;
+      }
+    } catch (error) {
+      log.error(error);
+      isErrorSave = true;
+      toast.error("Save error");
+    } finally {
+      isLoadingSave = false;
+    }
   }
 
-  function updateXpathValueString(xpathValues: XPathModel) {
-    xpathValuesString = JSON.stringify(xpathValues, null, 2);
+  async function updateXpathValueString(xpathValues: XPathModel) {
+    xpathValuesString = (await promisedStringifyJSON(xpathValues)) as string;
   }
 
   async function fetchXPathUpdateHandler() {
-    isLoading = true;
-    isError = false;
+    isLoadingFetch = true;
+    isErrorSave = false;
+    isErrorFetch = false;
     const res = await fetchXPathUpdate();
     if (res) {
-      updateXpathValueString(res);
+      await updateXpathValueString(res);
+      toast.success("Fetch and save success");
     } else {
-      isError = true;
+      isErrorFetch = true;
+      toast.error("Save error");
     }
-    isLoading = false;
+    isLoadingFetch = false;
   }
 
   onMount(async () => {
@@ -37,25 +69,32 @@
 </script>
 
 <div class="space-y-2">
-  {#if isError}
-    <div class="alert alert-error shadow-lg">
+  {#if isErrorFetch || isErrorSave}
+    <div
+      transition:slide
+      class="alert alert-error shadow-lg flex justify-center text-left"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+        />
+      </svg>
       <div>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-          />
-        </svg>
-
-        <span>Update failed</span>
+        {#if isErrorFetch}
+          <div transition:slide>Update failed</div>
+        {/if}
+        {#if isErrorSave}
+          <div transition:slide>Invalid XPath values</div>
+        {/if}
       </div>
     </div>
   {/if}
@@ -65,18 +104,24 @@
     </div>
     <textarea
       bind:value={xpathValuesString}
-      class="min-h-[18rem] textarea textarea-bordered h-24 text-xs whitespace-nowrap"
+      class="min-h-[18rem] scrollbar-style textarea textarea-bordered h-24 text-xs whitespace-nowrap"
       placeholder="As Json"
     />
   </div>
   <button
-    disabled={isLoading}
+    disabled={isLoadingSave || isLoadingFetch}
     on:click={saveXPathHandler}
-    class={`${isLoading && "loading"} btn w-full`}>Save</button
+    class="btn w-full"
+  >
+    <span class={isLoadingSave ? "loading loading-ring" : ""} />
+    Save</button
   >
 </div>
 <button
   on:click={fetchXPathUpdateHandler}
-  disabled={isLoading}
-  class={`${isLoading && "loading"} btn w-full`}>Fetch Update</button
+  disabled={isLoadingSave || isLoadingFetch}
+  class="mt-4 btn-success btn w-full"
+>
+  <span class={isLoadingSave ? "loading loading-ring" : ""} />
+  Fetch Update</button
 >
