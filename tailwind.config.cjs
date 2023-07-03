@@ -2,5 +2,8 @@
 module.exports = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
   themes: false,
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    require("tailwind-scrollbar")({ nocompatible: true }),
+  ],
 };

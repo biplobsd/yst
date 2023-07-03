@@ -6,4 +6,8 @@
   .tsd {
     @apply transition-all duration-500 ease-in-out;
   }
+
+  .scrollbar-style {
+    @apply scrollbar-thin scrollbar-thumb-base-content/5 hover:scrollbar-thumb-base-content/30 scrollbar-track-rounded-md scrollbar-thumb-rounded;
+  }
 }

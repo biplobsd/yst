@@ -14,7 +14,7 @@
 
 <Update_XPath />
 <div
-  class="w-72 h-fit mx-auto mt-4 px-2 items-center overflow-hidden justify-between flex flex-col gap-2 tracking-wider"
+  class="w-72 h-fit mt-4 mx-3 px-1 items-center overflow-hidden justify-between flex flex-col gap-2 tracking-wider"
 >
   <div>
     <Header />

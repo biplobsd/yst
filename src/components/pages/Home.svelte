@@ -394,7 +394,7 @@
           >
             <textarea
               bind:value={channelPathsText}
-              class="textarea textarea-accent w-full text-xs"
+              class="textarea textarea-accent w-full text-xs scrollbar-style"
               placeholder="@google, @youtube"
               required
             />
@@ -418,14 +418,11 @@
         <div class="font-bold flex items-center w-full gap-1">
           Status
           {#if isLoading || !ready || isSubLoading}
-            <div class="tooltip tooltip-info" data-tip="Stop now" >
-            <button class="btn btn-xs flex" on:click={stop}
-              >
-                <span class="loading loading-infinity"></span>
+            <div class="tooltip tooltip-info" data-tip="Stop now">
+              <button class="btn btn-xs flex" on:click={stop}>
+                <span class="loading loading-infinity" />
                 <span class="animate-pulse">Stop</span>
-
-            </button
-            >
+              </button>
             </div>
           {/if}
         </div>
