@@ -415,12 +415,18 @@
   <div class="flex flex-col items-center gap-1 w-full">
     {#if isRightSiteNow}
       {#if status.msg}
-        <div class="font-bold flex items-center gap-1 w-[17rem]">
+        <div class="font-bold flex items-center w-full gap-1">
           Status
           {#if isLoading || !ready || isSubLoading}
-            <button class="btn btn-xs" on:click={stop}
-              ><div class="btn btn-xs loading pr-1">Stop</div></button
+            <div class="tooltip tooltip-info" data-tip="Stop now" >
+            <button class="btn btn-xs flex" on:click={stop}
+              >
+                <span class="loading loading-infinity"></span>
+                <span class="animate-pulse">Stop</span>
+
+            </button
             >
+            </div>
           {/if}
         </div>
         <div class="ring w-full py-2 px-2 my-2 rounded-md">

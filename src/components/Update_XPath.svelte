@@ -25,10 +25,9 @@
 {#if isXPathUpdating}
   <div
     transition:slide
-    class="h-fit py-1 bg-base-300 w-full flex justify-center"
+    class="h-fit py-1 w-full flex justify-center items-center gap-1"
   >
-    <div class="btn btn-ghost loading m-0 p-0 text-xs !h-fit !min-h-fit">
-      Updating xpath
-    </div>
+      <span class="loading loading-ring h-full"></span>
+      <span class="animate-pulse">Updating xpath</span>
   </div>
 {/if}
