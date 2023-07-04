@@ -158,7 +158,7 @@ async function collectHref() {
     await runtime.send({
       type: "status",
       status: {
-        msg: "Starting collecting...",
+        msg: "Collecting channel IDs...",
         code: "loading",
       },
     });

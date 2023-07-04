@@ -18,6 +18,9 @@
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
   import ExternalLinkIcon from "../icons/External_Link_Icon.svelte";
+  import toast from "svelte-french-toast";
+  import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
+  import copy from "copy-text-to-clipboard";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -214,6 +217,7 @@
     isLoading = false;
     isStop = false;
     isSubLoading = false;
+    saveError = false;
   }
 
   async function parseData(dataLocal: RuntimeMessage) {
@@ -303,13 +307,19 @@
   }
 
   function channelsIdsStringSave(listStr: string = channelPathsText) {
+    const toastId = toast.loading("Saving...");
     const l = channelsIdsParse(listStr.split(","));
     if (l === undefined) {
-      setStatus("Unable to channels IDs string saving...", true);
+      toast.error("Save unsuccessful", {
+        id: toastId,
+      });
       return;
     }
     channelPaths = l;
     channelPathsWritable.set(l);
+    toast.success("Save successful", {
+      id: toastId,
+    });
   }
 
   async function readySignalSend() {
@@ -380,11 +390,35 @@
             >
             symbol.
           </p>
-          <p>
-            Example:
-            <span class="font-bold">@youtube</span>,
-            <span class="font-bold">@google</span>
-          </p>
+          <div class="flex justify-between items-center pb-1">
+            <p>
+              Example:
+              <span class="font-bold">@youtube</span>,
+              <span class="font-bold">@google</span>
+            </p>
+            <span
+              class="tooltip tooltip-left"
+              data-tip="Copy channel IDs to clipboard"
+            >
+              <button
+                class="btn btn-xs !px-1"
+                on:click={() => {
+                  const toastID = toast.loading(
+                    "Copying channels IDs to clipboard..."
+                  );
+                  if (copy(channelPathsText)) {
+                    toast.success("Copied!", {
+                      id: toastID,
+                    });
+                  } else {
+                    toast.error("Failed copy to clipboard!", {
+                      id: toastID,
+                    });
+                  }
+                }}><ClipboardCopyIcon /></button
+              ></span
+            >
+          </div>
         </span>
         <form
           on:submit={(e) => {
