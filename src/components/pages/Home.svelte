@@ -363,26 +363,22 @@
       >
         <input type="checkbox" class="peer" />
         <div
-          class="collapse-title text-sm bg-success/70 dark:text-white/80 text-slate-700/80 font-sans"
+          class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
         >
           Subscriptions: {channelPathsCount}
         </div>
         <div class="collapse-content bg-success/60 peer-checked:py-2">
-          <span class="text-xs dark:text-slate-200 text-slate-700/80 space-y-2">
+          <span class="text-xs text-slate-800 space-y-2">
             <p>
               Enter only channel IDs. Channel IDs start with the <span
-                class="dark:text-red-100 text-red-800/60 font-bold">@</span
+                class="font-bold">@</span
               >
               symbol.
             </p>
             <p>
               Example:
-              <span class="dark:text-red-200 text-red-800/60 font-bold"
-                >@youtube</span
-              >,
-              <span class="dark:text-red-200 text-red-800/60 font-bold"
-                >@google</span
-              >
+              <span class="font-bold">@youtube</span>,
+              <span class="font-bold">@google</span>
             </p>
           </span>
           <form
