@@ -66,7 +66,7 @@ async function expendedButtonClick() {
 
 async function expendedItemsFound() {
   for (let index = 0; index < 5; index++) {
-    if (isStopping()) {
+    if (await isStopping()) {
       return false;
     }
     // checking expendedable
@@ -87,9 +87,9 @@ async function drawerOpening() {
   return false;
 }
 
-function isStopping() {
+async function isStopping() {
   if (stop) {
-    runtime.send({
+    await runtime.send({
       type: "statusOption",
       status: {
         msg: "Stop back",
@@ -114,7 +114,7 @@ async function checking() {
     // return false;
   }
 
-  if (isStopping()) {
+  if (await isStopping()) {
     return false;
   }
 
@@ -130,7 +130,7 @@ async function checking() {
     return false;
   }
 
-  if (isStopping()) {
+  if (await isStopping()) {
     return false;
   }
 
@@ -145,7 +145,7 @@ async function checking() {
     // return false;
   }
 
-  if (isStopping()) {
+  if (await isStopping()) {
     return false;
   }
 
@@ -167,12 +167,12 @@ async function collectHref() {
       return false;
     }
 
-    if (isStopping()) {
+    if (await isStopping()) {
       return false;
     }
 
     // collecting href
-    const channelPaths = parseHref();
+    const channelPaths = await parseHref();
     if (channelPaths) {
       await runtime.send({
         type: "dataOption",
@@ -208,7 +208,7 @@ function removeAtNSlash(path: string) {
   return path;
 }
 
-function parseHref() {
+async function parseHref() {
   const rawChannelsWithoutExpend = getXpathFromElements(
     xpathValues.GET_CHANNELS_WITHOUT_EXPEND
   );
@@ -223,7 +223,7 @@ function parseHref() {
     const channelsPaths: string[] = [];
     const fullEle = rawChannelsWithoutExpend.concat(rawChannelsWithExpend);
     for (let l of fullEle) {
-      if (isStopping()) {
+      if (await isStopping()) {
         return undefined;
       }
       const path = l.getAttribute("href");
@@ -389,7 +389,7 @@ export async function parseData(dataLocal: RuntimeMessage) {
           alert("Collecting...");
           return;
         }
-        collectHref();
+        await collectHref();
         break;
       case "changePage":
         if (isLoading) {
@@ -415,13 +415,14 @@ export async function parseData(dataLocal: RuntimeMessage) {
       case "stop":
         isLoading = false;
         stop = false;
+        await isStopping();
         break;
       case "error":
         isLoading = false;
         stop = false;
         break;
       case "ready":
-        readySignalSend();
+        await readySignalSend();
         break;
       default:
         break;

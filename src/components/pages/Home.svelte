@@ -15,6 +15,9 @@
     xPathValuesWritable,
   } from "src/utils/storage";
   import { get } from "svelte/store";
+  import { blur, slide } from "svelte/transition";
+  import log from "src/utils/logger";
+  import ExternalLinkIcon from "../icons/External_Link_Icon.svelte";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -33,7 +36,7 @@
 
   async function stop() {
     isStop = true;
-    await runtime.send({
+    runtime.send({
       type: "status",
       status: { msg: "Stop signal sended", code: "stop" },
     });
@@ -43,6 +46,7 @@
     if (isLoading) {
       return false;
     }
+    reset();
     const isRequestSent = await runtime.send({
       type: "status",
       status: { msg: "Collecting links", code: "collecting" },
@@ -227,6 +231,8 @@
 
     lastStatusData = validationResult.data;
 
+    log.info(lastStatusData);
+
     if (
       lastStatusData.type === "status" ||
       lastStatusData.type === "statusOption"
@@ -354,124 +360,139 @@
   });
 </script>
 
-<div class="w-full items-center flex flex-col justify-center gap-2">
-  {#if isRightSiteNow}
-    <div class="mb-4">
-      <div class="mb-1"><span class="font-bold">Data</span></div>
+{#if isRightSiteNow}
+  <div class="space-y-2">
+    <div class="font-bold">Data</div>
+    <div
+      class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
+    >
+      <input type="checkbox" class="peer" />
       <div
-        class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
+        class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
       >
-        <input type="checkbox" class="peer" />
-        <div
-          class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
-        >
-          Subscriptions: {channelPathsCount}
-        </div>
-        <div class="collapse-content bg-success/60 peer-checked:py-2">
-          <span class="text-xs text-slate-800 space-y-2">
-            <p>
-              Enter only channel IDs. Channel IDs start with the <span
-                class="font-bold">@</span
-              >
-              symbol.
-            </p>
-            <p>
-              Example:
-              <span class="font-bold">@youtube</span>,
-              <span class="font-bold">@google</span>
-            </p>
-          </span>
-          <form
-            on:submit={(e) => {
-              e.preventDefault();
-              saveError = false;
-              channelsIdsStringSave();
-            }}
-          >
-            <textarea
-              bind:value={channelPathsText}
-              class="textarea textarea-accent w-full text-xs scrollbar-style"
-              placeholder="@google, @youtube"
-              required
-            />
-            {#if saveError}
-              <div class="alert alert-error shadow-lg mb-4">
-                <span>Make sure your input channels start with @</span>
-              </div>
-            {/if}
-            <button disabled={!ready || isSubLoading} class="btn w-full"
-              >Save</button
-            >
-          </form>
-        </div>
+        Subscriptions: {channelPathsCount}
       </div>
-    </div>
-  {/if}
-
-  <div class="flex flex-col items-center gap-1 w-full">
-    {#if isRightSiteNow}
-      {#if status.msg}
-        <div class="font-bold flex items-center w-full gap-1">
-          Status
-          {#if isLoading || !ready || isSubLoading}
-            <div class="tooltip tooltip-info" data-tip="Stop now">
-              <button class="btn btn-xs flex" on:click={stop}>
-                <span class="loading loading-infinity" />
-                <span class="animate-pulse">Stop</span>
-              </button>
+      <div class="collapse-content bg-success/60 peer-checked:py-2">
+        <span class="text-xs text-slate-800 space-y-2">
+          <p>
+            Enter only channel IDs. Channel IDs start with the <span
+              class="font-bold">@</span
+            >
+            symbol.
+          </p>
+          <p>
+            Example:
+            <span class="font-bold">@youtube</span>,
+            <span class="font-bold">@google</span>
+          </p>
+        </span>
+        <form
+          on:submit={(e) => {
+            e.preventDefault();
+            saveError = false;
+            channelsIdsStringSave();
+          }}
+        >
+          <textarea
+            bind:value={channelPathsText}
+            class="textarea textarea-accent w-full text-xs scrollbar-style"
+            placeholder="@google, @youtube"
+            required
+          />
+          {#if saveError}
+            <div class="alert alert-error shadow-lg mb-4">
+              <span>Make sure your input channels start with @</span>
             </div>
           {/if}
-        </div>
-        <div class="ring w-full py-2 px-2 my-2 rounded-md">
-          <span
-            class={`${status.isError && "text-red-500"} ${
-              isLoading && "animate-bounce"
-            } text-xs tracking-wider mb-2 w-full`}>{status.msg}</span
+          <button disabled={!ready || isSubLoading} class="btn w-full"
+            >Save</button
           >
-        </div>
-      {/if}
-      {#if !ready && !isSubLoading}
-        <span class="animate-bounce text-xs tracking-wider"
-          >Waiting for the content scripts ready signal ...</span
-        >
-      {/if}
-
-      <div class="w-[17rem] space-y-2">
-        <div><span class="font-bold">Actions</span></div>
-        <button
-          disabled={!isRightSiteNow || !ready || isSubLoading}
-          class="btn btn-success w-full rounded-full"
-          on:click={collectSubs}
-          >{!ready && !isSubLoading
-            ? "Not ready yet"
-            : "Collect channel"}</button
-        >
-        <button
-          disabled={(channelPathsCount ? false : true) ||
-            isSubLoading ||
-            !ready}
-          class="w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd"
-          on:click={() => subUnSub(true)}
-          >{!ready && !isSubLoading ? "Not ready yet" : "Subscribe"}</button
-        >
-        <button
-          disabled={(channelPathsCount ? false : true) ||
-            isSubLoading ||
-            !ready}
-          class="w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd"
-          on:click={() => subUnSub(false)}
-          >{!ready && !isSubLoading ? "Not ready yet" : "Unsubscribe"}</button
-        >
+        </form>
       </div>
-    {/if}
-    {#if !isRightSiteNow}
-      <div>This page is not a YouTube page</div>
-      <a
-        class="link link-hover text-blue-500 btn"
-        target="_blank"
-        rel="noreferrer"
-        href={STORIES_URL[0]}>Open Youtube</a
+    </div>
+    <div>
+      <div
+        transition:slide
+        class="font-bold flex items-center w-full gap-1 h-6 mb-[2px]"
       >
-    {/if}
+        Status
+        {#if isLoading || !ready || isSubLoading}
+          <div transition:blur class="tooltip tooltip-info" data-tip="Stop now">
+            <button
+              disabled={isStop}
+              class="btn btn-xs flex normal-case"
+              on:click={stop}
+            >
+              <span class="loading loading-infinity" />
+              <span class="animate-pulse">
+                {#if isStop}
+                  <div transition:slide>Stopping...</div>
+                {:else}
+                  <div transition:slide>Stop</div>
+                {/if}
+              </span>
+            </button>
+          </div>
+        {/if}
+      </div>
+      <div
+        class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider"
+      >
+        {#if status.msg}
+          <div
+            transition:slide
+            class={status.isError ? "text-red-500" : undefined}
+          >
+            {status.msg}
+          </div>
+        {:else if !ready && !isSubLoading}
+          <div transition:slide class="animate-bounce">
+            Waiting for the content scripts ready signal ...
+          </div>
+        {/if}
+      </div>
+    </div>
+    <div class="w-[17rem] space-y-2">
+      <div><span class="font-bold">Actions</span></div>
+      <button
+        disabled={!isRightSiteNow || !ready || isSubLoading || isLoading}
+        class="btn btn-success w-full rounded-full"
+        on:click={collectSubs}>Collect channel</button
+      >
+      <button
+        disabled={(channelPathsCount ? false : true) ||
+          isSubLoading ||
+          !ready ||
+          isLoading}
+        class="w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd"
+        on:click={() => subUnSub(true)}>Subscribe</button
+      >
+      <button
+        disabled={(channelPathsCount ? false : true) ||
+          isSubLoading ||
+          !ready ||
+          isLoading}
+        class="w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd"
+        on:click={() => subUnSub(false)}>Unsubscribe</button
+      >
+    </div>
   </div>
-</div>
+{:else}
+  <div
+    class="text-justify space-y-2 justify-center flex flex-col items-center w-full h-36"
+  >
+    <a
+      class="btn btn-success"
+      target="_blank"
+      rel="noreferrer"
+      href={STORIES_URL[0]}
+    >
+      <ExternalLinkIcon />
+      Open Youtube</a
+    >
+    <div>
+      This page is not a YouTube page. Click the button above to open
+      YouTube.com in a new tab. Then reopen this extension for options.
+    </div>
+  </div>
+{/if}

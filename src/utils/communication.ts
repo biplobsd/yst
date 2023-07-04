@@ -55,8 +55,6 @@ interface RuntimeModel {
 export const runtime: RuntimeModel = {
   isOptionsPage: false,
   send: async function (runtimeMessage) {
-    console.log("isOptionsPage", this.isOptionsPage, runtimeMessage);
-
     try {
       if (this.isOptionsPage) {
         const [tab] = await chrome.tabs.query({
@@ -77,7 +75,7 @@ export const runtime: RuntimeModel = {
         return true;
       }
     } catch (error) {
-      console.error(error);
+      log.error(error);
       log.info("isOptionsPage", this.isOptionsPage, "Runtime Error: ");
       log.error(chrome.runtime.lastError);
     }
