@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { SettingSelected } from "src/utils/types";
   import UpdateXpath from "../xpath/Update_Xpath.svelte";
-  import { fade, slide } from "svelte/transition";
+  import { slide } from "svelte/transition";
   let selected: SettingSelected = "-1";
 </script>
 

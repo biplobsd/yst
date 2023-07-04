@@ -107,11 +107,11 @@ async function checking() {
     runtime.send({
       type: "status",
       status: {
-        msg: "Unable to open drawer",
-        code: "error",
+        msg: "[Ignored error] Unable to open drawer",
+        code: "message",
       },
     });
-    return false;
+    // return false;
   }
 
   if (isStopping()) {
@@ -138,11 +138,11 @@ async function checking() {
     runtime.send({
       type: "status",
       status: {
-        msg: "Unable to expended all lists",
-        code: "error",
+        msg: "[Ignored error] Unable to expended all lists",
+        code: "message",
       },
     });
-    return false;
+    // return false;
   }
 
   if (isStopping()) {

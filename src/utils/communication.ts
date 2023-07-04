@@ -17,6 +17,7 @@ const StatusCodeSchema = z.enum([
   "xpath",
   "channelIDs",
   "contentScriptDestroy",
+  "message",
 ]);
 
 const StatusSchema = z.object({
