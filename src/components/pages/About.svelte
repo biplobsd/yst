@@ -28,3 +28,12 @@
     href="https://biplobsd.github.io">https://biplobsd.github.io</a
   >
 </div>
+<div>
+  <span class="font-bold">Developer name :</span>
+  <a
+    class="link link-hover"
+    target="_blank"
+    rel="noreferrer"
+    href="https://github.com/biplobsd">Biplob Kumar Sutradhar</a
+  >
+</div>

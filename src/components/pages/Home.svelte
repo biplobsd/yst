@@ -451,7 +451,11 @@
       >
         Status
         {#if isLoading || !ready || isSubLoading}
-          <div transition:blur class="tooltip tooltip-info" data-tip="Stop now">
+          <div
+            transition:blur
+            class="tooltip tooltip-info"
+            data-tip={isStop ? "Please wait..." : "Click to Stop now"}
+          >
             <button
               disabled={isStop}
               class="btn btn-xs flex normal-case"
