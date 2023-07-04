@@ -1,7 +1,18 @@
 <script lang="ts">
   import { REPO_URL } from "src/utils/constants";
-  import { GITHUB_LOGO } from "src/utils/large_strings";
-  import CoffeeIcon from "./Coffee_Icon.svelte";
+  import CoffeeIcon from "./icons/Coffee_Icon.svelte";
+  import { isDarkThemeWritable } from "src/utils/storage";
+  import { onMount } from "svelte";
+  import GithubMark from "src/assets/icons/github-mark.png";
+  import GithubMarkWhite from "src/assets/icons/github-mark-white.png";
+
+  let isLight = false;
+
+  onMount(() => {
+    isDarkThemeWritable.subscribe((modeValue) => {
+      isLight = modeValue === "light";
+    });
+  });
 </script>
 
 <div class="my-2 gap-2 flex justify-center items-center mb-3">
@@ -11,7 +22,12 @@
     rel="noreferrer"
     href={REPO_URL}
   >
-    <img class="w-4 h-4" src={GITHUB_LOGO} alt="Github logo" />
+    <img
+      class="w-4 h-4"
+      src={isLight ? GithubMark : GithubMarkWhite}
+      alt="Github logo"
+    />
+
     Learn more
   </a>
   <a
