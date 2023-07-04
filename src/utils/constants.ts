@@ -9,3 +9,4 @@ export const XPATH_URL =
 
 export const CHANNEL_PATHS_KEY = "channelPaths";
 export const XPATH_VALUES_KEY = "xpathValues";
+export const THEME_MODE_KEY = "themeMode";
