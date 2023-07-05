@@ -1,3 +1,4 @@
+import { delay } from "./helper";
 import log from "./logger";
 import { XPathModelSchema } from "./xpaths";
 import { z } from "zod";
@@ -44,9 +45,18 @@ export const runtimeMessageSchema = z.discriminatedUnion("type", [
 
 export type RuntimeMessage = z.infer<typeof runtimeMessageSchema>;
 
+interface RetryOptions {
+  ms?: number;
+  count?: number;
+}
+
 interface RuntimeModel {
   isOptionsPage: boolean;
-  send: (runtimeMessage: RuntimeMessage) => Promise<boolean>;
+  sendOnce: (runtimeMessage: RuntimeMessage) => Promise<boolean>;
+  send: (
+    runtimeMessage: RuntimeMessage,
+    options?: RetryOptions
+  ) => Promise<boolean>;
   addListener: (
     handleFunction: (runtimeMessage: RuntimeMessage) => void
   ) => () => void;
@@ -54,7 +64,7 @@ interface RuntimeModel {
 
 export const runtime: RuntimeModel = {
   isOptionsPage: false,
-  send: async function (runtimeMessage) {
+  sendOnce: async function (runtimeMessage) {
     try {
       if (this.isOptionsPage) {
         const [tab] = await chrome.tabs.query({
@@ -62,16 +72,11 @@ export const runtime: RuntimeModel = {
           currentWindow: true,
         });
         if (tab.id) {
-          const response = await chrome.tabs.sendMessage(
-            tab.id,
-            runtimeMessage
-          );
-          log.info(response);
+          await chrome.tabs.sendMessage(tab.id, runtimeMessage);
           return true;
         }
       } else {
-        const response = await chrome.runtime.sendMessage(runtimeMessage);
-        log.info(response);
+        await chrome.runtime.sendMessage(runtimeMessage);
         return true;
       }
     } catch (error) {
@@ -81,6 +86,23 @@ export const runtime: RuntimeModel = {
     }
     return false;
   },
+  send: async function (runtimeMessage, options = {}) {
+    const { count = 3, ms = 1000 } = options;
+
+    for (let index = 0; index < count; index++) {
+      if (await this.sendOnce(runtimeMessage)) {
+        return true;
+      }
+      try {
+        await delay(ms);
+      } catch (error) {
+        log.error(error);
+        return false;
+      }
+    }
+    return false;
+  },
+
   addListener: (handleFunction) => {
     chrome.runtime.onMessage.addListener(handleFunction);
     return () => chrome.runtime.onMessage.removeListener(handleFunction);

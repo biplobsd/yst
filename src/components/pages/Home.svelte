@@ -119,7 +119,7 @@
     return;
   }
 
-  async function waitingForResponse(msg: string, sec = 10, delaySec = 1000) {
+  async function waitingForResponse(msg: string, sec: number, ms: number) {
     let timeoutSub = true;
     ready = false;
     for (let index = 0; index < sec; index++) {
@@ -131,14 +131,30 @@
       if (isStop) {
         return true;
       }
-      await delay(delaySec);
+      await delay(ms);
+    }
+
+    return timeoutSub;
+  }
+
+  async function waitingForResponseReady(msg: string, sec = 10, ms = 1000) {
+    if (await waitingForResponse(msg, sec, ms)) {
+      return false;
     }
 
     if (!ready) {
       await readySignalSend();
+    } else {
+      return false;
     }
 
-    return timeoutSub || isStop;
+    if (await waitingForResponse("[Retry wait] " + msg, sec, ms)) {
+      return false;
+    }
+
+    setStatus("Error: Content script did not responding", true);
+
+    return true;
   }
 
   async function subUnSub(mode = true) {
@@ -163,32 +179,44 @@
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
         // Sending webpage change action
-        await runtime.send({
-          type: "status",
-          status: { msg: channelPaths[indexMain], code: "changePage" },
-        });
+        if (
+          !(await runtime.send({
+            type: "statusContent",
+            status: { msg: channelPaths[indexMain], code: "changePage" },
+          }))
+        ) {
+          setStatus("Unable to send messages to the client script", true);
+          return;
+        }
 
         if (
-          await waitingForResponse(
+          isStop ||
+          (await waitingForResponseReady(
             `Waiting for the ready signal: ` + channelPaths[indexMain]
-          )
+          ))
         ) {
           return;
         }
         // ------------------------------------
 
         // Sending subscribe, unsubscribe action
-        await runtime.send({
-          type: "statusContent",
-          status: {
-            msg: channelPaths[indexMain],
-            code: mode ? "subscribe" : "unsubscribe",
-          },
-        });
         if (
-          await waitingForResponse(
+          !(await runtime.send({
+            type: "statusContent",
+            status: {
+              msg: channelPaths[indexMain],
+              code: mode ? "subscribe" : "unsubscribe",
+            },
+          }))
+        ) {
+          setStatus("Unable to send messages to the client script", true);
+          return;
+        }
+        if (
+          isStop ||
+          (await waitingForResponseReady(
             `Waiting for the ${un}subscribe signal: ` + channelPaths[indexMain]
-          )
+          ))
         ) {
           return;
         }
@@ -214,6 +242,9 @@
       }
 
       setStatus("Done");
+    } catch (error) {
+      setStatus("Error: " + error, true);
+      return;
     } finally {
       isSubLoading = false;
       isLoading = false;
@@ -528,7 +559,7 @@
       <div class="capitalize flex justify-between">
         <div class="font-bold">Actions</div>
         {#if actionName !== ""}
-          <div transition:blur class="text-base-content/70 font-semibold">
+          <div transition:blur class="font-normal text-base-content/70">
             {#if !(isLoading || !ready || isSubLoading)}
               <span transition:blur>Last run:</span>
             {/if}
