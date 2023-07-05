@@ -122,7 +122,7 @@
   async function waitingForResponse(msg: string, sec: number, ms: number) {
     let timeoutSub = true;
     ready = false;
-    for (let index = 0; index < sec; index++) {
+    for (let index = sec; index >= 0; index--) {
       setStatus(msg + " T-" + index);
       if (ready) {
         timeoutSub = false;
