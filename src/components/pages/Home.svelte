@@ -36,6 +36,9 @@
   let isStop = false;
   let isSubLoading = false;
   let channelPathsCount = 0;
+  let failedCount = 0;
+  let successCount = 0;
+  let actionName = "";
 
   async function stop() {
     isStop = true;
@@ -50,6 +53,9 @@
       return false;
     }
     reset();
+
+    actionName = "Collect Channel";
+
     const isRequestSent = await runtime.send({
       type: "status",
       status: { msg: "Collecting links", code: "collecting" },
@@ -93,7 +99,7 @@
 
         if (notFoundList.length === 0) {
           setStatus(
-            "Already all those channel are subscribed! No need to again subscribe"
+            "All those channels have already been subscribed to! There's no need to subscribe again."
           );
         }
       } else {
@@ -141,9 +147,11 @@
       return;
     }
     reset();
+
     try {
       setStatus("Getting current channels");
       await filterUnSubs(mode);
+      actionName = `${mode ? "" : "un"}subscribe`;
 
       if (channelPaths.length === 0) {
         return;
@@ -198,6 +206,10 @@
           const l = channelsIdsParse(sCList);
           const parsedChannelPaths = await channelPathsSchema.parseAsync(l);
           channelPathsWritable.set(parsedChannelPaths);
+
+          successCount++;
+        } else {
+          failedCount++;
         }
       }
 
@@ -218,6 +230,8 @@
     isStop = false;
     isSubLoading = false;
     saveError = false;
+    failedCount = 0;
+    successCount = 0;
   }
 
   async function parseData(dataLocal: RuntimeMessage) {
@@ -406,7 +420,11 @@
                   const toastID = toast.loading(
                     "Copying channels IDs to clipboard..."
                   );
-                  if (copy(channelPathsText)) {
+                  if (channelPathsText === "") {
+                    toast.error("Empty channel IDs list", {
+                      id: toastID,
+                    });
+                  } else if (copy(channelPathsText)) {
                     toast.success("Copied!", {
                       id: toastID,
                     });
@@ -447,29 +465,48 @@
     <div>
       <div
         transition:slide
-        class="font-bold flex items-center w-full gap-1 h-6 mb-[2px]"
+        class="font-bold flex items-center justify-between w-full h-6 mb-[2px]"
       >
-        Status
-        {#if isLoading || !ready || isSubLoading}
-          <div
-            transition:blur
-            class="tooltip tooltip-info"
-            data-tip={isStop ? "Please wait..." : "Click to Stop now"}
-          >
-            <button
-              disabled={isStop}
-              class="btn btn-xs flex normal-case"
-              on:click={stop}
+        <div class="flex items-start gap-1 h-full">
+          Status
+          {#if isLoading || !ready || isSubLoading}
+            <div
+              transition:blur
+              class="tooltip tooltip-info"
+              data-tip={isStop ? "Please wait..." : "Click to Stop now"}
             >
-              <span class="loading loading-infinity" />
-              <span class="animate-pulse">
-                {#if isStop}
-                  <div transition:slide>Stopping...</div>
-                {:else}
-                  <div transition:slide>Stop</div>
-                {/if}
-              </span>
-            </button>
+              <button
+                disabled={isStop}
+                class="btn btn-xs flex normal-case"
+                on:click={stop}
+              >
+                <span class="loading loading-infinity" />
+                <span class="animate-pulse">
+                  {#if isStop}
+                    <div transition:slide>Stopping...</div>
+                  {:else}
+                    <div transition:slide>Stop</div>
+                  {/if}
+                </span>
+              </button>
+            </div>
+          {/if}
+        </div>
+        {#if failedCount !== 0 || successCount !== 0}
+          <div
+            transition:slide
+            class="text-base-content/70 font-normal flex gap-1"
+          >
+            <div class="flex gap-1 h-full">
+              Failed :
+              <div transition:slide class="text-error/80">{failedCount}</div>
+            </div>
+            <div class="flex gap-1 h-full">
+              Success :
+              <div transition:slide class="text-success/80">
+                {successCount}
+              </div>
+            </div>
           </div>
         {/if}
       </div>
@@ -477,10 +514,7 @@
         class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider"
       >
         {#if status.msg}
-          <div
-            transition:slide
-            class={status.isError ? "text-red-500" : undefined}
-          >
+          <div class={status.isError ? "text-red-500" : undefined}>
             {status.msg}
           </div>
         {:else if !ready && !isSubLoading}
@@ -491,7 +525,17 @@
       </div>
     </div>
     <div class="w-[17rem] space-y-2">
-      <div><span class="font-bold">Actions</span></div>
+      <div class="capitalize flex justify-between">
+        <div class="font-bold">Actions</div>
+        {#if actionName !== ""}
+          <div transition:blur class="text-base-content/70 font-semibold">
+            {#if !(isLoading || !ready || isSubLoading)}
+              <span transition:blur>Last run:</span>
+            {/if}
+            <span> {actionName}</span>
+          </div>
+        {/if}
+      </div>
       <button
         disabled={!isRightSiteNow || !ready || isSubLoading || isLoading}
         class="btn btn-success w-full rounded-full"
