@@ -12,7 +12,7 @@ import {
 import log from "src/utils/logger";
 import type { XPathModel } from "src/utils/xpaths";
 
-let isLoading: boolean = false;
+let isRunning: boolean = false;
 let stop: boolean = false;
 let xpathValues: XPathModel;
 
@@ -154,7 +154,7 @@ async function checking() {
 
 async function collectHref() {
   try {
-    isLoading = true;
+    isRunning = true;
     await runtime.send({
       type: "status",
       status: {
@@ -193,7 +193,7 @@ async function collectHref() {
     }
     return false;
   } finally {
-    isLoading = false;
+    isRunning = false;
   }
 }
 
@@ -382,43 +382,51 @@ export async function parseData(dataLocal: RuntimeMessage) {
   if (dataParsed.type === "status" || dataParsed.type === "statusContent") {
     switch (status.code) {
       case "loading":
-        isLoading = true;
+        isRunning = true;
         break;
       case "collecting":
-        if (isLoading) {
-          alert("Collecting...");
+        if (isRunning) {
+          alert(
+            "[Youtube Subscriptions Transfer Extension] Collecting... Wait or Refresh page"
+          );
           return;
         }
         await collectHref();
         break;
       case "changePage":
-        if (isLoading) {
-          alert("Changing page...");
+        if (isRunning) {
+          alert(
+            "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page"
+          );
           return;
         }
         newPage(status.msg);
         break;
       case "subscribe":
-        if (isLoading) {
-          alert("Changing page...");
+        if (isRunning) {
+          alert(
+            "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page"
+          );
           return;
         }
         await subSubNow(status.msg);
         break;
       case "unsubscribe":
-        if (isLoading) {
-          alert("Changing page...");
+        if (isRunning) {
+          alert(
+            "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page"
+          );
           return;
         }
         await unSubSubNow(status.msg);
         break;
       case "stop":
-        isLoading = false;
+        isRunning = false;
         stop = false;
         await isStopping();
         break;
       case "error":
-        isLoading = false;
+        isRunning = false;
         stop = false;
         break;
       case "ready":

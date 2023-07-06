@@ -21,12 +21,13 @@
   import toast from "svelte-french-toast";
   import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
   import copy from "copy-text-to-clipboard";
+  import Timer from "../Timer.svelte";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
   let lastStatusData: RuntimeMessage | undefined = undefined;
 
-  let isLoading = true;
+  let isRunning = true;
   let ready = false;
   let isRightSiteNow = false;
   let status: { isError: boolean; msg?: string } = { isError: false };
@@ -34,7 +35,7 @@
   let channelPathsText = "";
   let saveError = false;
   let isStop = false;
-  let isSubLoading = false;
+  let isSubRunning = false;
   let channelPathsCount = 0;
   let failedCount = 0;
   let successCount = 0;
@@ -49,7 +50,7 @@
   }
 
   async function collectSubs() {
-    if (isLoading) {
+    if (isRunning) {
       return false;
     }
     reset();
@@ -73,7 +74,7 @@
 
     for (let index = 0; index < 30; index++) {
       await delay(500);
-      if (!isLoading) {
+      if (!isRunning) {
         return true;
       }
     }
@@ -159,7 +160,7 @@
 
   async function subUnSub(mode = true) {
     const un = !mode && "un";
-    if (isLoading) {
+    if (isRunning) {
       return;
     }
     reset();
@@ -173,8 +174,8 @@
         return;
       }
 
-      isLoading = true;
-      isSubLoading = true;
+      isRunning = true;
+      isSubRunning = true;
 
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
@@ -246,8 +247,8 @@
       setStatus("Error: " + error, true);
       return;
     } finally {
-      isSubLoading = false;
-      isLoading = false;
+      isSubRunning = false;
+      isRunning = false;
       // channelsIdsStringSave();
     }
   }
@@ -257,9 +258,9 @@
   }
 
   function reset() {
-    isLoading = false;
+    isRunning = false;
     isStop = false;
-    isSubLoading = false;
+    isSubRunning = false;
     saveError = false;
     failedCount = 0;
     successCount = 0;
@@ -291,7 +292,7 @@
       switch (status.code) {
         case "loading":
         case "collecting":
-          isLoading = true;
+          isRunning = true;
           return;
         case "stop":
           reset();
@@ -304,20 +305,21 @@
         case "subscribeSuccessful":
         case "accept":
           ready = true;
-          isLoading = false;
+          isRunning = false;
           return;
         case "error":
           setStatus(status.msg, true);
-          isLoading = false;
+          isRunning = false;
           ready = true;
           return;
         default:
           return;
       }
     } else if (dataLocal.type === "dataOption") {
-      isLoading = false;
-      setStatus("Data collected successfully");
+      setStatus("Channel IDs collected. Now saving...");
       saveChannelsIds(dataLocal.channelPaths);
+      isRunning = false;
+      setStatus("Channel IDs collected successfully.");
     }
   }
 
@@ -425,7 +427,10 @@
       <div
         class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
       >
-        Subscriptions: {channelPathsCount}
+        Subscriptions:
+        {#key channelPathsCount}
+          <span in:blur>{channelPathsCount}</span>
+        {/key}
       </div>
       <div class="collapse-content bg-success/60 peer-checked:py-2">
         <span class="text-xs text-slate-800 space-y-2">
@@ -487,7 +492,7 @@
               <span>Make sure your input channels start with @</span>
             </div>
           {/if}
-          <button disabled={!ready || isSubLoading} class="btn w-full"
+          <button disabled={!ready || isSubRunning} class="btn w-full"
             >Save</button
           >
         </form>
@@ -500,7 +505,7 @@
       >
         <div class="flex items-start gap-1 h-full">
           Status
-          {#if isLoading || !ready || isSubLoading}
+          {#if isRunning || !ready || isSubRunning}
             <div
               transition:blur
               class="tooltip tooltip-info"
@@ -530,13 +535,17 @@
           >
             <div class="flex gap-1 h-full">
               Failed :
-              <div transition:slide class="text-error/80">{failedCount}</div>
+              {#key failedCount}
+                <div in:blur class="text-error/80">{failedCount}</div>
+              {/key}
             </div>
             <div class="flex gap-1 h-full">
               Success :
-              <div transition:slide class="text-success/80">
-                {successCount}
-              </div>
+              {#key successCount}
+                <div in:blur class="text-success/80">
+                  {successCount}
+                </div>
+              {/key}
             </div>
           </div>
         {/if}
@@ -548,7 +557,7 @@
           <div class={status.isError ? "text-red-500" : undefined}>
             {status.msg}
           </div>
-        {:else if !ready && !isSubLoading}
+        {:else if !ready && !isSubRunning}
           <div transition:slide class="animate-bounce">
             Waiting for the content scripts ready signal ...
           </div>
@@ -559,32 +568,36 @@
       <div class="capitalize flex justify-between">
         <div class="font-bold">Actions</div>
         {#if actionName !== ""}
-          <div transition:blur class="font-normal text-base-content/70">
-            {#if !(isLoading || !ready || isSubLoading)}
+          <div
+            transition:blur
+            class="font-normal text-base-content/70 flex gap-1"
+          >
+            {#if !(isRunning || !ready || isSubRunning)}
               <span transition:blur>Last run:</span>
             {/if}
-            <span> {actionName}</span>
+            <Timer bind:isRunning={isSubRunning} />
+            <div>{actionName}</div>
           </div>
         {/if}
       </div>
       <button
-        disabled={!isRightSiteNow || !ready || isSubLoading || isLoading}
+        disabled={!isRightSiteNow || !ready || isSubRunning || isRunning}
         class="btn btn-success w-full rounded-full"
         on:click={collectSubs}>Collect channel</button
       >
       <button
         disabled={(channelPathsCount ? false : true) ||
-          isSubLoading ||
+          isSubRunning ||
           !ready ||
-          isLoading}
+          isRunning}
         class="w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd"
         on:click={() => subUnSub(true)}>Subscribe</button
       >
       <button
         disabled={(channelPathsCount ? false : true) ||
-          isSubLoading ||
+          isSubRunning ||
           !ready ||
-          isLoading}
+          isRunning}
         class="w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd"
         on:click={() => subUnSub(false)}>Unsubscribe</button
       >
