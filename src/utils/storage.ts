@@ -1,12 +1,20 @@
 import { writable } from "svelte/store";
+
 import {
   CHANNEL_PATHS_KEY,
+  FIRST_OAUTH_KEY,
+  FIRST_USER_KEY,
+  MODE_KEY,
+  SECOND_OAUTH_KEY,
+  SECOND_USER_KEY,
+  SUBSCRIPTIONS_KEY,
   THEME_MODE_KEY,
   XPATH_VALUES_KEY,
 } from "./constants";
 import { z } from "zod";
 import log from "./logger";
 import { XPathModelSchema, xpathValues } from "./xpaths";
+import { SubscriptionsListSchema, UserSchema } from "./schema";
 
 export async function promisedParseJSON(json: string | null): Promise<any> {
   if (!json) {
@@ -95,6 +103,113 @@ isDarkThemeWritable.subscribe(async (value) => {
   try {
     localStorage.setItem(THEME_MODE_KEY, value);
     document.documentElement.setAttribute("data-theme", value);
+  } catch (error) {
+    log.error(error);
+    return;
+  }
+});
+
+export const MODE_DEFAULT = "xpath";
+const modeSchema = z.enum(["xpath", "api"]).default(MODE_DEFAULT);
+export type MODE = z.infer<typeof modeSchema>;
+const storedModeRaw = localStorage.getItem(MODE_KEY);
+const storedModeValidated = modeSchema.safeParse(storedModeRaw);
+export const modeWritable = writable(
+  storedModeValidated.success ? storedModeValidated.data : MODE_DEFAULT
+);
+
+modeWritable.subscribe(async (value) => {
+  try {
+    localStorage.setItem(MODE_KEY, value);
+  } catch (error) {
+    log.error(error);
+    return;
+  }
+});
+
+// OAuth token
+const firstToken = localStorage.getItem(FIRST_OAUTH_KEY);
+export const channel0OAuthTokenWritable = writable(firstToken);
+channel0OAuthTokenWritable.subscribe((value) => {
+  localStorage.setItem(FIRST_OAUTH_KEY, value ? value : "");
+});
+
+const secondToken = localStorage.getItem(SECOND_OAUTH_KEY);
+export const channel1OAuthTokenWritable = writable(secondToken);
+channel1OAuthTokenWritable.subscribe((value) => {
+  localStorage.setItem(SECOND_OAUTH_KEY, value ? value : "");
+});
+
+// UserData
+const storedFirstUserRaw = localStorage.getItem(FIRST_USER_KEY);
+let jsonParsedFirstUserRaw = null;
+if (storedFirstUserRaw) {
+  try {
+    jsonParsedFirstUserRaw = JSON.parse(storedFirstUserRaw);
+  } catch (error) {
+    log.error(error);
+  }
+}
+const storedFirstUser = UserSchema.safeParse(jsonParsedFirstUserRaw);
+export const firstUserWritable = writable(
+  storedFirstUser.success ? storedFirstUser.data : null
+);
+firstUserWritable.subscribe(async (value) => {
+  try {
+    const stringValue = value
+      ? ((await promisedStringifyJSON(value)) as string)
+      : "";
+    localStorage.setItem(FIRST_USER_KEY, stringValue);
+  } catch (error) {
+    log.error(error);
+    return;
+  }
+});
+
+const storedSecondUserRaw = localStorage.getItem(SECOND_USER_KEY);
+let jsonParsedSecondUserRaw = null;
+if (storedSecondUserRaw) {
+  try {
+    jsonParsedSecondUserRaw = JSON.parse(storedSecondUserRaw);
+  } catch (error) {
+    log.error(error);
+  }
+}
+const storedSecondUser = UserSchema.safeParse(jsonParsedSecondUserRaw);
+export const secondUserWritable = writable(
+  storedSecondUser.success ? storedSecondUser.data : null
+);
+secondUserWritable.subscribe(async (value) => {
+  try {
+    const stringValue = value
+      ? ((await promisedStringifyJSON(value)) as string)
+      : "";
+    localStorage.setItem(SECOND_USER_KEY, stringValue);
+  } catch (error) {
+    log.error(error);
+    return;
+  }
+});
+
+const storedSubscriptionsRaw = localStorage.getItem(SUBSCRIPTIONS_KEY);
+let jsonParsedSubscriptionsRaw = null;
+if (storedSubscriptionsRaw) {
+  try {
+    jsonParsedSubscriptionsRaw = JSON.parse(storedSubscriptionsRaw);
+  } catch (error) {
+    log.error(error);
+  }
+}
+const storedSubscriptions = SubscriptionsListSchema.safeParse(
+  jsonParsedSubscriptionsRaw
+);
+export const subscriptionsWritable = writable(
+  storedSubscriptions.success ? storedSubscriptions.data : []
+);
+subscriptionsWritable.subscribe(async (value) => {
+  try {
+    const stringValue = (await promisedStringifyJSON(value)) as string;
+    localStorage.setItem(SUBSCRIPTIONS_KEY, stringValue);
   } catch (error) {
     log.error(error);
     return;

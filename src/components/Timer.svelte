@@ -1,10 +1,14 @@
 <script>
+  // @ts-nocheck
   import { tweened } from "svelte/motion";
   import { blur } from "svelte/transition";
+  /**
+   * @type { NodeJS.Timeout | undefined}
+   */
+  let interval = undefined;
 
   let original = 0;
   let timer = tweened(original);
-  let interval = 0;
 
   export let isRunning = false;
 

@@ -2,6 +2,8 @@
   import type { SettingSelected } from "src/utils/types";
   import UpdateXpath from "../xpath/Update_Xpath.svelte";
   import { slide } from "svelte/transition";
+  import SelectXpath from "../xpath/Select_Xpath.svelte";
+  import ModeSwitch from "../Mode_Switch.svelte";
   let selected: SettingSelected = "-1";
 </script>
 
@@ -27,25 +29,9 @@
       </div>
     </div>
   {:else}
-    <button on:click={() => (selected = "xpath")} class="btn w-full"
-      ><div class="flex justify-between items-center w-full">
-        <span>XPath</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M8.25 4.5l7.5 7.5-7.5 7.5"
-          />
-        </svg>
-      </div>
-    </button>
+    <SelectXpath bind:selected />
+    <div class="divider" />
+    <ModeSwitch />
   {/if}
 
   {#if selected === "xpath"}

@@ -3,9 +3,19 @@
   import Home from "src/components/pages/Home.svelte";
   import About from "src/components/pages/About.svelte";
   import type { TabName } from "../utils/types";
-  import { fade, fly, slide, blur, scale, draw } from "svelte/transition";
+  import { slide, blur } from "svelte/transition";
+  import { MODE_DEFAULT, type MODE, modeWritable } from "src/utils/storage";
+  import { onMount } from "svelte";
+  import Api from "./pages/API.svelte";
 
   let tabName: TabName = "Home";
+  let localMode: MODE = MODE_DEFAULT;
+
+  onMount(() => {
+    modeWritable.subscribe((mode) => {
+      localMode = mode;
+    });
+  });
 </script>
 
 <main>
@@ -30,7 +40,11 @@
   <div class="my-2 w-full">
     {#if tabName === "Home"}
       <div in:blur out:slide>
-        <Home />
+        {#if localMode === "xpath"}
+          <Home />
+        {:else}
+          <Api />
+        {/if}
       </div>
     {/if}
     {#if tabName === "Settings"}

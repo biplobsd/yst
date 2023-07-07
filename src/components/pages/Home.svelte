@@ -582,7 +582,7 @@
       </div>
       <button
         disabled={!isRightSiteNow || !ready || isSubRunning || isRunning}
-        class="btn btn-success w-full rounded-full"
+        class="collect-channel-btn"
         on:click={collectSubs}>Collect channel</button
       >
       <button
@@ -590,7 +590,7 @@
           isSubRunning ||
           !ready ||
           isRunning}
-        class="w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd"
+        class="subscribe-btn"
         on:click={() => subUnSub(true)}>Subscribe</button
       >
       <button
@@ -598,7 +598,7 @@
           isSubRunning ||
           !ready ||
           isRunning}
-        class="w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd"
+        class="unsubscribe-btn"
         on:click={() => subUnSub(false)}>Unsubscribe</button
       >
     </div>

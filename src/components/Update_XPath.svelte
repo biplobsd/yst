@@ -1,10 +1,9 @@
 <script lang="ts">
   import { xPathValuesWritable } from "src/utils/storage";
-  import { fetchXPathUpdate } from "../utils/helper";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import { get } from "svelte/store";
-  import toast from "svelte-french-toast";
+  import { fetchXPathUpdate } from "src/popup/helper";
 
   let isXPathUpdating = false;
 

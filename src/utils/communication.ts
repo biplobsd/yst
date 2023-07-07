@@ -19,6 +19,8 @@ const StatusCodeSchema = z.enum([
   "channelIDs",
   "contentScriptDestroy",
   "message",
+  "authToken",
+  "authTokenSuccessful",
 ]);
 
 const StatusSchema = z.object({
@@ -33,12 +35,22 @@ export const runtimeMessageSchema = z.discriminatedUnion("type", [
     channelPaths: z.string().array(),
   }),
   z.object({
+    type: z.literal("dataOptionAuthToken"),
+    status: StatusSchema,
+    authToken: z.string(),
+  }),
+  z.object({
     type: z.literal("dataContent"),
     status: StatusSchema,
     xpathValues: XPathModelSchema,
   }),
   z.object({
-    type: z.enum(["status", "statusOption", "statusContent"]),
+    type: z.enum([
+      "status",
+      "statusOption",
+      "statusContent",
+      "statusBackground",
+    ]),
     status: StatusSchema,
   }),
 ]);
@@ -66,7 +78,7 @@ export const runtime: RuntimeModel = {
   isOptionsPage: false,
   sendOnce: async function (runtimeMessage) {
     try {
-      if (this.isOptionsPage) {
+      if (this.isOptionsPage && runtimeMessage.type !== "statusBackground") {
         const [tab] = await chrome.tabs.query({
           active: true,
           currentWindow: true,
@@ -80,6 +92,7 @@ export const runtime: RuntimeModel = {
         return true;
       }
     } catch (error) {
+      console.log(error);
       log.error(error);
       log.info("isOptionsPage", this.isOptionsPage, "Runtime Error: ");
       log.error(chrome.runtime.lastError);
