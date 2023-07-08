@@ -67,10 +67,11 @@
       return false;
     }
     reset();
-
+    isRunning = true;
     actionName = "Collect Channel";
 
     await getChannelsList();
+    isRunning = false;
   }
 
   async function collectAndWait() {
