@@ -7,9 +7,9 @@
 <div
   class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
 >
-  <input type="checkbox" class="peer" />
+  <input type="checkbox" class="peer !min-h-8" />
   <div
-    class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
+    class="!min-h-8 !py-0 flex items-center collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
   >
     Subscriptions:
     {#key subscriptionCount}

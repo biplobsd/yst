@@ -140,14 +140,16 @@
 <div
   class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
 >
-  <input type="checkbox" class="peer" />
-  <div class="collapse-title text-sm tracking-wider font-sans font-semibold">
+  <input type="checkbox" class="peer !min-h-8" />
+  <div
+    class="!min-h-8 !py-0 flex items-center collapse-title text-sm tracking-wider font-sans font-semibold"
+  >
     {#key primaryChannelName}
       <span in:blur>{primaryChannelName}</span>
     {/key}
   </div>
   <div
-    class="scrollbar-style overflow-hidden collapse-content peer-checked:pb-2 peer-checked:!-mt-5 w-full"
+    class="scrollbar-style overflow-hidden collapse-content peer-checked:pb-2 w-full"
   >
     <table class="table table-xs w-full">
       <thead>
