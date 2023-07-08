@@ -31,21 +31,16 @@
   let primaryChannelName: string;
 
   async function waitingForResponse(msg: string, sec: number, ms: number) {
-    let timeoutSub = true;
     isReady = false;
     for (let index = sec; index >= 0; index--) {
-      if (isReady) {
-        timeoutSub = false;
-        break;
-      }
-      if (isStop) {
+      if (isReady || isStop) {
         return true;
       }
       setStatus(msg + " T-" + index);
       await delay(ms);
     }
 
-    return timeoutSub;
+    return false;
   }
 
   async function waitingForResponseReady(msg: string, sec = 10, ms = 1000) {
@@ -105,9 +100,7 @@
         status: { code: "authToken", msg: "OAuth token get" },
       });
 
-      if (await waitingForResponseReady(`Waiting for the OAuth Token `, 30)) {
-        return;
-      }
+      await waitingForResponseReady(`Waiting for the OAuth Token `, 30);
     } catch (error) {
       log.info(error);
     } finally {

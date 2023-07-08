@@ -226,6 +226,14 @@
           return;
       }
     } else if (dataLocal.type === "dataOptionAuthToken") {
+      if (primaryChannel === -1) {
+        setStatus(
+          "Received OAuth token, but it was rejected due to not arriving on time",
+          true
+        );
+        return;
+      }
+
       setStatus("OAuth token receive. Getting user information");
       switch (primaryChannel) {
         case 0:
