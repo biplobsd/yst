@@ -9,10 +9,7 @@
     type RuntimeMessage,
   } from "src/utils/communication";
   import type { XPathModel } from "src/utils/xpaths";
-  import {
-    channelPathsWritable,
-    xPathValuesWritable,
-  } from "src/utils/storage";
+  import { channelPathsWritable, xPathValuesWritable } from "src/utils/storage";
   import { get } from "svelte/store";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
@@ -423,17 +420,17 @@
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
     >
-      <input type="checkbox" class="peer" />
+      <input type="checkbox" class="peer !min-h-8 !py-0" />
       <div
-        class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
+        class="!min-h-8 !py-0 gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
       >
         Subscriptions:
         {#key channelPathsCount}
           <span in:blur>{channelPathsCount}</span>
         {/key}
       </div>
-      <div class="collapse-content bg-success/60 peer-checked:py-2">
-        <span class="text-xs text-slate-800 space-y-2">
+      <div class="collapse-content peer-checked:py-2">
+        <span class="text-xs space-y-2">
           <p>
             Enter only channel IDs. Channel IDs start with the <span
               class="font-bold">@</span

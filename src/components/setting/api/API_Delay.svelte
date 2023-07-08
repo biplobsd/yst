@@ -13,7 +13,7 @@
 
 <div class="form-control w-full max-w-xs !my-0">
   <label class="label">
-    <span class="label-text">API delay per require</span>
+    <span class="label-text">API delay per request</span>
     <input
       type="number"
       placeholder="ms"
