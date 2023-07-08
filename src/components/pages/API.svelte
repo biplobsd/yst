@@ -33,6 +33,9 @@
     SubscriptionsRawSchema,
     type SubscriptionsList,
   } from "src/utils/schema";
+  import Data from "../api/Data.svelte";
+  import { readySignalSend } from "src/background/helper";
+  import SelectAccount from "../api/Select_Account.svelte";
 
   let subscriptionsList: SubscriptionsList = [];
   let subscriptionCount: number = 0;
@@ -45,11 +48,9 @@
   let lastStatusData: RuntimeMessage | undefined = undefined;
 
   let isRunning = true;
-  let ready = false;
-  let isRightSiteNow = false;
+  let isReady = false;
   let status: { isError: boolean; msg?: string } = { isError: false };
   let storageRemoveListener: () => void;
-  let channelPathsText = "";
   let saveError = false;
   let isStop = false;
   let isSubRunning = false;
@@ -107,7 +108,8 @@
       let notFoundList: SubscriptionsList;
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !subscriptionsList.map(y=> y.channelId).includes(elem.channelId)
+          (elem) =>
+            !subscriptionsList.map((y) => y.channelId).includes(elem.channelId)
         );
         if (notFoundList.length === 0) {
           setStatus(
@@ -116,7 +118,7 @@
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          subscriptionsList.map(y => y.channelId).includes(elem.channelId)
+          subscriptionsList.map((y) => y.channelId).includes(elem.channelId)
         );
         if (notFoundList.length === 0) {
           setStatus(
@@ -129,44 +131,6 @@
       subscriptionCount = notFoundList.length;
     }
     return;
-  }
-
-  async function waitingForResponse(msg: string, sec: number, ms: number) {
-    let timeoutSub = true;
-    ready = false;
-    for (let index = sec; index >= 0; index--) {
-      setStatus(msg + " T-" + index);
-      if (ready) {
-        timeoutSub = false;
-        break;
-      }
-      if (isStop) {
-        return true;
-      }
-      await delay(ms);
-    }
-
-    return timeoutSub;
-  }
-
-  async function waitingForResponseReady(msg: string, sec = 10, ms = 1000) {
-    if (await waitingForResponse(msg, sec, ms)) {
-      return false;
-    }
-
-    if (!ready) {
-      await readySignalSend();
-    } else {
-      return false;
-    }
-
-    if (await waitingForResponse("[Retry wait] " + msg, sec, ms)) {
-      return false;
-    }
-
-    setStatus("Error: Background script did not responding", true);
-
-    return true;
   }
 
   async function subUnSub(mode = true) {
@@ -251,18 +215,19 @@
       setStatus(status.msg);
       switch (status.code) {
         case "accept":
-          ready = true;
+          isReady = true;
           isRunning = false;
           return;
         case "error":
           setStatus(status.msg, true);
           isRunning = false;
-          ready = true;
+          isReady = true;
           return;
         default:
           return;
       }
     } else if (dataLocal.type === "dataOptionAuthToken") {
+      setStatus("OAuth token receive. Getting user information");
       switch (primaryChannel) {
         case 0:
           channel0OAuthTokenWritable.set(dataLocal.authToken);
@@ -280,9 +245,11 @@
         default:
           break;
       }
-      setStatus("OAuth token receive. Now saving...");
+
       isRunning = false;
-      ready = true;
+      isReady = true;
+
+      setStatus("OAuth token receive successful");
     }
   }
 
@@ -430,52 +397,6 @@
     }
   }
 
-  async function readySignalSend() {
-    // Ready signal
-    await runtime.send({
-      type: "statusBackground",
-      status: {
-        msg: "Is the content script ready?",
-        code: "ready",
-      },
-    });
-  }
-
-  async function connectDisconnect(btnNo: 0 | 1) {
-    isRunning = true;
-    primaryChannel = btnNo;
-    try {
-      if (btnNo === 0) {
-        if (channel0OAuthToken) {
-          channel0OAuthTokenWritable.set(null);
-          firstUserWritable.set(null);
-          return;
-        }
-      } else {
-        if (channel1OAuthToken) {
-          channel1OAuthTokenWritable.set(null);
-          secondUserWritable.set(null);
-          return;
-        }
-      }
-
-      await runtime.send({
-        type: "statusBackground",
-        status: { code: "authToken", msg: "OAuth token get" },
-      });
-
-      if (await waitingForResponseReady(`Waiting for the OAuth Token `, 30)) {
-        return;
-      }
-
-      setStatus("OAuth token receive successful");
-    } catch (error) {
-      log.info(error);
-    } finally {
-      isRunning = false;
-    }
-  }
-
   onMount(async () => {
     channel0OAuthTokenWritable.subscribe(
       (value) => (channel0OAuthToken = value)
@@ -501,134 +422,15 @@
   });
 </script>
 
-<button
-  on:click={async () => {
-    const user = await getUserInfo();
-    console.log(user);
-    firstUserWritable.set(user);
-  }}>Getinfo {primaryChannel}</button
->
-
 <div class="space-y-2">
-  <div class="font-bold">Select Account</div>
-  <div>
-    <div class="overflow-x-auto">
-      <table class="table table-xs">
-        <thead>
-          <tr>
-            <!-- <th>Primary</th> -->
-            <th />
-            <th>Name</th>
-            <th class="text-center">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>
-              <label>
-                <input
-                  type="radio"
-                  class="radio radio-xs"
-                  bind:group={primaryChannel}
-                  name="radio-1"
-                  value={0}
-                />
-              </label>
-            </th>
-            <td>
-              <div class="flex justify-center items-center space-x-2">
-                <div class="avatar">
-                  <div class="mask mask-squircle">
-                    <div
-                      class="avatar rounded-full w-8 placeholder flex justify-center items-center h-full"
-                    >
-                      {#if firstUser}
-                        <img src={firstUser.picture} alt={firstUser.name} />
-                      {:else}
-                        <div class="bg-base-200 w-full" />
-                      {/if}
-                    </div>
-                  </div>
-                </div>
-                <div class="w-full">
-                  {#if firstUser}
-                    <div class="font-bold">{firstUser.given_name}</div>
-                  {:else}
-                    <div class="bg-base-200 h-4 rounded-md" />
-                  {/if}
-                </div>
-              </div>
-            </td>
-            <td class="text-center">
-              <button on:click={() => connectDisconnect(0)} class="btn btn-xs"
-                >{channel0OAuthToken ? "Disconnect" : "connect"}</button
-              >
-            </td>
-          </tr>
-
-          <tr>
-            <th>
-              <label>
-                <input
-                  type="radio"
-                  class="radio radio-xs"
-                  bind:group={primaryChannel}
-                  name="radio-1"
-                  value={1}
-                />
-              </label>
-            </th>
-            <td>
-              <div class="flex justify-center items-center space-x-2">
-                <div class="avatar">
-                  <div class="mask mask-squircle">
-                    <div
-                      class="avatar rounded-full w-8 placeholder flex justify-center items-center h-full"
-                    >
-                      {#if secondUser}
-                        <img src={secondUser.picture} alt={secondUser.name} />
-                      {:else}
-                        <div class="bg-base-200 w-full" />
-                      {/if}
-                    </div>
-                  </div>
-                </div>
-                <div class="w-full">
-                  {#if secondUser}
-                    <div class="font-bold">{secondUser.given_name}</div>
-                  {:else}
-                    <div class="bg-base-200 h-4 rounded-md" />
-                  {/if}
-                </div>
-              </div>
-            </td>
-            <td class="text-center">
-              <button on:click={() => connectDisconnect(1)} class="btn btn-xs"
-                >{channel1OAuthToken ? "Disconnect" : "connect"}</button
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="font-bold">Data</div>
-  <div
-    class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
-  >
-    <input type="checkbox" class="peer" />
-    <div
-      class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
-    >
-      Subscriptions:
-      {#key subscriptionCount}
-        <span in:blur>{subscriptionCount}</span>
-      {/key}
-    </div>
-    <div class="collapse-content bg-success/60 peer-checked:py-2">
-      Data will show here
-    </div>
-  </div>
+  <SelectAccount
+    bind:isStop
+    bind:isReady
+    bind:isRunning
+    bind:primaryChannel
+    {setStatus}
+  />
+  <Data bind:subscriptionCount />
   <div>
     <div
       transition:slide
@@ -636,7 +438,7 @@
     >
       <div class="flex items-start gap-1 h-full">
         Status
-        {#if isRunning || !ready || isSubRunning}
+        {#if isRunning || !isReady || isSubRunning}
           <div
             transition:blur
             class="tooltip tooltip-info"
@@ -688,9 +490,9 @@
         <div class={status.isError ? "text-red-500" : undefined}>
           {status.msg}
         </div>
-      {:else if !ready && !isSubRunning}
+      {:else if !isReady && !isSubRunning}
         <div transition:slide class="animate-bounce">
-          Waiting for the content scripts ready signal ...
+          Waiting for the background scripts ready signal ...
         </div>
       {/if}
     </div>
@@ -703,7 +505,7 @@
           transition:blur
           class="font-normal text-base-content/70 flex gap-1"
         >
-          {#if !(isRunning || !ready || isSubRunning)}
+          {#if !(isRunning || !isReady || isSubRunning)}
             <span transition:blur>Last run:</span>
           {/if}
           <Timer bind:isRunning={isSubRunning} />
@@ -712,14 +514,14 @@
       {/if}
     </div>
     <button
-      disabled={!ready || isSubRunning || isRunning}
+      disabled={!isReady || isSubRunning || isRunning}
       class="collect-channel-btn"
       on:click={collectSubs}>Collect channel</button
     >
     <button
       disabled={(subscriptionCount ? false : true) ||
         isSubRunning ||
-        !ready ||
+        !isReady ||
         isRunning}
       class="subscribe-btn"
       on:click={() => subUnSub(true)}>Subscribe</button
@@ -727,7 +529,7 @@
     <button
       disabled={(subscriptionCount ? false : true) ||
         isSubRunning ||
-        !ready ||
+        !isReady ||
         isRunning}
       class="unsubscribe-btn"
       on:click={() => subUnSub(false)}>Unsubscribe</button
