@@ -1,9 +1,10 @@
 <script lang="ts">
+  import APIDelay from "./../setting/api/API_Delay.svelte";
   import type { SettingSelected } from "src/utils/types";
-  import UpdateXpath from "../xpath/Update_Xpath.svelte";
+  import UpdateXpath from "../setting/xpath/Update_Xpath.svelte";
   import { slide } from "svelte/transition";
-  import SelectXpath from "../xpath/Select_Xpath.svelte";
-  import ModeSwitch from "../Mode_Switch.svelte";
+  import SelectXpath from "../setting/xpath/Select_Xpath.svelte";
+  import ModeSwitch from "../setting/Mode_Switch.svelte";
   let selected: SettingSelected = "-1";
 </script>
 
@@ -32,6 +33,8 @@
     <SelectXpath bind:selected />
     <div class="divider" />
     <ModeSwitch />
+    <div class="divider" />
+    <APIDelay />
   {/if}
 
   {#if selected === "xpath"}

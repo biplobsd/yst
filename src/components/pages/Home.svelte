@@ -10,7 +10,6 @@
   } from "src/utils/communication";
   import type { XPathModel } from "src/utils/xpaths";
   import {
-    channelPathsSchema,
     channelPathsWritable,
     xPathValuesWritable,
   } from "src/utils/storage";
@@ -22,6 +21,7 @@
   import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
+  import { channelPathsSchema } from "src/utils/schema";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;

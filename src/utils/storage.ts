@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 
 import {
+  API_REQ_DELAY,
   CHANNEL_PATHS_KEY,
   FIRST_OAUTH_KEY,
   FIRST_USER_KEY,
@@ -15,8 +16,13 @@ import {
 import { z } from "zod";
 import log from "./logger";
 import { XPathModelSchema, xpathValues } from "./xpaths";
-import { SubscriptionsListSchema, UserSchema } from "./schema";
+import {
+  SubscriptionsListSchema,
+  UserSchema,
+  channelPathsSchema,
+} from "./schema";
 import type { PrimaryChannel } from "./types";
+import { MODE_DEFAULT, THEME_MODE_DEFAULT } from "./default";
 
 export async function promisedParseJSON(json: string | null): Promise<any> {
   if (!json) {
@@ -40,8 +46,6 @@ export async function promisedStringifyJSON(value: any) {
     }
   });
 }
-
-export const channelPathsSchema = z.string().array().default([]);
 
 const storedChannelPathsRaw = localStorage.getItem(CHANNEL_PATHS_KEY);
 
@@ -93,7 +97,6 @@ xPathValuesWritable.subscribe(async (value) => {
   }
 });
 
-export const THEME_MODE_DEFAULT = "dark";
 const themeSchema = z.enum(["dark", "light"]).default(THEME_MODE_DEFAULT);
 const storedThemeRaw = localStorage.getItem(THEME_MODE_KEY);
 const storedThemeValidated = themeSchema.safeParse(storedThemeRaw);
@@ -111,7 +114,6 @@ isDarkThemeWritable.subscribe(async (value) => {
   }
 });
 
-export const MODE_DEFAULT = "xpath";
 const modeSchema = z.enum(["xpath", "api"]).default(MODE_DEFAULT);
 export type MODE = z.infer<typeof modeSchema>;
 const storedModeRaw = localStorage.getItem(MODE_KEY);
@@ -224,4 +226,12 @@ export const primaryChannelWritable = writable(
 );
 primaryChannelWritable.subscribe((value) => {
   localStorage.setItem(PRIMARY_CHANNEL, String(value));
+});
+
+const apiReqDelayRaw = localStorage.getItem(API_REQ_DELAY);
+export const apiReqDelayWritable = writable(
+  apiReqDelayRaw ? +apiReqDelayRaw : 500
+);
+apiReqDelayWritable.subscribe((value) => {
+  localStorage.setItem(API_REQ_DELAY, String(value));
 });

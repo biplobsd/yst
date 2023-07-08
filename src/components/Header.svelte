@@ -3,9 +3,10 @@
   import icon48 from "src/assets/icons/icon128.png";
   import ThemeSwitch from "./Theme_Switch.svelte";
 
-  import { MODE_DEFAULT, modeWritable, type MODE } from "src/utils/storage";
+  import { modeWritable, type MODE } from "src/utils/storage";
   import { onMount } from "svelte";
   import { blur } from "svelte/transition";
+  import { MODE_DEFAULT } from "src/utils/default";
 
   let localMode: MODE = MODE_DEFAULT;
 

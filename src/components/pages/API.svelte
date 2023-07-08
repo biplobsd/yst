@@ -8,6 +8,7 @@
     type RuntimeMessage,
   } from "src/utils/communication";
   import {
+    apiReqDelayWritable,
     channel0OAuthTokenWritable,
     channel1OAuthTokenWritable,
     firstUserWritable,
@@ -35,6 +36,7 @@
     USERINFO_API_URL,
   } from "src/utils/constants";
   import type { PrimaryChannel } from "src/utils/types";
+  import { API_REQ_DELAY_DEFAULT } from "src/utils/default.js";
 
   let subscriptionsList: SubscriptionsList = [];
   let subscriptionCount: number = 0;
@@ -53,6 +55,7 @@
   let failedCount = 0;
   let successCount = 0;
   let actionName = "";
+  let apiReqDelay = API_REQ_DELAY_DEFAULT;
 
   async function stop() {
     isStop = true;
@@ -159,9 +162,11 @@
           setStatus(`${un}subscribe to the ${title} unsuccessful`, true);
           failedCount++;
         }
-        await delay(500);
+        await delay(apiReqDelay);
       }
-      setStatus("Done");
+      if (!isStop) {
+        setStatus("Done");
+      }
     } catch (error) {
       setStatus("Error: " + error, true);
       return;
@@ -435,7 +440,7 @@
 
       pageToken = data.nextPageToken;
 
-      await delay(1000);
+      await delay(apiReqDelay);
     }
 
     log.info(subscriptionsList);
@@ -488,6 +493,8 @@
     );
 
     primaryChannelWritable.subscribe((value) => (primaryChannel = value));
+
+    apiReqDelayWritable.subscribe((value) => (apiReqDelay = value));
 
     subscriptionsList = get(subscriptionsWritable);
     subscriptionCount = subscriptionsList.length;

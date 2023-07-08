@@ -36,5 +36,7 @@ export const SubscriptionsListSchema = z
   .array()
   .default([]);
 
+export const channelPathsSchema = z.string().array().default([]);
+
 export type User = z.infer<typeof UserSchema>;
 export type SubscriptionsList = z.infer<typeof SubscriptionsListSchema>;

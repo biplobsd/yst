@@ -4,9 +4,10 @@
   import About from "src/components/pages/About.svelte";
   import type { TabName } from "../utils/types";
   import { slide, blur } from "svelte/transition";
-  import { MODE_DEFAULT, type MODE, modeWritable } from "src/utils/storage";
+  import { type MODE, modeWritable } from "src/utils/storage";
   import { onMount } from "svelte";
   import Api from "./pages/API.svelte";
+  import { MODE_DEFAULT } from "src/utils/default";
 
   let tabName: TabName = "Home";
   let localMode: MODE = MODE_DEFAULT;

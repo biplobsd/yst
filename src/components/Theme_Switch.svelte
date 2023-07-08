@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { THEME_MODE_DEFAULT, isDarkThemeWritable } from "src/utils/storage";
+  import { THEME_MODE_DEFAULT } from "src/utils/default";
+  import { isDarkThemeWritable } from "src/utils/storage";
   import { onMount } from "svelte";
 
   let isLight = false;

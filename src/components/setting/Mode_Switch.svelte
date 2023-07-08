@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { MODE_DEFAULT, modeWritable, type MODE } from "src/utils/storage";
+  import { MODE_DEFAULT } from "src/utils/default";
+  import { modeWritable, type MODE } from "src/utils/storage";
   import { onMount } from "svelte";
 
   let localMode: MODE = MODE_DEFAULT;
