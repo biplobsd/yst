@@ -69,7 +69,7 @@ export async function parseData(dataLocal: RuntimeMessage) {
             Object.entries(auth_params)
           ).toString();
           const oAuth2Url = AUTH_URL + "?" + url;
-          console.log("oAuth2URL", oAuth2Url);
+          log.info("oAuth2URL", oAuth2Url);
 
           const redirectTokenUrl = await chrome.identity.launchWebAuthFlow({
             url: oAuth2Url,

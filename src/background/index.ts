@@ -1,13 +1,14 @@
 import { runtime } from "src/utils/communication";
 import { parseData } from "./background";
+import log from "src/utils/logger";
 
 let storageRemoveListener = () => {};
 
-console.log("OnInstalled...");
+log.info("OnInstalled...");
 runtime.isOptionsPage = false;
 storageRemoveListener = runtime.addListener(parseData);
 
 chrome.runtime.onSuspend.addListener(function () {
-  console.log("Unloading.");
+  log.info("Unloading.");
   storageRemoveListener();
 });

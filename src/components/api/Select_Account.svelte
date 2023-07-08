@@ -25,13 +25,6 @@
   let channel0OAuthToken: string | null = null;
   let channel1OAuthToken: string | null = null;
 
-  $: {
-    console.log(
-      channel1OAuthToken && channel1OAuthToken?.length !== 0 ? true : false
-    );
-    console.log(channel0OAuthToken);
-  }
-
   let firstUser: User | null = null;
   let secondUser: User | null = null;
 

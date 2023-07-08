@@ -92,7 +92,7 @@ export const runtime: RuntimeModel = {
         return true;
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       log.error(error);
       log.info("isOptionsPage", this.isOptionsPage, "Runtime Error: ");
       log.error(chrome.runtime.lastError);
