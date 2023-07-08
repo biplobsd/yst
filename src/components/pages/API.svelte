@@ -7,26 +7,18 @@
     runtimeMessageSchema,
     type RuntimeMessage,
   } from "src/utils/communication";
-  import type { XPathModel } from "src/utils/xpaths";
   import {
     channel0OAuthTokenWritable,
     channel1OAuthTokenWritable,
-    channelPathsSchema,
-    channelPathsWritable,
     firstUserWritable,
     secondUserWritable,
     subscriptionsWritable,
-    xPathValuesWritable,
   } from "src/utils/storage";
   import { get } from "svelte/store";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
-  import ExternalLinkIcon from "../icons/External_Link_Icon.svelte";
-  import toast from "svelte-french-toast";
-  import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
-  import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
-  import axios from "axios";
+  import axios, { AxiosError } from "axios";
   import {
     UserSchema,
     type User,
@@ -36,13 +28,16 @@
   import Data from "../api/Data.svelte";
   import { readySignalSend } from "src/background/helper";
   import SelectAccount from "../api/Select_Account.svelte";
+  import {
+    API_KEY,
+    SUBSCRIPTIONS_API_URL,
+    USERINFO_API_URL,
+  } from "src/utils/constants";
 
   let subscriptionsList: SubscriptionsList = [];
   let subscriptionCount: number = 0;
   let channel0OAuthToken: string | null = null;
-  let firstUser: User | null = null;
   let channel1OAuthToken: string | null = null;
-  let secondUser: User | null = null;
 
   let primaryChannel: 0 | 1 = 0;
   let lastStatusData: RuntimeMessage | undefined = undefined;
@@ -51,7 +46,6 @@
   let isReady = false;
   let status: { isError: boolean; msg?: string } = { isError: false };
   let storageRemoveListener: () => void;
-  let saveError = false;
   let isStop = false;
   let isSubRunning = false;
   let failedCount = 0;
@@ -75,12 +69,6 @@
     actionName = "Collect Channel";
 
     await getChannelsList();
-    // if (isRequestSent) {
-    //   return true;
-    // } else {
-    //   setStatus("Unable to sent collect signal to the content script", true);
-    //   return false;
-    // }
   }
 
   async function collectAndWait() {
@@ -151,6 +139,9 @@
       setStatus(`Starting to ${un}subscribe to the channels`);
 
       for (let index = 0; index < subscriptionsList.length; index++) {
+        if (isStop) {
+          break;
+        }
         const { channelId, id, title } = subscriptionsList[index];
         const response = mode
           ? await insertSubscription(channelId)
@@ -174,6 +165,7 @@
     } finally {
       isSubRunning = false;
       isRunning = false;
+      subscriptionsWritable.set(subscriptionsList);
     }
   }
 
@@ -185,7 +177,6 @@
     isRunning = false;
     isStop = false;
     isSubRunning = false;
-    saveError = false;
     failedCount = 0;
     successCount = 0;
   }
@@ -260,10 +251,9 @@
       Authorization: "Bearer " + oAuthToken,
       "Content-Type": "application/json",
     };
-    const listUrl = "https://youtube.googleapis.com/youtube/v3/subscriptions";
 
     try {
-      await axios.delete(listUrl, {
+      await axios.delete(SUBSCRIPTIONS_API_URL, {
         params: {
           id,
           key: import.meta.env.VITE_API_KEY,
@@ -271,8 +261,33 @@
         headers,
       });
       return true;
-    } catch (error) {
-      setStatus((error as any).response.data.error.message, true);
+    } catch (err) {
+      const errors = err as Error | AxiosError;
+      if (axios.isAxiosError(errors)) {
+        log.error(errors);
+        switch (errors.response?.status) {
+          case 403:
+          case 401:
+            setStatus(
+              "Reconnect your account. OAuth token might be expired!",
+              true
+            );
+            resetAccount();
+            isStop = true;
+            return false;
+          case 404:
+            setStatus(
+              "The subscriber identified with the request cannot be found.",
+              true
+            );
+
+            return false;
+        }
+
+        setStatus(errors.response?.data.error.message, true);
+      } else {
+        setStatus(errors.message, true);
+      }
       return false;
     }
   }
@@ -284,11 +299,10 @@
       Authorization: "Bearer " + oAuthToken,
       "Content-Type": "application/json",
     };
-    const listUrl = "https://youtube.googleapis.com/youtube/v3/subscriptions";
 
     try {
       await axios.post(
-        listUrl,
+        SUBSCRIPTIONS_API_URL,
         {
           snippet: {
             resourceId: {
@@ -300,14 +314,46 @@
         {
           params: {
             part: "snippet",
-            key: import.meta.env.VITE_API_KEY,
+            key: API_KEY,
           },
           headers,
         }
       );
       return true;
-    } catch (error) {
-      setStatus((error as any).response.data.error.message, true);
+    } catch (err) {
+      const errors = err as Error | AxiosError;
+      if (axios.isAxiosError(errors)) {
+        log.error(errors);
+        switch (errors.response?.status) {
+          case 403:
+          case 401:
+            setStatus(
+              "Reconnect your account. OAuth token might be expired!",
+              true
+            );
+            resetAccount();
+            isStop = true;
+            return false;
+          case 400:
+            setStatus(
+              "You have reached your maximum number of subscriptions.",
+              true
+            );
+            isStop = true;
+            return false;
+          case 404:
+            setStatus(
+              "The subscriber identified with the request cannot be found.",
+              true
+            );
+
+            return false;
+        }
+
+        setStatus(errors.response?.data.error.message, true);
+      } else {
+        setStatus(errors.message, true);
+      }
       return false;
     }
   }
@@ -319,31 +365,54 @@
       Authorization: "Bearer " + oAuthToken,
       "Content-Type": "application/json",
     };
-    const listUrl = "https://youtube.googleapis.com/youtube/v3/subscriptions";
 
     let pageToken = undefined;
     subscriptionsList = [];
     while (true) {
       let res: any;
       try {
-        res = await axios.get(listUrl, {
+        res = await axios.get(SUBSCRIPTIONS_API_URL, {
           params: {
             pageToken,
             part: "snippet",
             mine: true,
-            key: import.meta.env.VITE_API_KEY,
+            key: API_KEY,
             fields:
               "nextPageToken, items(id, snippet(title, resourceId(channelId)))",
             maxResults: 50,
           },
           headers,
         });
-      } catch (error) {
-        setStatus((error as any).response.data.error.message, true);
+      } catch (err) {
+        const errors = err as Error | AxiosError;
+        if (axios.isAxiosError(errors)) {
+          log.error(errors);
+          switch (errors.response?.status) {
+            case 401:
+              setStatus(
+                "Reconnect your account. OAuth token might be expired!",
+                true
+              );
+              resetAccount();
+              return;
+            case 404:
+              setStatus(
+                "The subscriber identified with the request cannot be found.",
+                true
+              );
+              return;
+          }
+
+          setStatus(errors.response?.data.error.message, true);
+        } else {
+          setStatus(errors.message, true);
+        }
+        // do what you want with your axios error
+
         return;
       }
       const raw = await SubscriptionsRawSchema.safeParseAsync(res.data);
-      console.log(raw);
+      log.info(raw);
       if (!raw.success) {
         break;
       }
@@ -364,26 +433,32 @@
       pageToken = data.nextPageToken;
 
       await delay(1000);
-      // break;
     }
 
-    console.log(subscriptionsList);
+    log.info(subscriptionsList);
     subscriptionsWritable.set(subscriptionsList);
     subscriptionCount = subscriptionsList.length;
     setStatus("Subscription list collected successful");
   }
 
+  function resetAccount() {
+    if (primaryChannel === 0) {
+      channel0OAuthTokenWritable.set(null);
+      firstUserWritable.set(null);
+    } else {
+      channel1OAuthTokenWritable.set(null);
+      secondUserWritable.set(null);
+    }
+  }
+
   async function getUserInfo(): Promise<User | null> {
     try {
-      const res = await axios.get(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        {
-          params: {
-            access_token:
-              primaryChannel === 0 ? channel0OAuthToken : channel1OAuthToken,
-          },
-        }
-      );
+      const res = await axios.get(USERINFO_API_URL, {
+        params: {
+          access_token:
+            primaryChannel === 0 ? channel0OAuthToken : channel1OAuthToken,
+        },
+      });
 
       const userData = await UserSchema.safeParseAsync(res.data);
       if (userData.success) {
@@ -402,13 +477,9 @@
       (value) => (channel0OAuthToken = value)
     );
 
-    firstUserWritable.subscribe((value) => (firstUser = value));
-
     channel1OAuthTokenWritable.subscribe(
       (value) => (channel1OAuthToken = value)
     );
-
-    secondUserWritable.subscribe((value) => (secondUser = value));
 
     subscriptionsList = get(subscriptionsWritable);
     subscriptionCount = subscriptionsList.length;
