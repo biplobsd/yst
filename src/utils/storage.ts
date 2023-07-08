@@ -5,6 +5,7 @@ import {
   FIRST_OAUTH_KEY,
   FIRST_USER_KEY,
   MODE_KEY,
+  PRIMARY_CHANNEL,
   SECOND_OAUTH_KEY,
   SECOND_USER_KEY,
   SUBSCRIPTIONS_KEY,
@@ -15,6 +16,7 @@ import { z } from "zod";
 import log from "./logger";
 import { XPathModelSchema, xpathValues } from "./xpaths";
 import { SubscriptionsListSchema, UserSchema } from "./schema";
+import type { PrimaryChannel } from "./types";
 
 export async function promisedParseJSON(json: string | null): Promise<any> {
   if (!json) {
@@ -214,4 +216,12 @@ subscriptionsWritable.subscribe(async (value) => {
     log.error(error);
     return;
   }
+});
+
+const primaryChannelRaw = localStorage.getItem(PRIMARY_CHANNEL);
+export const primaryChannelWritable = writable(
+  (primaryChannelRaw ? +primaryChannelRaw : -1) as PrimaryChannel
+);
+primaryChannelWritable.subscribe((value) => {
+  localStorage.setItem(PRIMARY_CHANNEL, String(value));
 });

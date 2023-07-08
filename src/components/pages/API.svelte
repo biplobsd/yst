@@ -11,6 +11,7 @@
     channel0OAuthTokenWritable,
     channel1OAuthTokenWritable,
     firstUserWritable,
+    primaryChannelWritable,
     secondUserWritable,
     subscriptionsWritable,
   } from "src/utils/storage";
@@ -33,13 +34,14 @@
     SUBSCRIPTIONS_API_URL,
     USERINFO_API_URL,
   } from "src/utils/constants";
+  import type { PrimaryChannel } from "src/utils/types";
 
   let subscriptionsList: SubscriptionsList = [];
   let subscriptionCount: number = 0;
   let channel0OAuthToken: string | null = null;
   let channel1OAuthToken: string | null = null;
 
-  let primaryChannel: 0 | 1 = 0;
+  let primaryChannel: PrimaryChannel = -1;
   let lastStatusData: RuntimeMessage | undefined = undefined;
 
   let isRunning = true;
@@ -442,12 +444,15 @@
   }
 
   function resetAccount() {
-    if (primaryChannel === 0) {
-      channel0OAuthTokenWritable.set(null);
-      firstUserWritable.set(null);
-    } else {
-      channel1OAuthTokenWritable.set(null);
-      secondUserWritable.set(null);
+    switch (primaryChannel) {
+      case 0:
+        channel0OAuthTokenWritable.set(null);
+        firstUserWritable.set(null);
+        break;
+      case 1:
+        channel1OAuthTokenWritable.set(null);
+        secondUserWritable.set(null);
+        break;
     }
   }
 
@@ -480,6 +485,8 @@
     channel1OAuthTokenWritable.subscribe(
       (value) => (channel1OAuthToken = value)
     );
+
+    primaryChannelWritable.subscribe((value) => (primaryChannel = value));
 
     subscriptionsList = get(subscriptionsWritable);
     subscriptionCount = subscriptionsList.length;
@@ -585,12 +592,13 @@
       {/if}
     </div>
     <button
-      disabled={!isReady || isSubRunning || isRunning}
+      disabled={primaryChannel === -1 || !isReady || isSubRunning || isRunning}
       class="collect-channel-btn"
       on:click={collectSubs}>Collect channel</button
     >
     <button
-      disabled={(subscriptionCount ? false : true) ||
+      disabled={primaryChannel === -1 ||
+        (subscriptionCount ? false : true) ||
         isSubRunning ||
         !isReady ||
         isRunning}
@@ -598,7 +606,8 @@
       on:click={() => subUnSub(true)}>Subscribe</button
     >
     <button
-      disabled={(subscriptionCount ? false : true) ||
+      disabled={primaryChannel === -1 ||
+        (subscriptionCount ? false : true) ||
         isSubRunning ||
         !isReady ||
         isRunning}

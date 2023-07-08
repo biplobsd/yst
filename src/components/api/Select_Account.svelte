@@ -13,8 +13,10 @@
   } from "src/utils/storage";
   import { onMount } from "svelte";
   import Item from "./Item.svelte";
+  import axios from "axios";
+  import type { PrimaryChannel } from "src/utils/types";
 
-  export let primaryChannel: 0 | 1;
+  export let primaryChannel: PrimaryChannel;
   export let isRunning: boolean;
   export let isReady: boolean;
   export let isStop: boolean;
@@ -73,18 +75,32 @@
     return true;
   }
 
+  async function revokeToken(token: string) {
+    try {
+      await axios.get(`https://accounts.google.com/o/oauth2/revoke`, {
+        params: {
+          token,
+        },
+      });
+    } catch (error) {
+      log.error(error);
+    }
+  }
+
   async function connectDisconnect(btnNo: 0 | 1) {
     isRunning = true;
     primaryChannel = btnNo;
     try {
       if (btnNo === 0) {
         if (channel0OAuthToken) {
+          await revokeToken(channel0OAuthToken);
           channel0OAuthTokenWritable.set(null);
           firstUserWritable.set(null);
           return;
         }
       } else {
         if (channel1OAuthToken) {
+          await revokeToken(channel1OAuthToken);
           channel1OAuthTokenWritable.set(null);
           secondUserWritable.set(null);
           return;
@@ -120,23 +136,20 @@
   });
 
   $: {
-    if (primaryChannel === 0) {
-      if (firstUser) {
-        primaryChannelName = firstUser.given_name;
-      } else {
-        primaryChannelName = "Channel 1";
-      }
+    if (primaryChannel === 0 && firstUser) {
+      primaryChannelName = firstUser.given_name;
+    } else if (primaryChannel === 1 && secondUser) {
+      primaryChannelName = secondUser.given_name;
     } else {
-      if (secondUser) {
-        primaryChannelName = secondUser.given_name;
-      } else {
-        primaryChannelName = "Channel 2";
+      primaryChannelName = "Choose a account";
+      if (!isRunning) {
+        primaryChannel = -1;
       }
     }
   }
 </script>
 
-<div>Select Account</div>
+<div class="font-bold">Account</div>
 <div
   class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
 >

@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { User } from "src/utils/schema";
+  import type { PrimaryChannel } from "src/utils/types";
 
-  export let primaryChannel: 0 | 1;
+  export let primaryChannel: PrimaryChannel;
   export let user: User | null = null;
   export let connectDisconnect: (btnNo: 0 | 1) => Promise<void>;
   export let id: 0 | 1;
