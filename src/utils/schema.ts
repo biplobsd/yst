@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const UserSchema = z.object({
-  email: z.string(),
-  email_verified: z.boolean(),
-  family_name: z.string(),
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
+  family_name: z.string().optional(),
   given_name: z.string(),
   hd: z.string().optional(),
-  locale: z.string(),
-  name: z.string(),
+  locale: z.string().optional(),
+  name: z.string().optional(),
   picture: z.string(),
-  sub: z.string(),
+  sub: z.string().optional(),
 });
 
 export const SubscriptionsRawSchema = z.object({
