@@ -134,7 +134,7 @@
     } else if (primaryChannel === 1 && secondUser) {
       primaryChannelName = secondUser.given_name;
     } else {
-      primaryChannelName = "Choose a account";
+      primaryChannelName = "Choose an account";
       if (!isRunning) {
         primaryChannel = -1;
       }
