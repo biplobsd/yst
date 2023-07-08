@@ -174,13 +174,16 @@
       isRunning = true;
       isSubRunning = true;
 
+      const len = channelPaths.length;
+      const copyList = Object.assign([], channelPaths);
+
       setStatus(`Starting to ${un}subscribe to the channels`);
-      for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
+      for (let indexMain = 0; indexMain < len; indexMain++) {
         // Sending webpage change action
         if (
           !(await runtime.send({
             type: "statusContent",
-            status: { msg: channelPaths[indexMain], code: "changePage" },
+            status: { msg: copyList[indexMain], code: "changePage" },
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
@@ -190,7 +193,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ready signal: ` + channelPaths[indexMain]
+            `Waiting for the ready signal: ` + copyList[indexMain]
           ))
         ) {
           return;
@@ -202,7 +205,7 @@
           !(await runtime.send({
             type: "statusContent",
             status: {
-              msg: channelPaths[indexMain],
+              msg: copyList[indexMain],
               code: mode ? "subscribe" : "unsubscribe",
             },
           }))
@@ -213,7 +216,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ${un}subscribe signal: ` + channelPaths[indexMain]
+            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain]
           ))
         ) {
           return;

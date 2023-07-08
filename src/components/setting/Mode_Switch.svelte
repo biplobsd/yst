@@ -28,7 +28,7 @@
     <input
       type="radio"
       name="radio-10"
-      class="radio radio-xs checked:bg-red-500"
+      class="radio radio-xs checked:bg-success"
       checked={localMode === "xpath"}
       on:change={() => {
         modeWritable.set("xpath");
@@ -46,7 +46,7 @@
       disabled={!isChrome}
       type="radio"
       name="radio-10"
-      class="radio radio-xs checked:bg-blue-500"
+      class="radio radio-xs checked:bg-info"
       checked={localMode === "api"}
       on:change={() => {
         modeWritable.set("api");

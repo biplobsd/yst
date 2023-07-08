@@ -59,10 +59,6 @@
 
   async function stop() {
     isStop = true;
-    runtime.send({
-      type: "status",
-      status: { msg: "Stop signal sended", code: "stop" },
-    });
   }
 
   async function collectSubs() {
@@ -128,7 +124,7 @@
   }
 
   async function subUnSub(mode = true) {
-    const un = !mode && "un";
+    const un = mode ? "" : "un";
     if (isRunning) {
       return;
     }
@@ -144,11 +140,14 @@
       isSubRunning = true;
       setStatus(`Starting to ${un}subscribe to the channels`);
 
-      for (let index = 0; index < subscriptionsList.length; index++) {
+      const len = subscriptionsList.length;
+      const copyList = Object.assign([], subscriptionsList);
+
+      for (let index = 0; index < len; index++) {
         if (isStop) {
           break;
         }
-        const { channelId, id, title } = subscriptionsList[index];
+        const { channelId, id, title } = copyList[index];
         const response = mode
           ? await insertSubscription(channelId)
           : await deleteSubscription(id);
@@ -156,7 +155,7 @@
         if (response) {
           setStatus(`${un}subscribe to the ${title} successful`);
           successCount++;
-          delete subscriptionsList[index];
+          subscriptionsList.shift();
           subscriptionCount--;
         } else {
           setStatus(`${un}subscribe to the ${title} unsuccessful`, true);
@@ -173,7 +172,9 @@
     } finally {
       isSubRunning = false;
       isRunning = false;
+      // console.log(subscriptionsList);
       subscriptionsWritable.set(subscriptionsList);
+      isStop = false;
     }
   }
 

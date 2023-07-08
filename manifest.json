@@ -3,10 +3,6 @@
   "description": "Transferring subscriptions from one YouTube account to another",
   "version": "1.3",
   "manifest_version": 3,
-  "oauth2": {
-    "client_id": "772148893287-ce9u45rsk959280okc2mtpasjnv7dpbl.apps.googleusercontent.com",
-    "scopes": ["https://www.googleapis.com/auth/youtube.readonly"]
-  },
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvvylaYWRonmOq2UpC6Rl7BsweKto4OkUqIMGOxDEPn5sz7YNXtEU441UHQ117WEYQ0YJFDio1fCWaoiwyZWXF4T6JR8NT5hoQsZiND8GDvSqYMrh4rBcHq1kSYrE9h5UYwzc4sfkit7f3MQ6BkUZXdLFxmF/vhA5K26BrLI8NupeR18J7OiD4xL6BvRU1CFUyR8HkjZWBBOQp1CrXXgPGZSb5z0Rf+v/+WqUMo5XJR4NC759iUI3OtSrK8lOKdAWn40fjjAkb0AMgiRBTT+iNYxbdWZpQISoqBP4mbHHFVS/1Iy7rtnu5ncte1Kf8qPyiSWhZ2xcUoK/X1bXOFjcLwIDAQAB",
   "icons": {
     "16": "src/assets/icons/icon16.png",
