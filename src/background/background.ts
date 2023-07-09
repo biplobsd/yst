@@ -55,7 +55,6 @@ export async function parseData(dataLocal: RuntimeMessage) {
 
         isWorking = true;
         try {
-          await chrome.identity.clearAllCachedAuthTokens();
           const auth_params = {
             client_id: import.meta.env.VITE_CLIENT_ID,
             redirect_uri: REDIRECT_URI,
@@ -96,7 +95,6 @@ export async function parseData(dataLocal: RuntimeMessage) {
             authToken: token,
           });
 
-          await chrome.identity.clearAllCachedAuthTokens();
           return;
         } catch (error) {
           log.error(error);
