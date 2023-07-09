@@ -2,37 +2,56 @@
 
 ![logo](/src/assets/icons/icon128.png)
 
-YouTube Subscriptions Transfer is a browser extension that allows you to transfer subscriptions from one account to another without using any API. The extension collects a list of channels and enables you to subscribe or unsubscribe to each channel. It interacts with the DOM using xpath.
+YouTube Subscriptions Transfer is a browser extension that allows you to transfer or move subscriptions from one account to another using XPath or API. The extension collects a list of channels and enables you to subscribe or unsubscribe to each channel. It interacts with the DOM using xpath and YouTube Data API v3.
 
-**_`Note: YST only works when the YouTube webpage language is set to English (US).`_**
+**_`Note: When using XPath mode, YST only works when the YouTube webpage language is set to English (US).`_**
 
-## Quick tutorial 60 second
+## Quick tutorial 60 second with the XPath mode
 
 [![Use case](https://img.youtube.com/vi/EsouSNQOALQ/0.jpg)](https://youtu.be/EsouSNQOALQ)
 
+## Usage scenario
+### Case 1 - Sharing with your friend
+Suppose you regularly watch YouTube videos, and you are subscribed to many of your favorite YouTube channels. Those channels are really good. Now your friend also wants to follow your subscriptions. Your friend requests you to share all of your YouTube subscriptions with their account. In this case, you can show your entire subscription list to your friend, and they can then subscribe to those channels one by one. In this case, the 'YouTube Subscription Transfer Extension' can help you transfer all of your subscriptions to their account automatically.
+
+### Case 2  - Work account to new account
+Suppose you are using your personal YouTube account, and you also use an ad blocker in your browser to skip YouTube video ads. Currently, you are posting your videos to your channel. However, in this case, YouTube might block you, possibly in a few days. Now that you are aware of this, you decide to create a new YouTube account to keep your personal and work accounts separate. You want to transfer your work account subscriptions to your new account. You have the option to do this manually, one by one, or you can use the "YouTube Subscription Transfer Extension" to automatically transfer or move them to your new account
 ## Installation
 
 <a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj">
   <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get YST on Microsoft Edge" width="224px">
 </a>
 
+__Chrome Web Store link comming soon...__
+
 Or get the built zip from the [release](https://github.com/biplobsd/yst/releases/latest) tab. Then follow the instructions in the [Load unpacked extensions](#load-unpacked-extensions) section. The **_/dist_** folder should be considered as the unpacked zip files.
 
-## Usages
 
+## YST has two modes
+Below is a comparison:
+
+| XPath      | API |
+| ----------- | ----------- |
+| No need to connect an account | Need to connect an account |
+| Only works on youtube.com   | No need to go to any page |
+| Slow on webpage loading   | API requests, so this is fast |
+
+## Usages
+### Using XPath mode (Default)
 To use the extension, open the Y (yst) icon from the extension panel. If you are not on the https://www.youtube.com page, click the Open YouTube button.
 
-![Options](https://user-images.githubusercontent.com/43641536/225968066-01278b17-4ea8-4fd5-954c-525c2a8cc0bd.png)
+![Options](https://github.com/biplobsd/yst/assets/43641536/3e4cef39-71d1-4bc0-8fff-2021761ba2e1)
+
 
 Wait for the page to load completely and wait for the Ready for accept request signal from the content script. Once connected, the options will look like the screenshot below.
 
-![First time view](https://user-images.githubusercontent.com/43641536/225969173-5372d3ee-8a00-4204-9922-886fdea2ec37.png)
+![First time view](https://github.com/biplobsd/yst/assets/43641536/1aca238e-f2a9-46d7-be00-158474d30041)
 
 ### Data section
 
 In the Data section, you can see how many subscriptions the extension has collected. If you expand the subscriptions, you will see all the channel IDs. You can also add, remove, or update this list and take action from this list.
 
-![Data section](https://user-images.githubusercontent.com/43641536/225971299-38607a74-eee1-488e-acf2-3b18ba99d2de.png)
+![Data section](https://github.com/biplobsd/yst/assets/43641536/86200bbd-1313-49a9-81e6-be4aab7f3240)
 
 ### Actions
 
@@ -47,7 +66,27 @@ In the Data section, you can see how many subscriptions the extension has collec
 
 The Subscribe and Unsubscribe buttons will only appear when the Subscriptions list is not empty
 
-![Actions active](https://user-images.githubusercontent.com/43641536/225979057-af78429a-d0a1-40d2-9704-ba2f9ec66ec8.png)
+![Actions active](https://github.com/biplobsd/yst/assets/43641536/4ea00f4c-601a-40d8-a06b-52412d9ec44d)
+
+## Using API mode
+To use the API mode, you first need to switch to API mode. To do that, go to the `Settings` tab and you will see an option called `Select Mode.` By default, XPath will be active. Click on `API.`
+
+![API Mode active](https://github.com/biplobsd/yst/assets/43641536/3c0764fa-de39-4559-b986-1755d101ecc7)
+
+### Connect your account
+Now go to the `Home` tab and expand the `Account` section. You will see two connect buttons.
+
+![Account empty](https://github.com/biplobsd/yst/assets/43641536/acea9bc2-9483-473f-b7b1-9a0a290cf5bc)
+
+Connect your account for the two accounts you want to subscribe or unsubscribe from. On the left side, you will see a radio button. After connecting your channels, choose your primary channel by clicking on the radio button.
+
+Now you will see the `Collect Channel` button enabled. Click to collect the channel.
+
+![Collect channel](https://github.com/biplobsd/yst/assets/43641536/76fbbbb5-fbde-4726-9fe2-65613a330232)
+
+After collecting the channel, choose your new account. Then click the `subscribe` button to transfer the subscription. Now wait and observe the success and failure count.
+
+By default, there is a 500ms delay for every API request. You can adjust this value in the `Settings` tab.
 
 ## Configuration
 
@@ -58,6 +97,15 @@ Add `REMOTE_DISABLE: true` to the Setting/XPath text box and save to disable aut
 ### Update XPath value
 
 If the YouTube website updates its site and any XPath value is broken, you can easily update that value by going to the "Settings" tab and selecting the "XPath" option. Now update the XPath values as json format. You need to add `REMOTE_DISABLE: true` for disabling auto update from project xpath value. Now click save.
+
+### Select Mode
+- XPath (Default)
+  > Manually visit the channel page and perform actions.
+- API
+  > API mode will use the `YouTube Data API v3`.
+
+### API Delay per request
+By default, there is a 500 millisecond delay for every API request. This will not affect the XPath mode. You can change this value in the settings tab.
 
 ## Development
 
