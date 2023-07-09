@@ -3,7 +3,7 @@
   "description": "Transferring subscriptions from one YouTube account to another",
   "version": "1.3",
   "manifest_version": 3,
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvvylaYWRonmOq2UpC6Rl7BsweKto4OkUqIMGOxDEPn5sz7YNXtEU441UHQ117WEYQ0YJFDio1fCWaoiwyZWXF4T6JR8NT5hoQsZiND8GDvSqYMrh4rBcHq1kSYrE9h5UYwzc4sfkit7f3MQ6BkUZXdLFxmF/vhA5K26BrLI8NupeR18J7OiD4xL6BvRU1CFUyR8HkjZWBBOQp1CrXXgPGZSb5z0Rf+v/+WqUMo5XJR4NC759iUI3OtSrK8lOKdAWn40fjjAkb0AMgiRBTT+iNYxbdWZpQISoqBP4mbHHFVS/1Iy7rtnu5ncte1Kf8qPyiSWhZ2xcUoK/X1bXOFjcLwIDAQAB",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoYt4kC3wk0Gtbe/DkUsTe+kcOXOfeMfYvItTgRi/wDApcC1+7MkpgmRNFY8fCyvWLlWMbq7FuaOcEuTsot8MiBZ1NAegug0IZQ5LXO9FoHpg9XpD5n0PHpgbXrKQORLMsrp9Ib5YZYMC757BwFz1EI6fdm8A4hJeVq6Lps4zHp5/LnveiiKomvqhWR8YHosWse2mK1zQLqe6MviIVeKFV7dO+RXifPSPMKXTyPY9BQl82qXpWsYreLay8PJ7h+dJM+BssVmx6JQAnz9CEnKRZoEBxgt+s57iGESZ6pGfMhOAIZdgxesew4o0/YE20nCLUU5FCbVtKzknBZKiC+ODmwIDAQAB",
   "icons": {
     "16": "src/assets/icons/icon16.png",
     "32": "src/assets/icons/icon32.png",
@@ -32,5 +32,5 @@
       "128": "src/assets/icons/icon128.png"
     }
   },
-  "permissions": ["storage", "tabs", "identity", "identity.email"]
+  "permissions": ["tabs", "identity"]
 }
