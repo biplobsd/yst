@@ -20,11 +20,11 @@
         bind:group={primaryChannel}
         name="radio-1"
         value={id}
-        disabled={isRunning}
+        disabled={isRunning || !isConnect}
       />
     </label>
   </th>
-  <td class=" w-full">
+  <td class={`w-full ${isConnect ? "" : "opacity-30"}`}>
     <div class="flex justify-center items-center space-x-2">
       <div class="avatar">
         <div class="mask mask-squircle">

@@ -3,11 +3,9 @@ import { writable } from "svelte/store";
 import {
   API_REQ_DELAY,
   CHANNEL_PATHS_KEY,
-  FIRST_OAUTH_KEY,
   FIRST_USER_KEY,
   MODE_KEY,
   PRIMARY_CHANNEL,
-  SECOND_OAUTH_KEY,
   SECOND_USER_KEY,
   SUBSCRIPTIONS_KEY,
   THEME_MODE_KEY,
@@ -132,16 +130,24 @@ modeWritable.subscribe(async (value) => {
 });
 
 // OAuth token
-const firstToken = localStorage.getItem(FIRST_OAUTH_KEY);
-export const channel0OAuthTokenWritable = writable(firstToken);
-channel0OAuthTokenWritable.subscribe((value) => {
-  localStorage.setItem(FIRST_OAUTH_KEY, value ? value : "");
+export const channel0OAuthTokenWritable = writable<null | string>(null);
+chrome.storage.session.get(["firstOAuthKey"]).then((result) => {
+  if (result && typeof result === "string") {
+    channel0OAuthTokenWritable.set(result);
+  }
+});
+channel0OAuthTokenWritable.subscribe(async (value) => {
+  await chrome.storage.session.set({ firstOAuthKey: value ? value : "" });
 });
 
-const secondToken = localStorage.getItem(SECOND_OAUTH_KEY);
-export const channel1OAuthTokenWritable = writable(secondToken);
-channel1OAuthTokenWritable.subscribe((value) => {
-  localStorage.setItem(SECOND_OAUTH_KEY, value ? value : "");
+export const channel1OAuthTokenWritable = writable<null | string>(null);
+chrome.storage.session.get(["secondOAuthKey"]).then((result) => {
+  if (result && typeof result === "string") {
+    channel1OAuthTokenWritable.set(result);
+  }
+});
+channel1OAuthTokenWritable.subscribe(async (value) => {
+  await chrome.storage.session.set({ secondOAuthKey: value ? value : "" });
 });
 
 // UserData

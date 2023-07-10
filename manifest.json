@@ -32,5 +32,5 @@
       "128": "src/assets/icons/icon128.png"
     }
   },
-  "permissions": ["tabs", "identity"]
+  "permissions": ["tabs", "identity", "storage"]
 }

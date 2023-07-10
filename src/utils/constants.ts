@@ -14,8 +14,6 @@ export const MODE_KEY = "mode";
 export const AUTH_URL = "https://accounts.google.com/o/oauth2/auth";
 export const REDIRECT_URI =
   "https://" + chrome.runtime.id + ".chromiumapp.org/provider_cb";
-export const FIRST_OAUTH_KEY = "firstOAuthKey";
-export const SECOND_OAUTH_KEY = "secondOAuthKey";
 export const FIRST_USER_KEY = "firstUserKey";
 export const SECOND_USER_KEY = "secondUserKey";
 export const SUBSCRIPTIONS_KEY = "SubscriptionsKey";

@@ -103,6 +103,7 @@
       await waitingForResponseReady(`Waiting for the OAuth Token `, 30);
     } catch (error) {
       log.info(error);
+      primaryChannel = -1;
     } finally {
       isRunning = false;
     }

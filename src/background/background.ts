@@ -60,7 +60,7 @@ export async function parseData(dataLocal: RuntimeMessage) {
             redirect_uri: REDIRECT_URI,
             response_type: "token",
             scope:
-              "https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+              "https://www.googleapis.com/auth/youtube.force-ssl https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/userinfo.profile",
             prompt: "select_account",
           };
 

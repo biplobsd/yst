@@ -222,6 +222,7 @@
           setStatus(status.msg, true);
           isRunning = false;
           isReady = true;
+          primaryChannel = -1;
           return;
         default:
           return;
