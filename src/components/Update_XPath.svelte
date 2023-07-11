@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { xPathValuesWritable } from "src/utils/storage";
-  import { fetchXPathUpdate } from "../utils/helper";
+  import { xPathValuesWritable, modeWritable } from "src/utils/storage";
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import { get } from "svelte/store";
-  import toast from "svelte-french-toast";
+  import { fetchXPathUpdate } from "src/popup/helper";
 
   let isXPathUpdating = false;
 
@@ -15,9 +14,10 @@
   }
 
   onMount(async () => {
+    const mode = get(modeWritable);
     const storedXPathValues = get(xPathValuesWritable);
 
-    if (!storedXPathValues.REMOTE_DISABLE) {
+    if (mode === "xpath" && !storedXPathValues.REMOTE_DISABLE) {
       await xpathUpdateHandler();
     }
   });

@@ -1,6 +1,5 @@
-import { STORIES_URL as SELECTED_URLS, XPATH_URL } from "./constants";
-import { XPathModelSchema, type XPathModel } from "./xpaths";
-import { xPathValuesWritable } from "./storage";
+import { STORIES_URL as SELECTED_URLS } from "./constants";
+import { type XPathModel } from "./xpaths";
 
 export function isXPathExpressionExists(expression: string): boolean {
   const result = document.evaluate(
@@ -79,23 +78,6 @@ export function getXpathFromElements(xpath: string) {
   }
 
   return undefined;
-}
-
-export async function fetchXPathUpdate(): Promise<XPathModel | undefined> {
-  try {
-    const resJson = await (await fetch(XPATH_URL)).json();
-
-    const xPathValueValidated = await XPathModelSchema.parseAsync(resJson);
-
-    const xpathValues = addDate(xPathValueValidated);
-
-    xPathValuesWritable.update((current) => {
-      return { ...current, ...xpathValues };
-    });
-    return xpathValues;
-  } catch (e) {
-    return undefined;
-  }
 }
 
 export function addDate(xpathValues: XPathModel) {

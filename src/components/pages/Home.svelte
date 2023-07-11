@@ -9,11 +9,7 @@
     type RuntimeMessage,
   } from "src/utils/communication";
   import type { XPathModel } from "src/utils/xpaths";
-  import {
-    channelPathsSchema,
-    channelPathsWritable,
-    xPathValuesWritable,
-  } from "src/utils/storage";
+  import { channelPathsWritable, xPathValuesWritable } from "src/utils/storage";
   import { get } from "svelte/store";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
@@ -22,6 +18,7 @@
   import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
+  import { channelPathsSchema } from "src/utils/schema";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -177,13 +174,16 @@
       isRunning = true;
       isSubRunning = true;
 
+      const len = channelPaths.length;
+      const copyList = Object.assign([], channelPaths);
+
       setStatus(`Starting to ${un}subscribe to the channels`);
-      for (let indexMain = 0; indexMain < channelPaths.length; indexMain++) {
+      for (let indexMain = 0; indexMain < len; indexMain++) {
         // Sending webpage change action
         if (
           !(await runtime.send({
             type: "statusContent",
-            status: { msg: channelPaths[indexMain], code: "changePage" },
+            status: { msg: copyList[indexMain], code: "changePage" },
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
@@ -193,7 +193,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ready signal: ` + channelPaths[indexMain]
+            `Waiting for the ready signal: ` + copyList[indexMain]
           ))
         ) {
           return;
@@ -205,7 +205,7 @@
           !(await runtime.send({
             type: "statusContent",
             status: {
-              msg: channelPaths[indexMain],
+              msg: copyList[indexMain],
               code: mode ? "subscribe" : "unsubscribe",
             },
           }))
@@ -216,7 +216,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ${un}subscribe signal: ` + channelPaths[indexMain]
+            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain]
           ))
         ) {
           return;
@@ -423,17 +423,17 @@
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
     >
-      <input type="checkbox" class="peer" />
+      <input type="checkbox" class="peer !min-h-8 !py-0" />
       <div
-        class="collapse-title text-sm bg-success/70 text-black/70 tracking-wider font-sans"
+        class="!min-h-8 !py-0 gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
       >
         Subscriptions:
         {#key channelPathsCount}
           <span in:blur>{channelPathsCount}</span>
         {/key}
       </div>
-      <div class="collapse-content bg-success/60 peer-checked:py-2">
-        <span class="text-xs text-slate-800 space-y-2">
+      <div class="collapse-content peer-checked:py-2">
+        <span class="text-xs space-y-2">
           <p>
             Enter only channel IDs. Channel IDs start with the <span
               class="font-bold">@</span
@@ -582,7 +582,7 @@
       </div>
       <button
         disabled={!isRightSiteNow || !ready || isSubRunning || isRunning}
-        class="btn btn-success w-full rounded-full"
+        class="collect-channel-btn"
         on:click={collectSubs}>Collect channel</button
       >
       <button
@@ -590,7 +590,7 @@
           isSubRunning ||
           !ready ||
           isRunning}
-        class="w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd"
+        class="subscribe-btn"
         on:click={() => subUnSub(true)}>Subscribe</button
       >
       <button
@@ -598,7 +598,7 @@
           isSubRunning ||
           !ready ||
           isRunning}
-        class="w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd"
+        class="unsubscribe-btn"
         on:click={() => subUnSub(false)}>Unsubscribe</button
       >
     </div>

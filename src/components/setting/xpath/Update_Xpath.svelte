@@ -2,7 +2,7 @@
   import { slide } from "svelte/transition";
   import { onMount } from "svelte";
   import { XPathModelSchema, type XPathModel } from "src/utils/xpaths";
-  import { addDate, fetchXPathUpdate } from "src/utils/helper";
+  import { addDate } from "src/utils/helper";
   import {
     promisedParseJSON,
     xPathValuesWritable,
@@ -11,6 +11,7 @@
   import { get } from "svelte/store";
   import log from "src/utils/logger";
   import toast from "svelte-french-toast";
+  import { fetchXPathUpdate } from "src/popup/helper";
   let xpathValuesString: string = "";
   let isLoadingSave = false;
   let isErrorSave = false;

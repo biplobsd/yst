@@ -10,4 +10,16 @@
   .scrollbar-style {
     @apply scrollbar-thin scrollbar-thumb-base-content/5 hover:scrollbar-thumb-base-content/30 scrollbar-track-rounded-md scrollbar-thumb-rounded;
   }
+
+  .subscribe-btn {
+    @apply w-full btn btn-ghost dark:bg-slate-100 bg-slate-800 dark:text-slate-900 text-slate-300 rounded-full hover:bg-slate-600 tsd;
+  }
+
+  .unsubscribe-btn {
+    @apply w-full btn btn-ghost dark:bg-slate-700/80 bg-slate-200/80 dark:text-slate-300/80 rounded-full hover:bg-slate-500/80 tsd;
+  }
+
+  .collect-channel-btn {
+    @apply btn btn-success w-full rounded-full;
+  }
 }
