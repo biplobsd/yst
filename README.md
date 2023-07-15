@@ -16,13 +16,11 @@ Suppose you regularly watch YouTube videos, and you are subscribed to many of yo
 
 ### Case 2  - Work account to new account
 Suppose you are using your personal YouTube account, and you also use an ad blocker in your browser to skip YouTube video ads. Currently, you are posting your videos to your channel. However, in this case, YouTube might block you, possibly in a few days. Now that you are aware of this, you decide to create a new YouTube account to keep your personal and work accounts separate. You want to transfer your work account subscriptions to your new account. You have the option to do this manually, one by one, or you can use the "YouTube Subscription Transfer Extension" to automatically transfer or move them to your new account
+
 ## Installation
-
-<a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj">
-  <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get YST on Microsoft Edge" width="224px">
-</a>
-
-__Chrome Web Store link comming soon...__
+| Edge Add-ons | Chrome Web Store |
+| ----------- | ----------- |
+| <a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get YST on Microsoft Edge" width="224px"></a> | <a href="https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa"><img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/HRs9MPufa1J1h5glNhut.png" alt="Get YST on Chrome Web Store" width="224px"></a> |
 
 Or get the built zip from the [release](https://github.com/biplobsd/yst/releases/latest) tab. Then follow the instructions in the [Load unpacked extensions](#load-unpacked-extensions) section. The **_/dist_** folder should be considered as the unpacked zip files.
 
