@@ -10,6 +10,12 @@ YouTube Subscriptions Transfer is a browser extension that allows you to transfe
 
 [![Use case](https://img.youtube.com/vi/EsouSNQOALQ/0.jpg)](https://youtu.be/EsouSNQOALQ)
 
+## Long Tutorial (In French Language)
+
+[![Comment transférer ses abonnements YouTube sur un autre compte](https://img.youtube.com/vi/lLRLc2C7M8s/0.jpg)](https://youtu.be/lLRLc2C7M8s)
+<br> Check out the article on [paradoxetemporel.fr](https://paradoxetemporel.fr/47853-comment-transferer-ses-abonnements-youtube-sur-un-autre-compte.html)
+<br> Thanks for the tutorial, [Zast](https://github.com/zast57) 
+
 ## Usage scenario
 ### Case 1 - Sharing with your friend
 Suppose you regularly watch YouTube videos, and you are subscribed to many of your favorite YouTube channels. Those channels are really good. Now your friend also wants to follow your subscriptions. Your friend requests you to share all of your YouTube subscriptions with their account. In this case, you can show your entire subscription list to your friend, and they can then subscribe to those channels one by one. In this case, the 'YouTube Subscription Transfer Extension' can help you transfer all of your subscriptions to their account automatically.
