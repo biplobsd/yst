@@ -27,6 +27,18 @@ export const SubscriptionsRawSchema = z.object({
     .array(),
 });
 
+export const ChannelRawSchema = z
+  .object({
+    items: z
+      .object({
+        snippet: z.object({
+          customUrl: z.string(),
+        }),
+      })
+      .array(),
+  })
+  .transform((x) => x.items.map((y) => y.snippet.customUrl));
+
 export const SubscriptionsListSchema = z
   .object({
     id: z.string(),

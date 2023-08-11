@@ -19,6 +19,7 @@
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
   import { channelPathsSchema } from "src/utils/schema";
+  import ZipReader from "../data/Zip_Reader.svelte";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -92,7 +93,7 @@
       let notFoundList: string[];
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !channelPaths.includes(elem)
+          (elem) => !channelPaths.includes(elem.toLowerCase())
         );
 
         if (notFoundList.length === 0) {
@@ -102,7 +103,7 @@
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          channelPaths.includes(elem)
+          channelPaths.includes(elem.toLowerCase())
         );
 
         if (notFoundList.length === 0) {
@@ -338,7 +339,7 @@
   function channelsIdsParse(listStr: string[]) {
     const l: string[] = [];
     for (let i of listStr) {
-      const iTrim = i.trim();
+      const iTrim = i.trim().toLowerCase();
       if (!iTrim.startsWith("@")) {
         if (iTrim.startsWith("channel/")) {
           l.push(iTrim);
@@ -362,6 +363,23 @@
       });
       return;
     }
+    channelPaths = l;
+    channelPathsWritable.set(l);
+    toast.success("Save successful", {
+      id: toastId,
+    });
+  }
+
+  function channelsIdsTakeoutSave(channelIDs: string[]) {
+    const toastId = toast.loading("Saving...");
+    const l = channelsIdsParse(channelIDs);
+    if (l === undefined) {
+      toast.error("Save unsuccessful", {
+        id: toastId,
+      });
+      return;
+    }
+
     channelPaths = l;
     channelPathsWritable.set(l);
     toast.success("Save successful", {
@@ -496,6 +514,7 @@
             >Save</button
           >
         </form>
+        <ZipReader {channelsIdsTakeoutSave} />
       </div>
     </div>
     <div>

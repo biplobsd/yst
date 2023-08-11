@@ -228,7 +228,7 @@ async function parseHref() {
       }
       const path = l.getAttribute("href");
       if (isValidChannelPath(path)) {
-        channelsPaths.push(removeAtNSlash(path!));
+        channelsPaths.push(removeAtNSlash(path!).toLowerCase());
       }
     }
     return channelsPaths;

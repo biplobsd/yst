@@ -57,6 +57,25 @@ In the Data section, you can see how many subscriptions the extension has collec
 
 ![Data section](https://github.com/biplobsd/yst/assets/43641536/86200bbd-1313-49a9-81e6-be4aab7f3240)
 
+#### Google Takeout
+
+YST now supports importing a Google Takeout ZIP file to import a `subscription.csv` file in XPath mode. The `subscription.csv` file contains channel IDs. During the import of the ZIP file, all `channel IDs` are converted to `custom URLs` for similarity checks with the YouTube page's subscription list. The conversion process utilizes the YouTube Data API.
+
+##### Here are the steps to import a Takeout ZIP file:
+
+1. Go to the [Google takeout manager](https://takeout.google.com/takeout/custom/youtube)
+2. Click on `All YouTube data included`, then on `Deselect all`, then select only `subscriptions` and click `OK`.
+
+   ![Checked subscriptions](https://github.com/biplobsd/yst/assets/43641536/28a1ffb1-6ab8-4439-8541-c8805d409fb9)
+   
+3. Click on `Next step` and then on `Create export`.
+4. Wait for the email. You will receive a Google Takeout email containing a link to the ZIP file. Download that ZIP file.
+5. Return to `YST`, click on `Data`, and below that, you will find the `Takeout import` section. Click the `Click to choose a ZIP file` button here. Then select and choose your takeout.zip file.
+
+   ![Takeout import](https://github.com/biplobsd/yst/assets/43641536/8fb3a7b5-17f3-442e-83db-ae0ca59369da)
+
+Now, YST will automatically import all channels from the `subscription.csv`. Afterward, you can proceed with any actions.
+
 ### Actions
 
 - Collect channel
