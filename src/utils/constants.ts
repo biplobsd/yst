@@ -19,6 +19,8 @@ export const SECOND_USER_KEY = "secondUserKey";
 export const SUBSCRIPTIONS_KEY = "SubscriptionsKey";
 export const SUBSCRIPTIONS_API_URL =
   "https://youtube.googleapis.com/youtube/v3/subscriptions";
+export const CHANNEL_API_URL =
+  "https://youtube.googleapis.com/youtube/v3/channels";
 export const API_KEY = import.meta.env.VITE_API_KEY;
 export const USERINFO_API_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 export const PRIMARY_CHANNEL = "primaryChannelKey";
