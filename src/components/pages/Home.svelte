@@ -93,7 +93,7 @@
       let notFoundList: string[];
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !channelPaths.includes(elem)
+          (elem) => !channelPaths.includes(elem.toLowerCase())
         );
 
         if (notFoundList.length === 0) {
@@ -103,7 +103,7 @@
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          channelPaths.includes(elem)
+          channelPaths.includes(elem.toLowerCase())
         );
 
         if (notFoundList.length === 0) {
@@ -339,7 +339,7 @@
   function channelsIdsParse(listStr: string[]) {
     const l: string[] = [];
     for (let i of listStr) {
-      const iTrim = i.trim();
+      const iTrim = i.trim().toLowerCase();
       if (!iTrim.startsWith("@")) {
         if (iTrim.startsWith("channel/")) {
           l.push(iTrim);
