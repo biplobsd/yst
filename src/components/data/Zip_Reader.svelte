@@ -8,9 +8,10 @@
   import log from "src/utils/logger";
   import { ChannelRawSchema } from "src/utils/schema";
   import qs from "qs";
+  import toast from "svelte-french-toast";
 
   export let channelsIdsTakeoutSave: (channelIDs: string[]) => void;
-  let files: FileList;
+  let files: FileList | null = null;
   let isLoading = false;
   const subCsvPath =
     "Takeout/YouTube and YouTube Music/subscriptions/subscriptions.csv";
@@ -65,12 +66,16 @@
   }
 
   async function handleFileSelect(file: File) {
+    const toastID = toast.loading("Importing zip file...");
     const zip = await ZipReader.init(new PassthroughBlobProvider(file));
+    toast.loading("Finding subscriptions.csv file...", { id: toastID });
     const zipEntry = zip.files.find((x) => x.path === subCsvPath);
     if (zipEntry) {
+      toast.loading("Extracting subscriptions.csv", { id: toastID });
       const subscriptCSVFile = await zip.extract(zipEntry);
       const channelIds: string[] = [];
 
+      toast.loading("Parsing csv", { id: toastID });
       let isFirstRow = true;
       for await (let row of csv_async_iter(subscriptCSVFile.stream())) {
         if (isFirstRow) {
@@ -80,13 +85,21 @@
         const id = row[0];
         if (id) channelIds.push(id);
       }
+
+      toast.loading("Converting channel ID to custom URL", { id: toastID });
       const customUrls = await convertChannelIdToCustomURL(channelIds);
+      toast.loading("Saving custom URL", { id: toastID });
       channelsIdsTakeoutSave(customUrls);
+      toast.success("All done", { id: toastID });
+    } else {
+      toast.error("subscriptions.csv file not found in the zip", {
+        id: toastID,
+      });
     }
   }
 
   const fileCheck = async () => {
-    if (!isLoading) {
+    if (files && !isLoading) {
       const file = files.item(0);
       if (file) {
         try {
@@ -94,6 +107,7 @@
           await handleFileSelect(file);
         } catch (error) {
           console.log(error);
+          toast.error(error as string);
         } finally {
           isLoading = false;
         }
@@ -106,7 +120,7 @@
   }
 </script>
 
-<div class="space-y-2 m-1 p-1 form-control">
+<div class="space-y-2 my-2 form-control">
   <div class="font-bold text-sm">Takeout import</div>
   <div class="relative w-full h-full">
     {#if isLoading}
@@ -116,11 +130,23 @@
         <div class="loading" />
       </div>
     {/if}
-    <input
-      bind:files
-      name="Takeout"
-      class="file-input w-full file-input-sm"
-      type="file"
-    />
+    <div class="flex items-center justify-center w-full">
+      <label
+        for="dropzone-file"
+        class="flex flex-col h-12 items-center justify-center w-full border-2 border-base-300 border-dashed rounded-lg cursor-pointer bg-base-content/30 hover:bg-base-content/40"
+      >
+        <p class="text-sm">
+          <span class="font-semibold">Click to choose zip file</span>
+        </p>
+        <input
+          id="dropzone-file"
+          bind:files
+          name="Takeout"
+          type="file"
+          class="hidden"
+          accept=".zip"
+        />
+      </label>
+    </div>
   </div>
 </div>
