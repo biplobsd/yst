@@ -19,6 +19,7 @@
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
   import { channelPathsSchema } from "src/utils/schema";
+  import ZipReader from "../data/Zip_Reader.svelte";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -369,6 +370,23 @@
     });
   }
 
+  function channelsIdsTakeoutSave(channelIDs: string[]) {
+    const toastId = toast.loading("Saving...");
+    const l = channelsIdsParse(channelIDs);
+    if (l === undefined) {
+      toast.error("Save unsuccessful", {
+        id: toastId,
+      });
+      return;
+    }
+
+    channelPaths = l;
+    channelPathsWritable.set(l);
+    toast.success("Save successful", {
+      id: toastId,
+    });
+  }
+
   async function readySignalSend() {
     // Ready signal
     await runtime.send({
@@ -496,6 +514,7 @@
             >Save</button
           >
         </form>
+        <ZipReader {channelsIdsTakeoutSave} />
       </div>
     </div>
     <div>
