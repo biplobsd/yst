@@ -6,6 +6,9 @@ YouTube Subscriptions Transfer is a browser extension that allows you to transfe
 
 **_`Note: When using XPath mode, YST only works when the YouTube webpage language is set to English (US).`_**
 
+**_`Issue: On Mac, popup close when changing webpage. Quick solution: Opening with inspect window when popup open and stay open inspect window.`_** <br>
+Read more: [#4](https://github.com/biplobsd/yst/issues/4)
+
 ## Quick tutorial 60 second with the XPath mode
 
 [![Use case](https://img.youtube.com/vi/EsouSNQOALQ/0.jpg)](https://youtu.be/EsouSNQOALQ)
