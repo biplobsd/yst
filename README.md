@@ -161,6 +161,85 @@ $ npm run build
 
 ![Example](https://wd.imgix.net/image/BhuKGJaIeLNPW9ehns59NfwqKxF2/vOu7iPbaapkALed96rzN.png?auto=format&w=571)
 
+## Setting Up Your Own YouTube Data API
+
+### Requirements
+- Extension ID (You can find this after building and importing it to the browser extensions tab).
+
+First, you need to obtain a client ID and API key from the Google Console. Create a project in the Google Cloud Console by visiting https://console.cloud.google.com/projectcreate. Name the project as `YST extension` and then click `Create.` Next, enable the YouTube Data API v3 by going to https://console.cloud.google.com/apis/library/youtube.googleapis.com?project=yst-extension and click the `Enable` button.
+
+Now, configure the consent screen by switching to the `OAuth consent screen` tab.
+
+### OAuth consent screen
+
+![OAuth consent screen](https://github.com/biplobsd/yst/assets/43641536/1eecac4b-82f8-4ad6-bbfd-c83c9fe415d7)
+
+#### 1 - OAuth Consent Screen
+
+Select "User Type" as "External."
+
+Save and continue.
+
+Now, input the following details:
+- App name as "YST"
+- User support email as your email.
+- Authorized domains as "chromiumapp.org"
+- Developer contact information as your email
+
+Save and continue.
+
+#### 2 - Scopes
+
+Add the following scopes:
+- `.../auth/userinfo.email`
+- `.../auth/userinfo.profile`
+- `.../auth/youtube.readonly`
+- `.../auth/youtube.force-ssl`
+
+![Scopes](https://github.com/biplobsd/yst/assets/43641536/2f38f4de-c721-4c08-b20b-a15970f62477)
+
+Save and continue.
+
+#### 3 - Test Users
+
+Add the email addresses of your two YouTube accounts as test users. Save and continue.
+
+Your OAuth consent screen is now set up.
+
+### Credentials Tab
+
+Go to the Credentials tab and create credentials.
+
+![Create credentials](https://github.com/biplobsd/yst/assets/43641536/29962aa2-2a45-4a3a-bbc0-c6654cc699b3)
+
+First, select API key. A popup will display with your API key; note it down.
+
+Now, click on the "CREATE CREDENTIALS" button again and select OAuth client ID. 
+
+> **_NOTE:_** `<EXTENSION_ID>` is your Extension ID, which you can find after building and importing it from the browser extensions tab.
+
+Configure the following:
+- Application type as `Web application`
+- Name as `YST OAuth`
+- Authorized JavaScript origins as `https://<EXTENSION_ID>.chromiumapp.org`
+- Authorized redirect URIs as `https://<EXTENSION_ID>.chromiumapp.org/provider_cb`
+
+Click `Create,` and a popup will appear with your OAuth client credentials. Note the `Client ID.`
+
+### Setting Google API Credentials
+
+![.env.local file](https://github.com/biplobsd/yst/assets/43641536/34a95d7a-123e-47a0-b330-6d3f9fef91f4)
+
+Now, create a `.env.local` file in the root directory and set your client ID and API key.
+
+```env
+## Google API Credentials
+VITE_CLIENT_ID=
+VITE_API_KEY=
+```
+
+Again, run `npm run build` and reload the extension from the browser extensions tab.
+
 ## Related information
 
 - This project starts with using the [NekitCorp/chrome-extension-svelte-typescript-boilerplate](https://github.com/NekitCorp/chrome-extension-svelte-typescript-boilerplate) boilerplate project. So don't forget to check out their project.
