@@ -20,6 +20,8 @@
   import Timer from "../Timer.svelte";
   import { channelPathsSchema } from "src/utils/schema";
   import ZipReader from "../data/Zip_Reader.svelte";
+  import DocsLink from "../Docs_Link.svelte";
+  import { docs } from "src/utils/docs";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -437,7 +439,9 @@
 
 {#if isRightSiteNow}
   <div class="space-y-2">
-    <div class="font-bold">Data</div>
+    <div class="font-bold flex gap-1 items-center">
+      Data <DocsLink href={docs.dataSection} />
+    </div>
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
     >
@@ -585,7 +589,9 @@
     </div>
     <div class="w-[17rem] space-y-2">
       <div class="capitalize flex justify-between">
-        <div class="font-bold">Actions</div>
+        <div class="font-bold flex items-center gap-1">
+          Actions <DocsLink href={docs.action} />
+        </div>
         {#if actionName !== ""}
           <div
             transition:blur

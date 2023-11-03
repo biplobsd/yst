@@ -5,6 +5,7 @@
   import { onMount } from "svelte";
   import GithubMark from "src/assets/icons/github-mark.png";
   import GithubMarkWhite from "src/assets/icons/github-mark-white.png";
+  import { docs } from "src/utils/docs";
 
   let isLight = false;
 
@@ -20,7 +21,7 @@
     class="btn btn-xs normal-case"
     target="_blank"
     rel="noreferrer"
-    href={REPO_URL}
+    href={docs.README}
   >
     <img
       class="w-4 h-4"

@@ -1,5 +1,7 @@
 <script lang="ts">
+  import DocsLink from "src/components/Docs_Link.svelte";
   import { API_REQ_DELAY_DEFAULT, MODE_DEFAULT } from "src/utils/default";
+  import { docs } from "src/utils/docs";
   import { apiReqDelayWritable } from "src/utils/storage";
   import { modeWritable, type MODE } from "src/utils/storage";
   import { onMount } from "svelte";
@@ -19,7 +21,10 @@
 
 <div class="form-control w-full max-w-xs !my-0">
   <label class="label">
-    <span class="label-text">API delay per request</span>
+    <p class="flex items-center gap-1">
+      <span class="label-text">API delay per request</span>
+      <DocsLink href={docs.apiDelay} />
+    </p>
     <input
       disabled={localMode !== "api"}
       type="number"

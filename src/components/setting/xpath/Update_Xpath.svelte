@@ -12,6 +12,8 @@
   import log from "src/utils/logger";
   import toast from "svelte-french-toast";
   import { fetchXPathUpdate } from "src/popup/helper";
+  import DocsLink from "src/components/Docs_Link.svelte";
+  import { docs } from "src/utils/docs";
   let xpathValuesString: string = "";
   let isLoadingSave = false;
   let isErrorSave = false;
@@ -101,7 +103,9 @@
   {/if}
   <div class="form-control">
     <div class="label">
-      <span class="label-text">All XPath</span>
+      <span class="label-text flex items-center gap-1"
+        >All XPath <DocsLink href={docs.updateXPathValue} /></span
+      >
     </div>
     <textarea
       bind:value={xpathValuesString}

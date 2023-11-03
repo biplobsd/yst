@@ -9,6 +9,8 @@
   import { ChannelRawSchema } from "src/utils/schema";
   import qs from "qs";
   import toast from "svelte-french-toast";
+  import DocsLink from "../Docs_Link.svelte";
+  import { docs } from "src/utils/docs";
 
   export let channelsIdsTakeoutSave: (channelIDs: string[]) => void;
   let files: FileList | null = null;
@@ -121,7 +123,9 @@
 </script>
 
 <div class="space-y-2 my-2 form-control">
-  <div class="font-bold text-sm">Takeout import</div>
+  <div class="font-bold text-sm flex items-center gap-1">
+    Takeout import <DocsLink href={docs.googleTakeout} />
+  </div>
   <div class="relative w-full h-full">
     {#if isLoading}
       <div
