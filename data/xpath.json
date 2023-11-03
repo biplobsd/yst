@@ -8,10 +8,10 @@
   "IS_EXPENDEDABLE_EXPENDED_BUTTON": "//*[contains(normalize-space(), 'Subscriptions')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/ytd-guide-entry-renderer",
   "THREE_LINES": "//yt-icon-button[@id='guide-button']",
   "DRAWER_OPENED": "//div[@id='contentContainer' and @opened]",
-  "ALREADY_SUBSCRIBE": "//*[contains(normalize-space(), '{{channelID}}')]/..//div[@id='notification-preference-button' and not(@invisible)]//span[text()='Subscribed']",
-  "SUBSCRIBE_BTN": "//*[contains(normalize-space(), '{{channelID}}')]/..//div[@id='subscribe-button']//span[text()='Subscribe']/ancestor::button",
+  "ALREADY_SUBSCRIBE": "//span[translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{{channelID}}']/ancestor::div[@id='info-section']//div[@id='notification-preference-button' and not(@invisible)]//span[text()='Subscribed']",
+  "SUBSCRIBE_BTN": "//span[translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{{channelID}}']/ancestor::div[@id='info-section']//div[@id='subscribe-button']//span[text()='Subscribe']/ancestor::button",
   "UNSUB1": "//yt-formatted-string[text()='Unsubscribe']",
   "UNSUB2": "//button[@aria-label='Unsubscribe']",
   "SEARCH_INPUT": "//input[@id='search']",
-  "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[@hidden]"
+  "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[not(@hidden)]"
 }

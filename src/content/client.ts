@@ -15,6 +15,7 @@ import type { XPathModel } from "src/utils/xpaths";
 let isRunning: boolean = false;
 let stop: boolean = false;
 let xpathValues: XPathModel;
+let isNotTabRegister = true;
 
 function getAlreadySubscribeXpath(channelID: string) {
   return xpathValues.ALREADY_SUBSCRIBE.replace("{{channelID}}", channelID);
@@ -29,10 +30,12 @@ async function searchChannel(channelID: string) {
     xpathValues.SEARCH_INPUT
   ) as HTMLInputElement;
   if (search) {
+    if (isNotTabRegister) {
+      search.dispatchEvent(new KeyboardEvent("keypress", { key: "Tab" }));
+      await delay(100);
+    }
     search.value = channelID;
-    search.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "Enter", keyCode: 13 })
-    );
+    search.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 13 }));
     return true;
   }
   return false;
@@ -47,9 +50,13 @@ async function switchChannel(channelID: string) {
 }
 
 async function waitingForProgressEnd() {
-  for (let index = 0; index < 20; index++) {
+  await delay(100);
+  for (let index = 0; index < 50; index++) {
     if (!isXPathExpressionExists(xpathValues.NAVIGATION_PROGRESS)) {
       return true;
+    }
+    if (isNotTabRegister) {
+      isNotTabRegister = false;
     }
     await delay(500);
   }
@@ -381,6 +388,7 @@ async function unSubSubNow(channelID: string) {
           const unSub2 = getXpathFromElement(xpathValues.UNSUB2);
           if (unSub2) {
             unSub2.click();
+            await delay(50);
             if (isXPathExpressionExists(getSubscribeButton(channelID))) {
               await runtime.send({
                 type: "statusOption",
