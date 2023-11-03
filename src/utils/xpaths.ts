@@ -1,4 +1,4 @@
-import xpathJson from "../../data/xpath.json";
+import xpathJson from "../../data/xpaths/v1.6.json";
 import { z } from "zod";
 
 export const XPathModelSchema = z.object({
