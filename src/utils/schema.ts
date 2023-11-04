@@ -32,12 +32,16 @@ export const ChannelRawSchema = z
     items: z
       .object({
         snippet: z.object({
-          customUrl: z.string(),
+          customUrl: z.string().optional(),
         }),
       })
       .array(),
   })
-  .transform((x) => x.items.map((y) => y.snippet.customUrl));
+  .transform((x) =>
+    x.items
+      .filter((y) => y.snippet.customUrl !== undefined)
+      .map((y) => y.snippet.customUrl!)
+  );
 
 export const SubscriptionsListSchema = z
   .object({

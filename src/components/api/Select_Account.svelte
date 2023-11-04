@@ -15,6 +15,8 @@
   import Item from "./Item.svelte";
   import axios from "axios";
   import type { PrimaryChannel } from "src/utils/types";
+  import DocsLink from "../Docs_Link.svelte";
+  import { docs } from "src/utils/docs";
 
   export let primaryChannel: PrimaryChannel;
   export let isRunning: boolean;
@@ -136,7 +138,9 @@
   }
 </script>
 
-<div class="font-bold">Account</div>
+<div class="font-bold flex items-center gap-1">
+  Account <DocsLink href={docs.connectAccount} />
+</div>
 <div
   class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
 >

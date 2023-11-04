@@ -15,6 +15,53 @@ import type { XPathModel } from "src/utils/xpaths";
 let isRunning: boolean = false;
 let stop: boolean = false;
 let xpathValues: XPathModel;
+let isNotTabRegister = true;
+
+function getAlreadySubscribeXpath(channelID: string) {
+  return xpathValues.ALREADY_SUBSCRIBE.replace("{{channelID}}", channelID);
+}
+
+function getSubscribeButton(channelID: string) {
+  return xpathValues.SUBSCRIBE_BTN.replace("{{channelID}}", channelID);
+}
+
+async function searchChannel(channelID: string) {
+  const search = getXpathFromElement(
+    xpathValues.SEARCH_INPUT
+  ) as HTMLInputElement;
+  if (search) {
+    if (isNotTabRegister) {
+      search.dispatchEvent(new KeyboardEvent("keypress", { key: "Tab" }));
+      await delay(100);
+    }
+    search.value = channelID;
+    search.dispatchEvent(new KeyboardEvent("keydown", { keyCode: 13 }));
+    return true;
+  }
+  return false;
+}
+
+async function switchChannel(channelID: string) {
+  if (await searchChannel(channelID)) {
+    if (await waitingForProgressEnd()) {
+      await readySignalSend();
+    }
+  }
+}
+
+async function waitingForProgressEnd() {
+  await delay(100);
+  for (let index = 0; index < 50; index++) {
+    if (!isXPathExpressionExists(xpathValues.NAVIGATION_PROGRESS)) {
+      return true;
+    }
+    if (isNotTabRegister) {
+      isNotTabRegister = false;
+    }
+    await delay(500);
+  }
+  return false;
+}
 
 function isDrawerOpened() {
   if (!isXPathExpressionExists(xpathValues.DRAWER_OPENED)) {
@@ -257,13 +304,9 @@ async function acceptSignalSend() {
   });
 }
 
-function newPage(path: string) {
-  window.location.href = "https://youtube.com/" + path;
-}
-
-async function isAlreadySubscribe() {
+async function isAlreadySubscribe(channelID: string) {
   for (let index = 0; index < 2; index++) {
-    if (isXPathExpressionExists(xpathValues.ALREADY_SUBSCRIBE)) {
+    if (isXPathExpressionExists(getAlreadySubscribeXpath(channelID))) {
       return true;
     }
     await delay(500);
@@ -272,7 +315,7 @@ async function isAlreadySubscribe() {
 }
 
 async function subSubNow(channelID: string) {
-  if (await isAlreadySubscribe()) {
+  if (await isAlreadySubscribe(channelID)) {
     await runtime.send({
       type: "statusOption",
       status: {
@@ -284,7 +327,7 @@ async function subSubNow(channelID: string) {
   }
 
   for (let index = 0; index < 2; index++) {
-    const subButton = getXpathFromElement(xpathValues.SUBSCRIBE_BTN);
+    const subButton = getXpathFromElement(getSubscribeButton(channelID));
     if (subButton) {
       subButton.click();
       break;
@@ -292,7 +335,7 @@ async function subSubNow(channelID: string) {
     await delay(500);
   }
 
-  if (await isAlreadySubscribe()) {
+  if (await isAlreadySubscribe(channelID)) {
     await runtime.send({
       type: "statusOption",
       status: {
@@ -321,7 +364,7 @@ async function unSubSubNow(channelID: string) {
     },
   };
 
-  if (isXPathExpressionExists(xpathValues.SUBSCRIBE_BTN)) {
+  if (isXPathExpressionExists(getSubscribeButton(channelID))) {
     await runtime.send({
       type: "statusOption",
       status: {
@@ -332,7 +375,7 @@ async function unSubSubNow(channelID: string) {
     return;
   }
 
-  const unSubButton = getXpathFromElement(xpathValues.ALREADY_SUBSCRIBE);
+  const unSubButton = getXpathFromElement(getAlreadySubscribeXpath(channelID));
   if (unSubButton) {
     unSubButton.click();
     await delay(50);
@@ -345,7 +388,8 @@ async function unSubSubNow(channelID: string) {
           const unSub2 = getXpathFromElement(xpathValues.UNSUB2);
           if (unSub2) {
             unSub2.click();
-            if (isXPathExpressionExists(xpathValues.SUBSCRIBE_BTN)) {
+            await delay(50);
+            if (isXPathExpressionExists(getSubscribeButton(channelID))) {
               await runtime.send({
                 type: "statusOption",
                 status: {
@@ -400,7 +444,7 @@ export async function parseData(dataLocal: RuntimeMessage) {
           );
           return;
         }
-        newPage(status.msg);
+        await switchChannel(status.msg);
         break;
       case "subscribe":
         if (isRunning) {
