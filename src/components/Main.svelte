@@ -20,7 +20,7 @@
 </script>
 
 <main>
-  <div class="tabs w-full flex items-stretch">
+  <div class="tabs tabs-lifted w-full flex items-stretch">
     <button
       on:click={() => (tabName = "Home")}
       class="tab tab-lifted w-full flex-1 {tabName === 'Home' && 'tab-active'}"
