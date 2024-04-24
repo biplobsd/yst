@@ -13,15 +13,14 @@
   import { get } from "svelte/store";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
-  import ExternalLinkIcon from "../icons/External_Link_Icon.svelte";
   import toast from "svelte-french-toast";
-  import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
   import { channelPathsSchema } from "src/utils/schema";
   import ZipReader from "../data/Zip_Reader.svelte";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
+  import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
 
   let channelPaths: string[] = [];
   let xpathValues: XPathModel | undefined = undefined;
@@ -272,9 +271,8 @@
   async function parseData(dataLocal: RuntimeMessage) {
     setStatus("...");
 
-    const validationResult = await runtimeMessageSchema.safeParseAsync(
-      dataLocal
-    );
+    const validationResult =
+      await runtimeMessageSchema.safeParseAsync(dataLocal);
 
     if (!validationResult.success) {
       setStatus("Error when parsing data", true);
@@ -473,7 +471,7 @@
               data-tip="Copy channel IDs to clipboard"
             >
               <button
-                class="btn btn-xs !px-1"
+                class="btn btn-xs"
                 on:click={() => {
                   const toastID = toast.loading(
                     "Copying channels IDs to clipboard..."
@@ -491,7 +489,7 @@
                       id: toastID,
                     });
                   }
-                }}><ClipboardCopyIcon /></button
+                }}><CopyIcon class="h-3 w-3" /></button
               ></span
             >
           </div>
