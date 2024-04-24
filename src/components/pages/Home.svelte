@@ -445,16 +445,16 @@
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
     >
-      <input type="checkbox" class="peer !min-h-8 !py-0" />
+      <input type="checkbox" class="peer" />
       <div
-        class="!min-h-8 !py-0 gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
+        class="gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
       >
         Subscriptions:
         {#key channelPathsCount}
           <span in:blur>{channelPathsCount}</span>
         {/key}
       </div>
-      <div class="collapse-content peer-checked:py-2">
+      <div class="collapse-content">
         <span class="text-xs space-y-2">
           <p>
             Enter only channel IDs. Channel IDs start with the <span
