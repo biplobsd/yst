@@ -4,6 +4,6 @@ module.exports = {
   themes: false,
   plugins: [
     require("daisyui"),
-    require("tailwind-scrollbar")({ nocompatible: true }),
+    require("tailwind-modern-scroll"),
   ],
 };
