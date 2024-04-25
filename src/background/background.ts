@@ -24,14 +24,17 @@ export async function parseData(
         case "option":
           await runtime.send({
             tabId,
-            to: "content",
+            to: "option",
             status: {
               code: "accept",
               msg: "Background script is ready",
             },
           });
           break;
+        default:
+          break;
       }
+      break;
     case "getAuthToken":
       if (isWorking) {
         await runtime.send({

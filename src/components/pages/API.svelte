@@ -186,11 +186,12 @@
   }
 
   async function parseData({ status, to }: RuntimeMessage) {
-    setStatus("...");
 
     if (to !== "option") {
       return;
     }
+
+    setStatus("msg" in status ? status.msg : status.code);
 
     switch (status.code) {
       case "accept":
