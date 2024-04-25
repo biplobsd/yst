@@ -389,7 +389,7 @@
   }
 
   onMount(async () => {
-    // storageRemoveListener = runtime.addListener(parseData);
+    storageRemoveListener = runtime.addListener(parseData);
 
     isRightSiteNow = await isRightSite();
     if (isRightSiteNow) {

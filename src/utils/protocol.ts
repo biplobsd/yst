@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { StatusSchema, fromMsgSchema } from "./communication";
 import { XPathModelSchema } from "./xpaths";
 
 export const StatusCodeSchema = z.enum([
@@ -14,18 +13,21 @@ export const StatusCodeSchema = z.enum([
   "getAuthToken",
 ]);
 
+export const StatusSchema = z.object({
+  msg: z.string(),
+  code: StatusCodeSchema,
+});
+
+export const fromMsgSchema = z
+  .enum(["background", "content", "option", "none"])
+  .optional();
+
 export const runtimeMessageSchema = z.discriminatedUnion("to", [
   z.object({
     tabId: z.number().optional(),
     from: fromMsgSchema,
     to: z.literal("background"),
-    status: z.discriminatedUnion("code", [
-      StatusSchema,
-      z.object({
-        code: z.literal("updateCheckMode"),
-        checkMode: z.boolean(),
-      }),
-    ]),
+    status: z.discriminatedUnion("code", [StatusSchema]),
   }),
   z.object({
     tabId: z.number().optional(),
@@ -42,7 +44,7 @@ export const runtimeMessageSchema = z.discriminatedUnion("to", [
         channelID: z.string(),
       }),
       z.object({
-        code: z.enum(["subscribe", 'unsubscribe']),
+        code: z.enum(["subscribe", "unsubscribe"]),
         channelID: z.string(),
       }),
     ]),

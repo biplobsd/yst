@@ -7,8 +7,8 @@
 
   onMount(async () => {
     runtime.fromMsg = "content";
-    // storageRemoveListener = runtime.addListener(parseData);
-    // await readySignalSend();
+    storageRemoveListener = runtime.addListener(parseData);
+    await readySignalSend();
   });
 
   onDestroy(async () => {

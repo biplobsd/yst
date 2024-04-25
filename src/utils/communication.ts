@@ -1,19 +1,9 @@
 import { delay } from "./helper";
 import log from "./logger";
-import { StatusCodeSchema, runtimeMessageSchema } from "./protocol";
+import { fromMsgSchema, runtimeMessageSchema } from "./protocol";
 import { z } from "zod";
 
-export const fromMsgSchema = z
-  .enum(["background", "content", "option", "none"])
-  .optional();
-
 export type FromMsg = z.infer<typeof fromMsgSchema>;
-
-export const StatusSchema = z.object({
-  msg: z.string(),
-  code: StatusCodeSchema,
-});
-
 export type RuntimeMessage = z.infer<typeof runtimeMessageSchema>;
 
 interface RetryOptions {
