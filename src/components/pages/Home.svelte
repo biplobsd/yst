@@ -520,7 +520,7 @@
                 <span class="loading loading-infinity" />
                 <span class="animate-pulse">
                   {#if isStop}
-                    <div transition:slide>Stopping...</div>
+                    <div transition:slide>Wait</div>
                   {:else}
                     <div transition:slide>Stop</div>
                   {/if}
@@ -552,7 +552,12 @@
         {/if}
       </div>
       <div
-        class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider"
+        style={`background-repeat: no-repeat; background-size: ${
+          ((successCount + failedCount + 1) /
+            (successCount + failedCount + channelPathsCount + 1)) *
+          100
+        }%`}
+        class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider progress-bar"
       >
         {#if status.msg}
           <div class={status.isError ? "text-red-500" : undefined}>
