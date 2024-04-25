@@ -9,14 +9,13 @@
   } from "src/utils/communication";
   import {
     apiReqDelayWritable,
-    channel0OAuthTokenWritable,
-    channel1OAuthTokenWritable,
+    firstOAuthKeyWritable,
+    secondOAuthKeyWritable,
     firstUserWritable,
-    primaryChannelWritable,
     secondUserWritable,
-    subscriptionsWritable,
+    subscriptionsListWritable,
+    primaryChannelWritable,
   } from "src/utils/storage";
-  import { get } from "svelte/store";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
   import Timer from "../Timer.svelte";
@@ -35,15 +34,11 @@
     SUBSCRIPTIONS_API_URL,
     USERINFO_API_URL,
   } from "src/utils/constants";
-  import type { PrimaryChannel } from "src/utils/types";
-  import { API_REQ_DELAY_DEFAULT } from "src/utils/default.js";
+  import { SETTINGS_DEFAULT as ud } from "src/utils/default";
 
-  let subscriptionsList: SubscriptionsList = [];
-  let subscriptionCount: number = 0;
-  let channel0OAuthToken: string | null = null;
-  let channel1OAuthToken: string | null = null;
+  let subscriptionsList = $subscriptionsListWritable;
+  let subscriptionCount = $subscriptionsListWritable.length;
 
-  let primaryChannel: PrimaryChannel = -1;
   let lastStatusData: RuntimeMessage | undefined = undefined;
 
   let isRunning = true;
@@ -55,7 +50,12 @@
   let failedCount = 0;
   let successCount = 0;
   let actionName = "";
-  let apiReqDelay = API_REQ_DELAY_DEFAULT;
+
+  function getAccessToken() {
+    return $primaryChannelWritable === "0"
+      ? $firstOAuthKeyWritable
+      : $secondOAuthKeyWritable;
+  }
 
   async function stop() {
     isStop = true;
@@ -84,7 +84,7 @@
     }
     setStatus(
       "Unable to get the subscriptions list from the content client",
-      true
+      true,
     );
     return false;
   }
@@ -99,24 +99,24 @@
       if (mode) {
         notFoundList = currentSubs.filter(
           (elem) =>
-            !subscriptionsList.map((y) => y.channelId).includes(elem.channelId)
+            !subscriptionsList.map((y) => y.channelId).includes(elem.channelId),
         );
         if (notFoundList.length === 0) {
           setStatus(
-            "All those channels have already been subscribed to! There's no need to subscribe again."
+            "All those channels have already been subscribed to! There's no need to subscribe again.",
           );
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          subscriptionsList.map((y) => y.channelId).includes(elem.channelId)
+          subscriptionsList.map((y) => y.channelId).includes(elem.channelId),
         );
         if (notFoundList.length === 0) {
           setStatus(
-            "No channel match with your current subscriptions channel list! NO need to unsubscribe"
+            "No channel match with your current subscriptions channel list! NO need to unsubscribe",
           );
         }
       }
-      subscriptionsWritable.set(notFoundList);
+      subscriptionsListWritable.set(notFoundList);
       subscriptionsList = notFoundList;
       subscriptionCount = notFoundList.length;
     }
@@ -161,7 +161,7 @@
           setStatus(`${un}subscribe to the ${title} unsuccessful`, true);
           failedCount++;
         }
-        await delay(apiReqDelay);
+        await delay($apiReqDelayWritable);
       }
       if (!isStop) {
         setStatus("Done");
@@ -173,7 +173,7 @@
       isSubRunning = false;
       isRunning = false;
       // console.log(subscriptionsList);
-      subscriptionsWritable.set(subscriptionsList);
+      subscriptionsListWritable.set(subscriptionsList);
       isStop = false;
     }
   }
@@ -193,9 +193,8 @@
   async function parseData(dataLocal: RuntimeMessage) {
     setStatus("...");
 
-    const validationResult = await runtimeMessageSchema.safeParseAsync(
-      dataLocal
-    );
+    const validationResult =
+      await runtimeMessageSchema.safeParseAsync(dataLocal);
 
     if (!validationResult.success) {
       setStatus("Error when parsing data", true);
@@ -222,31 +221,31 @@
           setStatus(status.msg, true);
           isRunning = false;
           isReady = true;
-          primaryChannel = -1;
+          primaryChannelWritable.set("-1");
           return;
         default:
           return;
       }
     } else if (dataLocal.type === "dataOptionAuthToken") {
-      if (primaryChannel === -1) {
+      if ($primaryChannelWritable === "-1") {
         setStatus(
           "Received OAuth token, but it was rejected due to not arriving on time",
-          true
+          true,
         );
         return;
       }
 
       setStatus("OAuth token receive. Getting user information");
-      switch (primaryChannel) {
-        case 0:
-          channel0OAuthTokenWritable.set(dataLocal.authToken);
+      switch ($primaryChannelWritable) {
+        case "0":
+          firstOAuthKeyWritable.set(dataLocal.authToken);
           const userData0 = await getUserInfo();
           if (userData0) {
             firstUserWritable.set(userData0);
           }
           break;
-        case 1:
-          channel1OAuthTokenWritable.set(dataLocal.authToken);
+        case "1":
+          secondOAuthKeyWritable.set(dataLocal.authToken);
           const userData1 = await getUserInfo();
           if (userData1) {
             secondUserWritable.set(userData1);
@@ -263,10 +262,8 @@
   }
 
   async function deleteSubscription(id: string) {
-    const oAuthToken =
-      primaryChannel === 0 ? channel0OAuthToken : channel1OAuthToken;
     const headers = {
-      Authorization: "Bearer " + oAuthToken,
+      Authorization: "Bearer " + getAccessToken(),
       "Content-Type": "application/json",
     };
 
@@ -288,7 +285,7 @@
           case 401:
             setStatus(
               "Reconnect your account. OAuth token might be expired!",
-              true
+              true,
             );
             resetAccount();
             isStop = true;
@@ -296,7 +293,7 @@
           case 404:
             setStatus(
               "The subscriber identified with the request cannot be found.",
-              true
+              true,
             );
 
             return false;
@@ -311,10 +308,8 @@
   }
 
   async function insertSubscription(channelId: string) {
-    const oAuthToken =
-      primaryChannel === 0 ? channel0OAuthToken : channel1OAuthToken;
     const headers = {
-      Authorization: "Bearer " + oAuthToken,
+      Authorization: "Bearer " + getAccessToken(),
       "Content-Type": "application/json",
     };
 
@@ -335,7 +330,7 @@
             key: API_KEY,
           },
           headers,
-        }
+        },
       );
       return true;
     } catch (err) {
@@ -347,7 +342,7 @@
           case 401:
             setStatus(
               "Reconnect your account. OAuth token might be expired!",
-              true
+              true,
             );
             resetAccount();
             isStop = true;
@@ -355,14 +350,14 @@
           case 400:
             setStatus(
               "You have reached your maximum number of subscriptions.",
-              true
+              true,
             );
             isStop = true;
             return false;
           case 404:
             setStatus(
               "The subscriber identified with the request cannot be found.",
-              true
+              true,
             );
 
             return false;
@@ -377,10 +372,8 @@
   }
 
   async function getChannelsList() {
-    const oAuthToken =
-      primaryChannel === 0 ? channel0OAuthToken : channel1OAuthToken;
     const headers = {
-      Authorization: "Bearer " + oAuthToken,
+      Authorization: "Bearer " + getAccessToken(),
       "Content-Type": "application/json",
     };
 
@@ -409,14 +402,14 @@
             case 401:
               setStatus(
                 "Reconnect your account. OAuth token might be expired!",
-                true
+                true,
               );
               resetAccount();
               return;
             case 404:
               setStatus(
                 "The subscriber identified with the request cannot be found.",
-                true
+                true,
               );
               return;
           }
@@ -450,24 +443,24 @@
 
       pageToken = data.nextPageToken;
 
-      await delay(apiReqDelay);
+      await delay($apiReqDelayWritable);
     }
 
     log.info(subscriptionsList);
-    subscriptionsWritable.set(subscriptionsList);
+    subscriptionsListWritable.set(subscriptionsList);
     subscriptionCount = subscriptionsList.length;
     setStatus("Subscription list collected successful");
   }
 
   function resetAccount() {
-    switch (primaryChannel) {
-      case 0:
-        channel0OAuthTokenWritable.set(null);
-        firstUserWritable.set(null);
+    switch ($primaryChannelWritable) {
+      case "0":
+        firstOAuthKeyWritable.set("");
+        firstUserWritable.set(ud.firstUser);
         break;
-      case 1:
-        channel1OAuthTokenWritable.set(null);
-        secondUserWritable.set(null);
+      case "1":
+        secondOAuthKeyWritable.set("");
+        secondUserWritable.set(ud.secondUser);
         break;
     }
   }
@@ -476,8 +469,7 @@
     try {
       const res = await axios.get(USERINFO_API_URL, {
         params: {
-          access_token:
-            primaryChannel === 0 ? channel0OAuthToken : channel1OAuthToken,
+          access_token: getAccessToken(),
         },
       });
 
@@ -494,21 +486,6 @@
   }
 
   onMount(async () => {
-    channel0OAuthTokenWritable.subscribe(
-      (value) => (channel0OAuthToken = value)
-    );
-
-    channel1OAuthTokenWritable.subscribe(
-      (value) => (channel1OAuthToken = value)
-    );
-
-    primaryChannelWritable.subscribe((value) => (primaryChannel = value));
-
-    apiReqDelayWritable.subscribe((value) => (apiReqDelay = value));
-
-    subscriptionsList = get(subscriptionsWritable);
-    subscriptionCount = subscriptionsList.length;
-
     storageRemoveListener = runtime.addListener(parseData);
     await readySignalSend();
   });
@@ -519,13 +496,7 @@
 </script>
 
 <div class="space-y-2">
-  <SelectAccount
-    bind:isStop
-    bind:isReady
-    bind:isRunning
-    bind:primaryChannel
-    {setStatus}
-  />
+  <SelectAccount bind:isStop bind:isReady bind:isRunning {setStatus} />
   <Data bind:subscriptionCount />
   <div>
     <div
@@ -610,12 +581,15 @@
       {/if}
     </div>
     <button
-      disabled={primaryChannel === -1 || !isReady || isSubRunning || isRunning}
+      disabled={$primaryChannelWritable === "-1" ||
+        !isReady ||
+        isSubRunning ||
+        isRunning}
       class="collect-channel-btn"
       on:click={collectSubs}>Collect channel</button
     >
     <button
-      disabled={primaryChannel === -1 ||
+      disabled={$primaryChannelWritable === "-1" ||
         (subscriptionCount ? false : true) ||
         isSubRunning ||
         !isReady ||
@@ -624,7 +598,7 @@
       on:click={() => subUnSub(true)}>Subscribe</button
     >
     <button
-      disabled={primaryChannel === -1 ||
+      disabled={$primaryChannelWritable === "-1" ||
         (subscriptionCount ? false : true) ||
         isSubRunning ||
         !isReady ||

@@ -1,14 +1,26 @@
 <script lang="ts">
   import type { User } from "src/utils/schema";
-  import type { PrimaryChannel } from "src/utils/types";
+  import {
+    firstOAuthKeyWritable,
+    firstUserWritable,
+    primaryChannelWritable,
+    secondOAuthKeyWritable,
+    secondUserWritable,
+  } from "src/utils/storage";
 
-  export let primaryChannel: PrimaryChannel;
-  export let user: User | null = null;
-  export let connectDisconnect: (btnNo: 0 | 1) => Promise<void>;
-  export let id: 0 | 1;
-  export let isConnect: boolean;
+  export let connectDisconnect: (btnNo: "0" | "1") => Promise<void>;
+  export let id: "0" | "1";
   export let isRunning: boolean;
+
+  let user: User | null = null;
+  let isConnect: boolean;
   let isLocalRunning: boolean;
+
+  $: {
+    user = id === "0" ? $firstUserWritable : $secondUserWritable;
+    let token = id === "0" ? $firstOAuthKeyWritable : $secondOAuthKeyWritable;
+    isConnect = !!token;
+  }
 </script>
 
 <tr>
@@ -17,7 +29,7 @@
       <input
         type="radio"
         class="radio radio-xs"
-        bind:group={primaryChannel}
+        bind:group={$primaryChannelWritable}
         name="radio-1"
         value={id}
         disabled={isRunning || !isConnect}
@@ -31,7 +43,7 @@
           <div
             class="avatar rounded-full w-8 placeholder flex justify-center items-center h-full"
           >
-            {#if user}
+            {#if user?.picture}
               <img src={user.picture} alt={user.name} />
             {:else}
               <div class="bg-base-content/10 w-full" />
@@ -40,7 +52,7 @@
         </div>
       </div>
       <div class="w-full">
-        {#if user}
+        {#if user?.given_name}
           <div class="font-bold">{user.given_name}</div>
         {:else}
           <div class="bg-base-content/10 h-4 rounded-md w-full" />

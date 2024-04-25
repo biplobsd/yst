@@ -7,7 +7,7 @@ export function isXPathExpressionExists(expression: string): boolean {
     document,
     null,
     XPathResult.ANY_TYPE,
-    null
+    null,
   );
   return result.iterateNext() !== null;
 }
@@ -45,7 +45,7 @@ export function getXpathFromElement(xpath: string) {
     document,
     null,
     XPathResult.ANY_TYPE,
-    null
+    null,
   );
   const reactNode = dom.iterateNext();
   if (reactNode && reactNode instanceof HTMLElement) {
@@ -61,7 +61,7 @@ export function getXpathFromElements(xpath: string) {
     document,
     null,
     XPathResult.ANY_TYPE,
-    null
+    null,
   );
 
   const listNodes: HTMLElement[] = [];
@@ -86,4 +86,27 @@ export function addDate(xpathValues: XPathModel) {
     ...xpathValues,
     UPDATE_DATE: currentDate.toISOString(),
   } as XPathModel;
+}
+
+export async function promisedParseJSON(json: string | null): Promise<any> {
+  if (!json) {
+    return null;
+  }
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(JSON.parse(json));
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+export async function promisedStringifyJSON(value: any) {
+  return new Promise((resolve, reject) => {
+    try {
+      resolve(JSON.stringify(value, null, 2));
+    } catch (e) {
+      reject(e);
+    }
+  });
 }

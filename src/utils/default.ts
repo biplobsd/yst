@@ -1,3 +1,28 @@
-export const MODE_DEFAULT = "xpath";
-export const THEME_MODE_DEFAULT = "dark";
-export const API_REQ_DELAY_DEFAULT = 500; // ms
+import type { Settings } from "./schema";
+import xpathJson from "../../data/xpaths/v1.6.json";
+
+export const SETTINGS_DEFAULT: Settings = {
+  themeMode: "dark",
+  channelIDs: [],
+  XPaths: { ...xpathJson, REMOTE_DISABLE: false },
+  workingMode: "xpath",
+  firstOAuthKey: "",
+  secondOAuthKey: "",
+  firstUser: {
+    locale: "",
+    name: "",
+    picture: "",
+    sub: "",
+    given_name: "",
+  },
+  secondUser: {
+    locale: "",
+    name: "",
+    picture: "",
+    sub: "",
+    given_name: "",
+  },
+  subscriptionsList: [],
+  primaryChannel: "-1",
+  apiReqDelay: 500,
+};

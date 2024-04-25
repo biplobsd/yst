@@ -3,7 +3,7 @@
   import axios, { AxiosError } from "axios";
   import { csv_async_iter } from "csv-iter-parse";
   import { API_KEY, CHANNEL_API_URL } from "src/utils/constants";
-  import { API_REQ_DELAY_DEFAULT } from "src/utils/default";
+  import { SETTINGS_DEFAULT as sd } from "src/utils/default";
   import { delay } from "src/utils/helper";
   import log from "src/utils/logger";
   import { ChannelRawSchema } from "src/utils/schema";
@@ -42,12 +42,12 @@
           switch (errors.response?.status) {
             case 401:
               console.error(
-                "Reconnect your account. OAuth token might be expired!"
+                "Reconnect your account. OAuth token might be expired!",
               );
               return customUrls;
             case 404:
               console.error(
-                "The subscriber identified with the request cannot be found."
+                "The subscriber identified with the request cannot be found.",
               );
               return customUrls;
           }
@@ -62,7 +62,7 @@
         break;
       }
       customUrls.push(...raw.data);
-      await delay(API_REQ_DELAY_DEFAULT);
+      await delay(sd.apiReqDelay);
     }
     return customUrls;
   }

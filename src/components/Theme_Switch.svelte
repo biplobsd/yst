@@ -1,25 +1,33 @@
 <script lang="ts">
-  import { THEME_MODE_DEFAULT } from "src/utils/default";
-  import { isDarkThemeWritable } from "src/utils/storage";
+  import { themeModeWritable } from "src/utils/storage";
   import { onMount } from "svelte";
   import { MoonIcon, SunIcon } from "lucide-svelte";
+  import { SETTINGS_DEFAULT } from "src/utils/default";
+  import log from "src/utils/logger";
 
   let isLight = false;
-  let themeMode = THEME_MODE_DEFAULT;
+  let themeMode = SETTINGS_DEFAULT.themeMode;
   const toggleThemeMode = (modeValue: string) =>
     modeValue === "dark" ? "light" : "dark";
 
   onMount(() => {
-    isDarkThemeWritable.subscribe((modeValue) => {
+    themeModeWritable.subscribe((modeValue) => {
       isLight = modeValue === "light";
       themeMode = modeValue;
+
+      try {
+        document.documentElement.setAttribute("data-theme", modeValue);
+      } catch (error) {
+        log.error(error);
+        return;
+      }
     });
   });
 </script>
 
 <abbr title={`Switch to ${toggleThemeMode(themeMode)} theme`}>
   <button
-    on:click={() => isDarkThemeWritable.update(toggleThemeMode)}
+    on:click={() => themeModeWritable.update(toggleThemeMode)}
     class={`${
       isLight ? "swap-active" : ""
     } swap-rotate btn btn-xs btn-ghost btn-circle swap`}

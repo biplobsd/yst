@@ -1,22 +1,8 @@
 <script lang="ts">
   import DocsLink from "src/components/Docs_Link.svelte";
-  import { API_REQ_DELAY_DEFAULT, MODE_DEFAULT } from "src/utils/default";
   import { docs } from "src/utils/docs";
-  import { apiReqDelayWritable } from "src/utils/storage";
-  import { modeWritable, type MODE } from "src/utils/storage";
-  import { onMount } from "svelte";
+  import { apiReqDelayWritable, workingModeWritable } from "src/utils/storage";
   import toast from "svelte-french-toast";
-  let localMode: MODE = MODE_DEFAULT;
-
-  let delay = API_REQ_DELAY_DEFAULT;
-
-  onMount(() => {
-    apiReqDelayWritable.subscribe((value) => (delay = value));
-
-    modeWritable.subscribe((mode) => {
-      localMode = mode;
-    });
-  });
 </script>
 
 <div class="form-control w-full max-w-xs !my-0">
@@ -26,10 +12,10 @@
       <DocsLink href={docs.apiDelay} />
     </p>
     <input
-      disabled={localMode !== "api"}
+      disabled={$workingModeWritable !== "api"}
       type="number"
       placeholder="ms"
-      value={delay}
+      value={$apiReqDelayWritable}
       min="0"
       on:change={(e) => {
         const delay = +e.currentTarget.value;

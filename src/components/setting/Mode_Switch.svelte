@@ -1,17 +1,7 @@
 <script lang="ts">
-  import { MODE_DEFAULT } from "src/utils/default";
   import { docs } from "src/utils/docs";
-  import { modeWritable, type MODE } from "src/utils/storage";
-  import { onMount } from "svelte";
   import DocsLink from "../Docs_Link.svelte";
-
-  let localMode: MODE = MODE_DEFAULT;
-
-  onMount(() => {
-    modeWritable.subscribe((mode) => {
-      localMode = mode;
-    });
-  });
+  import { workingModeWritable } from "src/utils/storage";
 </script>
 
 <div
@@ -26,9 +16,9 @@
       type="radio"
       name="radio-10"
       class="radio radio-xs checked:bg-success"
-      checked={localMode === "xpath"}
+      checked={$workingModeWritable === "xpath"}
       on:change={() => {
-        modeWritable.set("xpath");
+        workingModeWritable.set("xpath");
       }}
     />
   </label>
@@ -40,9 +30,9 @@
       type="radio"
       name="radio-10"
       class="radio radio-xs checked:bg-info"
-      checked={localMode === "api"}
+      checked={$workingModeWritable === "api"}
       on:change={() => {
-        modeWritable.set("api");
+        workingModeWritable.set("api");
       }}
     />
   </label>

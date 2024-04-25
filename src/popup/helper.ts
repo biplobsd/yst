@@ -1,6 +1,6 @@
 import { XPATH_URL } from "src/utils/constants";
 import { addDate } from "src/utils/helper";
-import { xPathValuesWritable } from "src/utils/storage";
+import { xpathsWritable } from "src/utils/storage";
 import { type XPathModel, XPathModelSchema } from "src/utils/xpaths";
 
 export async function fetchXPathUpdate(): Promise<XPathModel | undefined> {
@@ -11,7 +11,7 @@ export async function fetchXPathUpdate(): Promise<XPathModel | undefined> {
 
     const xpathValues = addDate(xPathValueValidated);
 
-    xPathValuesWritable.update((current) => {
+    xpathsWritable.update((current) => {
       return { ...current, ...xpathValues };
     });
     return xpathValues;

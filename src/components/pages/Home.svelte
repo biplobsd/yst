@@ -8,22 +8,19 @@
     runtimeMessageSchema,
     type RuntimeMessage,
   } from "src/utils/communication";
-  import type { XPathModel } from "src/utils/xpaths";
-  import { channelPathsWritable, xPathValuesWritable } from "src/utils/storage";
-  import { get } from "svelte/store";
+  import { channelIDsWritable, xpathsWritable } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
   import toast from "svelte-french-toast";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
-  import { channelPathsSchema } from "src/utils/schema";
   import ZipReader from "../data/Zip_Reader.svelte";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
   import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
+  import { channelIDsSchema } from "src/utils/schema";
 
-  let channelPaths: string[] = [];
-  let xpathValues: XPathModel | undefined = undefined;
+  let channelIDs = $channelIDsWritable;
   let lastStatusData: RuntimeMessage | undefined = undefined;
 
   let isRunning = true;
@@ -79,37 +76,37 @@
     }
     setStatus(
       "Unable to get the subscriptions list from the content client",
-      true
+      true,
     );
     return false;
   }
 
   async function filterUnSubs(mode = true) {
-    const currentSubs: string[] = channelPaths;
+    const currentSubs: string[] = channelIDs;
     if (!(await collectAndWait())) {
       return;
     }
 
-    if (channelPaths !== currentSubs) {
+    if (channelIDs !== currentSubs) {
       let notFoundList: string[];
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !channelPaths.includes(elem.toLowerCase())
+          (elem) => !channelIDs.includes(elem.toLowerCase()),
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "All those channels have already been subscribed to! There's no need to subscribe again."
+            "All those channels have already been subscribed to! There's no need to subscribe again.",
           );
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          channelPaths.includes(elem.toLowerCase())
+          channelIDs.includes(elem.toLowerCase()),
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "No channel match with your current subscriptions channel list! NO need to unsubscribe"
+            "No channel match with your current subscriptions channel list! NO need to unsubscribe",
           );
         }
       }
@@ -169,15 +166,15 @@
       await filterUnSubs(mode);
       actionName = `${mode ? "" : "un"}subscribe`;
 
-      if (channelPaths.length === 0) {
+      if (channelIDs.length === 0) {
         return;
       }
 
       isRunning = true;
       isSubRunning = true;
 
-      const len = channelPaths.length;
-      const copyList = Object.assign([], channelPaths);
+      const len = channelIDs.length;
+      const copyList = Object.assign([], channelIDs);
 
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
@@ -195,7 +192,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ready signal: ` + copyList[indexMain]
+            `Waiting for the ready signal: ` + copyList[indexMain],
           ))
         ) {
           return;
@@ -218,7 +215,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain]
+            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain],
           ))
         ) {
           return;
@@ -235,8 +232,8 @@
           sCList.splice(0, 1);
 
           const l = channelsIdsParse(sCList);
-          const parsedChannelPaths = await channelPathsSchema.parseAsync(l);
-          channelPathsWritable.set(parsedChannelPaths);
+          const parsedChannelIDs = await channelIDsSchema.parseAsync(l);
+          channelIDsWritable.set(parsedChannelIDs);
 
           successCount++;
         } else {
@@ -331,9 +328,9 @@
 
   function saveChannelsIds(list: string[]) {
     channelsIdsString(list);
-    channelPaths = list;
+    channelIDs = list;
 
-    channelPathsWritable.set(list);
+    channelIDsWritable.set(list);
   }
 
   function channelsIdsParse(listStr: string[]) {
@@ -363,8 +360,8 @@
       });
       return;
     }
-    channelPaths = l;
-    channelPathsWritable.set(l);
+    channelIDs = l;
+    channelIDsWritable.set(l);
     toast.success("Save successful", {
       id: toastId,
     });
@@ -380,8 +377,8 @@
       return;
     }
 
-    channelPaths = l;
-    channelPathsWritable.set(l);
+    channelIDs = l;
+    channelIDsWritable.set(l);
     toast.success("Save successful", {
       id: toastId,
     });
@@ -399,10 +396,10 @@
   }
 
   async function xpathSignalSend() {
-    if (!xpathValues) {
+    if (!$xpathsWritable) {
       setStatus(
         "Unable to send xPathValue signal to the content script...",
-        true
+        true,
       );
       return;
     }
@@ -412,22 +409,19 @@
         msg: "Sending XPath values",
         code: "xpath",
       },
-      xpathValues,
+      xpathValues: $xpathsWritable,
     });
   }
 
   onMount(async () => {
-    xpathValues = get(xPathValuesWritable);
-    const storedChannelPaths = get(channelPathsWritable);
-    channelPaths = storedChannelPaths;
-    channelsIdsParse(storedChannelPaths);
-
     storageRemoveListener = runtime.addListener(parseData);
 
     isRightSiteNow = await isRightSite();
     if (isRightSiteNow) {
       await readySignalSend();
     }
+
+    channelsIdsParse($channelIDsWritable);
   });
 
   onDestroy(() => {
@@ -474,7 +468,7 @@
                 class="btn btn-xs"
                 on:click={() => {
                   const toastID = toast.loading(
-                    "Copying channels IDs to clipboard..."
+                    "Copying channels IDs to clipboard...",
                   );
                   if (channelPathsText === "") {
                     toast.error("Empty channel IDs list", {
