@@ -2,11 +2,7 @@
   import "src/options/styles.css";
   import { onDestroy, onMount } from "svelte";
   import { delay } from "src/utils/helper";
-  import {
-    runtime,
-    runtimeMessageSchema,
-    type RuntimeMessage,
-  } from "src/utils/communication";
+  import { runtime, type RuntimeMessage } from "src/utils/communication";
   import {
     apiReqDelayWritable,
     firstOAuthKeyWritable,
@@ -27,7 +23,6 @@
     type SubscriptionsList,
   } from "src/utils/schema";
   import Data from "../api/Data.svelte";
-  import { readySignalSend } from "src/background/helper";
   import SelectAccount from "../api/Select_Account.svelte";
   import {
     API_KEY,
@@ -190,74 +185,59 @@
     successCount = 0;
   }
 
-  async function parseData(dataLocal: RuntimeMessage) {
+  async function parseData({ status, to }: RuntimeMessage) {
     setStatus("...");
 
-    const validationResult =
-      await runtimeMessageSchema.safeParseAsync(dataLocal);
-
-    if (!validationResult.success) {
-      setStatus("Error when parsing data", true);
-      lastStatusData = undefined;
+    if (to !== "option") {
       return;
     }
 
-    lastStatusData = validationResult.data;
-
-    log.info(lastStatusData);
-
-    if (
-      lastStatusData.type === "status" ||
-      lastStatusData.type === "statusOption"
-    ) {
-      const status = lastStatusData.status;
-      setStatus(status.msg);
-      switch (status.code) {
-        case "accept":
-          isReady = true;
-          isRunning = false;
-          return;
-        case "error":
-          setStatus(status.msg, true);
-          isRunning = false;
-          isReady = true;
-          primaryChannelWritable.set("-1");
-          return;
-        default:
-          return;
-      }
-    } else if (dataLocal.type === "dataOptionAuthToken") {
-      if ($primaryChannelWritable === "-1") {
-        setStatus(
-          "Received OAuth token, but it was rejected due to not arriving on time",
-          true,
-        );
+    switch (status.code) {
+      case "accept":
+        isReady = true;
+        isRunning = false;
         return;
-      }
+      case "error":
+        setStatus(status.msg, true);
+        isRunning = false;
+        isReady = true;
+        primaryChannelWritable.set("-1");
+        return;
+      case "authToken":
+        if ($primaryChannelWritable === "-1") {
+          setStatus(
+            "Received OAuth token, but it was rejected due to not arriving on time",
+            true,
+          );
+          return;
+        }
 
-      setStatus("OAuth token receive. Getting user information");
-      switch ($primaryChannelWritable) {
-        case "0":
-          firstOAuthKeyWritable.set(dataLocal.authToken);
-          const userData0 = await getUserInfo();
-          if (userData0) {
-            firstUserWritable.set(userData0);
-          }
-          break;
-        case "1":
-          secondOAuthKeyWritable.set(dataLocal.authToken);
-          const userData1 = await getUserInfo();
-          if (userData1) {
-            secondUserWritable.set(userData1);
-          }
+        setStatus("OAuth token receive. Getting user information");
+        switch ($primaryChannelWritable) {
+          case "0":
+            firstOAuthKeyWritable.set(status.authToken);
+            const userData0 = await getUserInfo();
+            if (userData0) {
+              firstUserWritable.set(userData0);
+            }
+            break;
+          case "1":
+            secondOAuthKeyWritable.set(status.authToken);
+            const userData1 = await getUserInfo();
+            if (userData1) {
+              secondUserWritable.set(userData1);
+            }
+          default:
+            break;
+        }
+
+        isRunning = false;
+        isReady = true;
+
+        setStatus("OAuth token receive successful");
+        break;
         default:
           break;
-      }
-
-      isRunning = false;
-      isReady = true;
-
-      setStatus("OAuth token receive successful");
     }
   }
 
@@ -487,7 +467,10 @@
 
   onMount(async () => {
     storageRemoveListener = runtime.addListener(parseData);
-    await readySignalSend();
+    await runtime.send({
+      to: "background",
+      status: { code: "ready", msg: "Get ready status" },
+    });
   });
 
   onDestroy(() => {

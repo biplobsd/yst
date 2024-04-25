@@ -3,11 +3,7 @@
   import { onDestroy, onMount } from "svelte";
   import { STORIES_URL } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
-  import {
-    runtime,
-    runtimeMessageSchema,
-    type RuntimeMessage,
-  } from "src/utils/communication";
+  import { runtime, type RuntimeMessage } from "src/utils/communication";
   import { channelIDsWritable, xpathsWritable } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
@@ -37,14 +33,6 @@
   let successCount = 0;
   let actionName = "";
 
-  async function stop() {
-    isStop = true;
-    runtime.send({
-      type: "status",
-      status: { msg: "Stop signal sended", code: "stop" },
-    });
-  }
-
   async function collectSubs() {
     if (isRunning) {
       return false;
@@ -54,8 +42,8 @@
     actionName = "Collect Channel";
 
     const isRequestSent = await runtime.send({
-      type: "status",
-      status: { msg: "Collecting links", code: "collecting" },
+      to: "content",
+      status: { msg: "Collecting channel ids", code: "collecting" },
     });
     if (isRequestSent) {
       return true;
@@ -181,8 +169,8 @@
         // Sending webpage change action
         if (
           !(await runtime.send({
-            type: "statusContent",
-            status: { msg: copyList[indexMain], code: "changePage" },
+            to: "content",
+            status: { code: "changeChannelID", channelID: copyList[indexMain] },
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
@@ -202,9 +190,9 @@
         // Sending subscribe, unsubscribe action
         if (
           !(await runtime.send({
-            type: "statusContent",
+            to: "content",
             status: {
-              msg: copyList[indexMain],
+              channelID: copyList[indexMain],
               code: mode ? "subscribe" : "unsubscribe",
             },
           }))
@@ -265,59 +253,47 @@
     successCount = 0;
   }
 
-  async function parseData(dataLocal: RuntimeMessage) {
+  async function parseData({ status, to }: RuntimeMessage) {
     setStatus("...");
 
-    const validationResult =
-      await runtimeMessageSchema.safeParseAsync(dataLocal);
-
-    if (!validationResult.success) {
-      setStatus("Error when parsing data", true);
-      lastStatusData = undefined;
+    if (to !== "option") {
       return;
     }
 
-    lastStatusData = validationResult.data;
+    log.info(status);
 
-    log.info(lastStatusData);
-
-    if (
-      lastStatusData.type === "status" ||
-      lastStatusData.type === "statusOption"
-    ) {
-      const status = lastStatusData.status;
-      setStatus(status.msg);
-      switch (status.code) {
-        case "loading":
-        case "collecting":
-          isRunning = true;
-          return;
-        case "stop":
-          reset();
-          return;
-        case "ready":
-          ready = true;
-          await xpathSignalSend();
-          return;
-        case "unsubscribeSuccessful":
-        case "subscribeSuccessful":
-        case "accept":
-          ready = true;
-          isRunning = false;
-          return;
-        case "error":
-          setStatus(status.msg, true);
-          isRunning = false;
-          ready = true;
-          return;
-        default:
-          return;
-      }
-    } else if (dataLocal.type === "dataOption") {
-      setStatus("Channel IDs collected. Now saving...");
-      saveChannelsIds(dataLocal.channelPaths);
-      isRunning = false;
-      setStatus("Channel IDs collected successfully.");
+    setStatus(status.code);
+    switch (status.code) {
+      case "loading":
+      case "collecting":
+        isRunning = true;
+        return;
+      case "stop":
+        reset();
+        return;
+      case "ready":
+        ready = true;
+        await xpathSignalSend();
+        return;
+      case "unsubscribeSuccessful":
+      case "subscribeSuccessful":
+      case "accept":
+        ready = true;
+        isRunning = false;
+        return;
+      case "error":
+        setStatus(status.msg, true);
+        isRunning = false;
+        ready = true;
+        return;
+      case "channelIDs":
+        setStatus("Channel IDs collected. Now saving...");
+        saveChannelsIds(status.channelIDs);
+        isRunning = false;
+        setStatus("Channel IDs collected successfully.");
+        return;
+      default:
+        return;
     }
   }
 
@@ -387,7 +363,7 @@
   async function readySignalSend() {
     // Ready signal
     await runtime.send({
-      type: "statusContent",
+      to: "content",
       status: {
         msg: "Is the content script ready?",
         code: "ready",
@@ -404,17 +380,16 @@
       return;
     }
     await runtime.send({
-      type: "dataContent",
+      to: "content",
       status: {
-        msg: "Sending XPath values",
-        code: "xpath",
-      },
-      xpathValues: $xpathsWritable,
+        code: "xpathValues",
+        xpathValues: $xpathsWritable,
+      }
     });
   }
 
   onMount(async () => {
-    storageRemoveListener = runtime.addListener(parseData);
+    // storageRemoveListener = runtime.addListener(parseData);
 
     isRightSiteNow = await isRightSite();
     if (isRightSiteNow) {

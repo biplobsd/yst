@@ -5,8 +5,8 @@ import log from "src/utils/logger";
 let storageRemoveListener = () => {};
 
 log.info("OnInstalled...");
-runtime.isOptionsPage = false;
-storageRemoveListener = runtime.addListener(parseData);
+runtime.fromMsg = 'background';
+// storageRemoveListener = runtime.addListener(parseData);
 
 chrome.runtime.onSuspend.addListener(function () {
   log.info("Unloading.");

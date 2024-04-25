@@ -1,18 +1,6 @@
-import { runtime } from "src/utils/communication";
 import { XPATH_URL } from "src/utils/constants";
 import { addDate } from "src/utils/helper";
 import { XPathModelSchema, type XPathModel } from "src/utils/xpaths";
-
-export async function readySignalSend() {
-  // Ready signal
-  await runtime.send({
-    type: "statusBackground",
-    status: {
-      msg: "Is the content script ready?",
-      code: "ready",
-    },
-  });
-}
 
 export async function fetchXPathUpdate(
   signal?: AbortSignal,

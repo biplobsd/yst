@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { readySignalSend } from "src/background/helper";
   import { runtime } from "src/utils/communication";
   import { delay } from "src/utils/helper";
   import log from "src/utils/logger";
@@ -43,7 +42,10 @@
     }
 
     if (!isReady) {
-      await readySignalSend();
+      runtime.send({
+        to: "background",
+        status: { code: "ready", msg: "Get ready status" },
+      });
     } else {
       return false;
     }
@@ -90,8 +92,8 @@
       }
 
       await runtime.send({
-        type: "statusBackground",
-        status: { code: "authToken", msg: "OAuth token get" },
+        to: "background",
+        status: { code: "getAuthToken", msg: "OAuth token get" },
       });
 
       await waitingForResponseReady(`Waiting for the OAuth Token `, 30);
