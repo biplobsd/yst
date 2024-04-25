@@ -270,9 +270,10 @@
 
     log.info(status);
 
-    lastStatusData = {status, to};
+    setStatus("msg" in status ? status.msg : status.code);
 
-    setStatus(status.code);
+    lastStatusData = { status, to };
+
     switch (status.code) {
       case "loading":
       case "collecting":
@@ -394,7 +395,7 @@
       status: {
         code: "xpathValues",
         xpathValues: $xpathsWritable,
-      }
+      },
     });
   }
 
