@@ -29,6 +29,7 @@
   let isStop = false;
   let isSubRunning = false;
   let channelPathsCount = 0;
+  let lastChannelIDsTotal = 0;
   let failedCount = 0;
   let successCount = 0;
   let actionName = "";
@@ -170,6 +171,7 @@
       isSubRunning = true;
 
       const len = channelIDs.length;
+      lastChannelIDsTotal = len;
       const copyList = Object.assign([], channelIDs);
 
       setStatus(`Starting to ${un}subscribe to the channels`);
@@ -552,11 +554,7 @@
         {/if}
       </div>
       <div
-        style={`background-repeat: no-repeat; background-size: ${
-          ((successCount + failedCount + 1) /
-            (successCount + failedCount + channelPathsCount + 1)) *
-          100
-        }%`}
+        style={`background-repeat: no-repeat; background-size: ${lastChannelIDsTotal !== 0 ? ((successCount+failedCount) / lastChannelIDsTotal) * 100 : 0}%`}
         class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider progress-bar"
       >
         {#if status.msg}
