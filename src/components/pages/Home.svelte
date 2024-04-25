@@ -443,9 +443,9 @@
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
     >
-      <input type="checkbox" class="peer" />
+      <input type="checkbox" class="peer !min-h-8" />
       <div
-        class="gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
+        class="!min-h-8 !py-0 after:!top-4 gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
       >
         Subscriptions:
         {#key channelPathsCount}

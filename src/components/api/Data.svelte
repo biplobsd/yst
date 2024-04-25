@@ -17,7 +17,7 @@
 >
   <input type="checkbox" class="peer !min-h-8" />
   <div
-    class="!min-h-8 !py-0 space-x-1 flex items-center collapse-title text-sm tracking-wider font-sans"
+    class="!min-h-8 !py-0 space-x-1 flex items-center collapse-title after:!top-4 text-sm tracking-wider font-sans"
   >
     <span>Subscriptions:</span>
     {#key subscriptionCount}

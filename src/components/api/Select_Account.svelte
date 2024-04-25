@@ -146,7 +146,7 @@
 >
   <input type="checkbox" class="peer !min-h-8" />
   <div
-    class="!min-h-8 !py-0 flex items-center collapse-title text-sm tracking-wider font-sans font-semibold"
+    class="!min-h-8 !py-0 flex items-center collapse-title after:!top-4 text-sm tracking-wider font-sans font-semibold"
   >
     {#key primaryChannelName}
       <span in:blur>{primaryChannelName}</span>
