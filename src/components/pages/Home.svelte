@@ -33,6 +33,14 @@
   let successCount = 0;
   let actionName = "";
 
+  async function stopFun() {
+    isStop = true;
+    runtime.send({
+      to: "content",
+      status: { msg: "Stop signal sended", code: "stop" },
+    });
+  }
+
   async function collectSubs() {
     if (isRunning) {
       return false;
@@ -261,6 +269,8 @@
     }
 
     log.info(status);
+
+    lastStatusData = {status, to};
 
     setStatus(status.code);
     switch (status.code) {
@@ -504,7 +514,7 @@
               <button
                 disabled={isStop}
                 class="btn btn-xs flex normal-case"
-                on:click={stop}
+                on:click={stopFun}
               >
                 <span class="loading loading-infinity" />
                 <span class="animate-pulse">
