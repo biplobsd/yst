@@ -4,7 +4,10 @@
   import { STORIES_URL } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
   import { runtime, type RuntimeMessage } from "src/utils/communication";
-  import { channelIDsWritable, xpathsWritable } from "src/utils/storage";
+  import {
+    channelIDsWritable as channelIDs,
+    xpathsWritable,
+  } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
   import toast from "svelte-french-toast";
@@ -16,9 +19,7 @@
   import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
   import { channelIDsSchema } from "src/utils/schema";
 
-  let channelIDs = $channelIDsWritable;
   let lastStatusData: RuntimeMessage | undefined = undefined;
-
   let isRunning = true;
   let ready = false;
   let isRightSiteNow = false;
@@ -79,26 +80,26 @@
   }
 
   async function filterUnSubs(mode = true) {
-    const currentSubs: string[] = channelIDs;
+    const currentSubs: string[] = $channelIDs;
     if (!(await collectAndWait())) {
       return;
     }
 
-    if (channelIDs !== currentSubs) {
+    if ($channelIDs !== currentSubs) {
       let notFoundList: string[];
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !channelIDs.includes(elem.toLowerCase()),
+          (elem) => !$channelIDs.includes(elem.toLowerCase()),
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "All those channels have already been subscribed to! There's no need to subscribe again.",
+            "All those channels have already been subscribed to! There is no need to subscribe again.",
           );
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          channelIDs.includes(elem.toLowerCase()),
+          $channelIDs.includes(elem.toLowerCase()),
         );
 
         if (notFoundList.length === 0) {
@@ -163,16 +164,16 @@
       await filterUnSubs(mode);
       actionName = `${mode ? "" : "un"}subscribe`;
 
-      if (channelIDs.length === 0) {
+      if ($channelIDs.length === 0) {
         return;
       }
 
       isRunning = true;
       isSubRunning = true;
 
-      const len = channelIDs.length;
+      const len = $channelIDs.length;
       lastChannelIDsTotal = len;
-      const copyList = Object.assign([], channelIDs);
+      const copyList = Object.assign([], $channelIDs);
 
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
@@ -231,7 +232,7 @@
 
           const l = channelsIdsParse(sCList);
           const parsedChannelIDs = await channelIDsSchema.parseAsync(l);
-          channelIDsWritable.set(parsedChannelIDs);
+          channelIDs.set(parsedChannelIDs);
 
           successCount++;
         } else {
@@ -317,9 +318,7 @@
 
   function saveChannelsIds(list: string[]) {
     channelsIdsString(list);
-    channelIDs = list;
-
-    channelIDsWritable.set(list);
+    channelIDs.set(list);
   }
 
   function channelsIdsParse(listStr: string[]) {
@@ -349,25 +348,22 @@
       });
       return;
     }
-    channelIDs = l;
-    channelIDsWritable.set(l);
+    channelIDs.set(l);
     toast.success("Save successful", {
       id: toastId,
     });
   }
 
-  function channelsIdsTakeoutSave(channelIDs: string[]) {
+  function channelsIdsTakeoutSave(cIds: string[]) {
     const toastId = toast.loading("Saving...");
-    const l = channelsIdsParse(channelIDs);
+    const l = channelsIdsParse(cIds);
     if (l === undefined) {
       toast.error("Save unsuccessful", {
         id: toastId,
       });
       return;
     }
-
-    channelIDs = l;
-    channelIDsWritable.set(l);
+    channelIDs.set(l);
     toast.success("Save successful", {
       id: toastId,
     });
@@ -409,7 +405,7 @@
       await readySignalSend();
     }
 
-    channelsIdsParse($channelIDsWritable);
+    channelsIdsParse($channelIDs);
   });
 
   onDestroy(() => {
@@ -554,7 +550,7 @@
         {/if}
       </div>
       <div
-        style={`background-repeat: no-repeat; background-size: ${lastChannelIDsTotal !== 0 ? ((successCount+failedCount) / lastChannelIDsTotal) * 100 : 0}%`}
+        style={`background-repeat: no-repeat; background-size: ${lastChannelIDsTotal !== 0 ? ((successCount + failedCount) / lastChannelIDsTotal) * 100 : 0}%`}
         class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider progress-bar"
       >
         {#if status.msg}

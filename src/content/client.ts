@@ -147,13 +147,7 @@ async function isStopping() {
 async function checking() {
   // checking is drawer open
   if (!(await drawerOpening())) {
-    runtime.send({
-      to: "option",
-      status: {
-        code: "error",
-        msg: "[Ignored error] Unable to open drawer",
-      },
-    });
+    log.info("Drawer not opened");
     // return false;
   }
 
@@ -178,13 +172,7 @@ async function checking() {
   }
 
   if (!(await expendedItemsFound())) {
-    runtime.send({
-      to: "option",
-      status: {
-        msg: "[Ignored error] Unable to expended all lists",
-        code: "error",
-      },
-    });
+    log.info("Expended items not found");
     // return false;
   }
 
