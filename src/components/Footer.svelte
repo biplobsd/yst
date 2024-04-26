@@ -5,7 +5,7 @@
   import GithubMarkWhite from "src/assets/icons/github-mark-white.png";
   import { docs } from "src/utils/docs";
   import ExternalLink from "./External_Link.svelte";
-    import { BMC_LINK } from "src/utils/constants";
+  import { BMC_LINK } from "src/utils/constants";
 </script>
 
 <div class="my-2 gap-2 flex justify-center items-center mb-3">
@@ -15,6 +15,7 @@
       target="_blank"
       rel="noreferrer"
       href={docs.README}
+      title="Click to open documentation page"
     >
       <img
         class="w-4 h-4"
@@ -26,6 +27,7 @@
   </ExternalLink>
   <ExternalLink>
     <a
+      title="Buy me a coffee to support this extension"
       class="btn btn-xs normal-case"
       target="_blank"
       rel="noreferrer"

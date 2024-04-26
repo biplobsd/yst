@@ -38,8 +38,12 @@ z-index: 1000;
     <div
       class="flex justify-center items-center h-full w-full flex-col gap-1 -mt-4"
     >
-      <div class="flex justify-end w-full">
-        <button on:click={() => (open = false)} class="btn btn-sm btn-circle"
+      <div class="flex justify-between items-end w-full">
+        <span class="ml-2 text-info font-bold">Last run was successful.</span>
+        <button
+          title="Close support popup"
+          on:click={() => (open = false)}
+          class="btn btn-xs btn-circle btn-outline"
           ><XIcon class="w-4 h-4" /></button
         >
       </div>

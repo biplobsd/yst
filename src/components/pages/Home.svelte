@@ -416,7 +416,7 @@
   });
 </script>
 
-{#if status.msg === "Done"}
+{#if status.msg === "Done" && successCount / lastChannelIDsTotal >= 0.6}
   <Done />
 {/if}
 
@@ -621,6 +621,7 @@
     class="text-justify space-y-2 justify-center flex flex-col items-center w-full h-36"
   >
     <a
+      title="Click to open YouTube.com in a new tab"
       class="btn btn-success"
       target="_blank"
       rel="noreferrer"

@@ -23,6 +23,7 @@
         <X class=" w-4 h-4 " />
       </button>
       <a
+        title="Click to open 60s YST tutorial video on Youtube."
         href={TUTORIAL_LINK}
         target="_blank"
         rel="noreferrer"
