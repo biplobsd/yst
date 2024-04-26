@@ -25,4 +25,5 @@ export const SETTINGS_DEFAULT: Settings = {
   subscriptionsList: [],
   primaryChannel: "-1",
   apiReqDelay: 500,
+  closeTutorial: false,
 };

@@ -6,6 +6,7 @@
   import { runtime, type RuntimeMessage } from "src/utils/communication";
   import {
     channelIDsWritable as channelIDs,
+    closeTutorialWritable,
     xpathsWritable,
   } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
@@ -19,7 +20,7 @@
   import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
   import { channelIDsSchema } from "src/utils/schema";
   import Done from "../Done.svelte";
-    import Tutorial from "../Tutorial.svelte";
+  import Tutorial from "../Tutorial.svelte";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
   let isRunning = true;
@@ -419,7 +420,9 @@
   <Done />
 {/if}
 
-<Tutorial />
+{#if !$closeTutorialWritable}
+  <Tutorial />
+{/if}
 
 {#if isRightSiteNow}
   <div class="space-y-2 relative">

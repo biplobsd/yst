@@ -64,3 +64,9 @@ export const apiReqDelayWritable = createWritable(
   STORAGE_KEYS.apiReqDelay,
   ud.apiReqDelay,
 );
+
+// Close tutorial
+export const closeTutorialWritable = createWritable(
+  STORAGE_KEYS.closeTutorial,
+  ud.closeTutorial,
+);

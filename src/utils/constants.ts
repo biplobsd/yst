@@ -26,3 +26,4 @@ export const PRIMARY_CHANNEL = "primaryChannelKey";
 export const API_REQ_DELAY = "apiReqDelay";
 export const BMC_LINK = "https://www.buymeacoffee.com/biplobsd";
 export const STORE_LINK = "https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa";
+export const TUTORIAL_LINK = "https://youtu.be/EsouSNQOALQ";
