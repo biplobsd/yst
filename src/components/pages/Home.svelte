@@ -19,6 +19,7 @@
   import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
   import { channelIDsSchema } from "src/utils/schema";
   import Done from "../Done.svelte";
+    import Tutorial from "../Tutorial.svelte";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
   let isRunning = true;
@@ -417,6 +418,8 @@
 {#if status.msg === "Done"}
   <Done />
 {/if}
+
+<Tutorial />
 
 {#if isRightSiteNow}
   <div class="space-y-2 relative">
