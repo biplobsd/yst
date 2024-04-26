@@ -265,11 +265,11 @@
   }
 
   async function parseData({ status, to }: RuntimeMessage) {
-    setStatus("...");
-
     if (to !== "option") {
       return;
     }
+
+    setStatus("...");
 
     log.info(status);
 

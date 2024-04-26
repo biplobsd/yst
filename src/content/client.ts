@@ -271,7 +271,7 @@ export async function readySignalSend() {
   await runtime.send({
     to: "option",
     status: {
-      msg: "Ready for accept request",
+      msg: "Ready for accept request?",
       code: "ready",
     },
   });
@@ -281,7 +281,7 @@ async function acceptSignalSend() {
   await runtime.send({
     to: "option",
     status: {
-      msg: "Ready for accept request",
+      msg: "Accepting request...",
       code: "accept",
     },
   });
@@ -396,11 +396,11 @@ async function unSubSubNow(channelID: string) {
 }
 
 export async function parseData({ status, to: type }: RuntimeMessage) {
-  log.info(status);
-
   if (type !== "content") {
     return;
   }
+
+  log.info(status);
 
   switch (status.code) {
     case "loading":

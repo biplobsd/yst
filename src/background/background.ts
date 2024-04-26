@@ -9,15 +9,17 @@ export async function parseData(
   { status, to, from }: RuntimeMessage,
   sender?: chrome.runtime.MessageSender,
 ) {
+  if (to !== "background") {
+    return;
+  }
+
   let tabId: number | undefined;
   if (sender && sender.tab && sender.tab.id) {
     tabId = sender.tab.id;
   }
+
   log.info(status);
 
-  if (to !== "background") {
-    return;
-  }
   switch (status.code) {
     case "ready":
       switch (from) {
