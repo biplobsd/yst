@@ -2,7 +2,7 @@
   import { PassthroughBlobProvider, ZipReader } from "async-zip-reader";
   import axios, { AxiosError } from "axios";
   import { csv_async_iter } from "csv-iter-parse";
-  import { API_KEY, CHANNEL_API_URL } from "src/utils/constants";
+  import { CHANNEL_API_URL } from "src/utils/constants";
   import { SETTINGS_DEFAULT as sd } from "src/utils/default";
   import { delay } from "src/utils/helper";
   import log from "src/utils/logger";
@@ -11,6 +11,7 @@
   import toast from "svelte-french-toast";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
+    import { apiKeyWritable } from "src/utils/storage";
 
   export let channelsIdsTakeoutSave: (channelIDs: string[]) => void;
   let files: FileList | null = null;
@@ -23,13 +24,19 @@
     for (let index = 0; index < channelIds.length; index += 50) {
       let res: any;
       try {
+        const apiKey = $apiKeyWritable;
+        if (!apiKey) {
+          toast.error("API key is not set");
+          return customUrls;
+        }
+
         res = await axios.get(CHANNEL_API_URL, {
           params: {
             id: channelIds.slice(index, index + 50),
             part: "snippet",
             fields: "items(snippet(customUrl))",
             maxResults: 50,
-            key: API_KEY,
+            key: apiKey,
           },
           paramsSerializer: (params) => {
             return qs.stringify(params, { arrayFormat: "repeat" });
@@ -90,6 +97,10 @@
 
       toast.loading("Converting channel ID to custom URL", { id: toastID });
       const customUrls = await convertChannelIdToCustomURL(channelIds);
+      if(customUrls.length === 0) {
+        toast.error("No custom URL found", { id: toastID });
+        return;
+      }
       toast.loading("Saving custom URL", { id: toastID });
       channelsIdsTakeoutSave(customUrls);
       toast.success("All done", { id: toastID });

@@ -70,3 +70,15 @@ export const closeTutorialWritable = createWritable(
   STORAGE_KEYS.closeTutorial,
   ud.closeTutorial,
 );
+
+// Google OAuth2 Client ID
+export const clientIDWritable = createWritable(
+  STORAGE_KEYS.clientID,
+  ud.clientID,
+);
+
+// Google OAuth2 API key
+export const apiKeyWritable = createWritable(
+  STORAGE_KEYS.apiKey,
+  ud.apiKey,
+);

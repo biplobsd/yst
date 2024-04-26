@@ -11,6 +11,7 @@
     secondUserWritable,
     subscriptionsListWritable,
     primaryChannelWritable,
+    apiKeyWritable,
   } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
@@ -25,7 +26,6 @@
   import Data from "../api/Data.svelte";
   import SelectAccount from "../api/Select_Account.svelte";
   import {
-    API_KEY,
     SUBSCRIPTIONS_API_URL,
     USERINFO_API_URL,
   } from "src/utils/constants";
@@ -249,10 +249,15 @@
     };
 
     try {
+      const apiKey = $apiKeyWritable;
+      if(!apiKey) {
+        setStatus("API key is not set", true);
+        return false;
+      }
       await axios.delete(SUBSCRIPTIONS_API_URL, {
         params: {
           id,
-          key: import.meta.env.VITE_API_KEY,
+          key: apiKey,
         },
         headers,
       });
@@ -295,6 +300,12 @@
     };
 
     try {
+      const apiKey = $apiKeyWritable;
+      if(!apiKey) {
+        setStatus("API key is not set", true);
+        return false;
+      }
+
       await axios.post(
         SUBSCRIPTIONS_API_URL,
         {
@@ -308,7 +319,7 @@
         {
           params: {
             part: "snippet",
-            key: API_KEY,
+            key: apiKey,
           },
           headers,
         },
@@ -360,6 +371,12 @@
 
     let pageToken = undefined;
     subscriptionsList = [];
+    const apiKey = $apiKeyWritable;
+    if (!apiKey) {
+      setStatus("API key is not set", true);
+      return;
+    }
+
     while (true) {
       let res: any;
       try {
@@ -368,7 +385,7 @@
             pageToken,
             part: "snippet",
             mine: true,
-            key: API_KEY,
+            key: apiKey,
             fields:
               "nextPageToken, items(id, snippet(title, resourceId(channelId)))",
             maxResults: 50,

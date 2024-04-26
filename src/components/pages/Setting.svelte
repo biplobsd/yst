@@ -6,11 +6,12 @@
   import SelectXpath from "../setting/xpath/Select_Xpath.svelte";
   import ModeSwitch from "../setting/Mode_Switch.svelte";
   import { ChevronLeftIcon } from "lucide-svelte";
+    import AccessKeys from "../setting/Access_Keys.svelte";
 
   let selected: SettingSelected = "-1";
 </script>
 
-<div class="space-y-2 w-full">
+<div class="space-y-1 w-full">
   {#if selected !== "-1"}
     <div class="flex w-full gap-2">
       <button class="btn" on:click={() => (selected = "-1")}>
@@ -26,6 +27,8 @@
     <ModeSwitch />
     <div class="divider" />
     <APIDelay />
+    <div class="divider" />
+    <AccessKeys/>
   {/if}
 
   {#if selected === "xpath"}

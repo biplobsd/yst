@@ -69,6 +69,8 @@ export const SettingsSchema = z.object({
   primaryChannel: z.enum(["0", "1", "-1"]).default("-1"),
   apiReqDelay: z.number().default(500),
   closeTutorial: z.boolean().default(false),
+  clientID: z.string().optional(),
+  apiKey: z.string().optional(),
 });
 
 export type User = z.infer<typeof UserSchema>;

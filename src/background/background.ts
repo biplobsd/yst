@@ -2,6 +2,7 @@ import { type RuntimeMessage, runtime } from "src/utils/communication";
 import { AUTH_URL, REDIRECT_URI } from "src/utils/constants";
 
 import log from "src/utils/logger";
+import { db } from "./storage";
 
 let isWorking = false;
 
@@ -48,8 +49,20 @@ export async function parseData(
 
       isWorking = true;
       try {
+        const clientID = await db.get("clientID");
+        if (!clientID) {
+          await runtime.send({
+            tabId,
+            to: "option",
+            status: {
+              code: "error",
+              msg: "Error: Client ID is not set.",
+            },
+          });
+          return;
+        }
         const auth_params = {
-          client_id: import.meta.env.VITE_CLIENT_ID,
+          client_id: clientID,
           redirect_uri: REDIRECT_URI,
           response_type: "token",
           scope:

@@ -26,4 +26,6 @@ export const SETTINGS_DEFAULT: Settings = {
   primaryChannel: "-1",
   apiReqDelay: 500,
   closeTutorial: false,
+  clientID: import.meta.env.VITE_CLIENT_ID,
+  apiKey: import.meta.env.VITE_API_KEY,
 };
