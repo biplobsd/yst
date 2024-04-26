@@ -5,6 +5,7 @@
   import GithubMarkWhite from "src/assets/icons/github-mark-white.png";
   import { docs } from "src/utils/docs";
   import ExternalLink from "./External_Link.svelte";
+    import { BMC_LINK } from "src/utils/constants";
 </script>
 
 <div class="my-2 gap-2 flex justify-center items-center mb-3">
@@ -28,7 +29,7 @@
       class="btn btn-xs normal-case"
       target="_blank"
       rel="noreferrer"
-      href="https://www.buymeacoffee.com/biplobsd"
+      href={BMC_LINK}
     >
       <CoffeeIcon />
       Buy me a coffee</a

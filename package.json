@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.23",
+    "@splidejs/svelte-splide": "^0.2.9",
     "@sveltejs/vite-plugin-svelte": "^3.1.0",
     "@total-typescript/ts-reset": "^0.5.1",
     "@tsconfig/svelte": "5.0.4",
@@ -35,6 +36,7 @@
     "qs": "^6.12.1",
     "svelte": "^4.2.15",
     "svelte-check": "3.6.9",
+    "svelte-confetti": "^1.4.0",
     "svelte-french-toast": "^1.2.0",
     "svelte-preprocess": "5.1.4",
     "tailwind-modern-scroll": "^0.0.7",

@@ -24,3 +24,5 @@ export const API_KEY = import.meta.env.VITE_API_KEY;
 export const USERINFO_API_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 export const PRIMARY_CHANNEL = "primaryChannelKey";
 export const API_REQ_DELAY = "apiReqDelay";
+export const BMC_LINK = "https://www.buymeacoffee.com/biplobsd";
+export const STORE_LINK = "https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa";

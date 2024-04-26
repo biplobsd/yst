@@ -29,7 +29,7 @@
       >About
     </button>
   </div>
-  <div class="my-2 w-full">
+  <div class="my-2 w-full relative">
     {#if tabName === "Home"}
       <div in:blur out:slide>
         {#if $workingModeWritable === "xpath"}

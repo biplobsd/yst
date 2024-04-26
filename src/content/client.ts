@@ -271,7 +271,7 @@ export async function readySignalSend() {
   await runtime.send({
     to: "option",
     status: {
-      msg: "Ready for accept request?",
+      msg: "Ready for accept request...",
       code: "ready",
     },
   });
@@ -281,7 +281,7 @@ async function acceptSignalSend() {
   await runtime.send({
     to: "option",
     status: {
-      msg: "Accepting request...",
+      msg: "Ready for accept request...",
       code: "accept",
     },
   });

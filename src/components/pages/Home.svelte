@@ -18,6 +18,7 @@
   import { docs } from "src/utils/docs";
   import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
   import { channelIDsSchema } from "src/utils/schema";
+  import Done from "../Done.svelte";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
   let isRunning = true;
@@ -413,8 +414,12 @@
   });
 </script>
 
+{#if status.msg === "Done"}
+  <Done />
+{/if}
+
 {#if isRightSiteNow}
-  <div class="space-y-2">
+  <div class="space-y-2 relative">
     <div class="font-bold flex gap-1 items-center">
       Data <DocsLink href={docs.dataSection} />
     </div>
