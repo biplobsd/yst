@@ -1,16 +1,19 @@
 <script>
-  import { APP_NAME, REPO_URL, VERSION } from "src/utils/constants";
+  import { REPO_URL } from "src/utils/constants";
+  const { name, version, author } = chrome.runtime.getManifest();
+  const extensionID = chrome.runtime.id;
 </script>
 
-<div><span class="font-bold">App name :</span> {APP_NAME}</div>
-<div><span class="font-bold">Version:</span> {VERSION} 2023</div>
+<div><span class="font-bold">App name :</span> {name}</div>
+<div><span class="font-bold">ID:</span> {extensionID}</div>
+<div><span class="font-bold">Version:</span> v{version}</div>
 <div>
   <span class="font-bold">Email:</span>
   <a
     class="link link-hover"
     target="_blank"
     rel="noreferrer"
-    href="mailto:biplobsd11@gmail.com">biplobsd11@gmail.com</a
+    href={`mailto:${author}`}>{author}</a
   >
 </div>
 <div>

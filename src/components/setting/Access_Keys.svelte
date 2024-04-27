@@ -6,7 +6,7 @@
 <div
   class="capitalize font-bold tracking-wider text-base !mt-0 flex items-center gap-1"
 >
-    Google API console keys
+  Google API console keys
 </div>
 
 <label class="form-control w-full !my-0">

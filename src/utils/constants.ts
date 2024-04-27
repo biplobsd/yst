@@ -1,11 +1,7 @@
 export const STORIES_URL = ["https://www.youtube.com/"];
 export const DEFAULT_STATUS_MSG = "Ready for request";
-export const APP_NAME = "Youtube Subscriptions Transfer";
-export const VERSION = "v1.6";
-
 export const REPO_URL = "https://github.com/biplobsd/yst";
-export const XPATH_URL = `https://raw.githubusercontent.com/biplobsd/yst/main/data/xpaths/${VERSION}.json`;
-
+export const XPATH_URL = `https://raw.githubusercontent.com/biplobsd/yst/main/data/xpaths/v1.6.json`;
 export const CHANNEL_PATHS_KEY = "channelPaths";
 export const XPATH_VALUES_KEY = "xpathValues";
 export const THEME_MODE_KEY = "themeMode";
@@ -24,5 +20,6 @@ export const USERINFO_API_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 export const PRIMARY_CHANNEL = "primaryChannelKey";
 export const API_REQ_DELAY = "apiReqDelay";
 export const BMC_LINK = "https://www.buymeacoffee.com/biplobsd";
-export const STORE_LINK = "https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa";
+export const STORE_LINK =
+  "https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa";
 export const TUTORIAL_LINK = "https://youtu.be/EsouSNQOALQ";

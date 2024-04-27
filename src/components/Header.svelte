@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { APP_NAME, VERSION } from "src/utils/constants";
   import icon48 from "src/assets/icons/icon128.png";
   import ThemeSwitch from "./Theme_Switch.svelte";
-
   import { blur } from "svelte/transition";
   import { workingModeWritable } from "src/utils/storage";
+
+  const { name, version } = chrome.runtime.getManifest();
 </script>
 
 <div class="flex items-center gap-1 mb-3 tracking-wider font-extrabold text-xl">
@@ -24,10 +24,10 @@
         {/key}
       </abbr>
     </div>
-    <span class="text-sm">{APP_NAME}</span>
+    <span class="text-sm">{name}</span>
   </div>
   <div class="flex flex-col items-center">
-    <span class="text-xs">{VERSION}</span>
+    <span class="text-xs">{version}</span>
     <ThemeSwitch />
   </div>
 </div>
