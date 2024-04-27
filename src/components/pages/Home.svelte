@@ -1,32 +1,27 @@
 <script lang="ts">
-  import "src/options/styles.css";
   import { onDestroy, onMount } from "svelte";
   import { STORIES_URL } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
+  import { runtime, type RuntimeMessage } from "src/utils/communication";
   import {
-    runtime,
-    runtimeMessageSchema,
-    type RuntimeMessage,
-  } from "src/utils/communication";
-  import type { XPathModel } from "src/utils/xpaths";
-  import { channelPathsWritable, xPathValuesWritable } from "src/utils/storage";
-  import { get } from "svelte/store";
+    channelIDsWritable as channelIDs,
+    closeTutorialWritable,
+    xpathsWritable,
+  } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
-  import ExternalLinkIcon from "../icons/External_Link_Icon.svelte";
   import toast from "svelte-french-toast";
-  import ClipboardCopyIcon from "../icons/Clipboard_Copy_Icon.svelte";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
-  import { channelPathsSchema } from "src/utils/schema";
   import ZipReader from "../data/Zip_Reader.svelte";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
+  import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
+  import { channelIDsSchema } from "src/utils/schema";
+  import Done from "../Done.svelte";
+  import Tutorial from "../Tutorial.svelte";
 
-  let channelPaths: string[] = [];
-  let xpathValues: XPathModel | undefined = undefined;
   let lastStatusData: RuntimeMessage | undefined = undefined;
-
   let isRunning = true;
   let ready = false;
   let isRightSiteNow = false;
@@ -37,14 +32,15 @@
   let isStop = false;
   let isSubRunning = false;
   let channelPathsCount = 0;
+  let lastChannelIDsTotal = 0;
   let failedCount = 0;
   let successCount = 0;
   let actionName = "";
 
-  async function stop() {
+  async function stopFun() {
     isStop = true;
     runtime.send({
-      type: "status",
+      to: "content",
       status: { msg: "Stop signal sended", code: "stop" },
     });
   }
@@ -58,8 +54,8 @@
     actionName = "Collect Channel";
 
     const isRequestSent = await runtime.send({
-      type: "status",
-      status: { msg: "Collecting links", code: "collecting" },
+      to: "content",
+      status: { msg: "Collecting channel ids", code: "collecting" },
     });
     if (isRequestSent) {
       return true;
@@ -80,37 +76,37 @@
     }
     setStatus(
       "Unable to get the subscriptions list from the content client",
-      true
+      true,
     );
     return false;
   }
 
   async function filterUnSubs(mode = true) {
-    const currentSubs: string[] = channelPaths;
+    const currentSubs: string[] = $channelIDs;
     if (!(await collectAndWait())) {
       return;
     }
 
-    if (channelPaths !== currentSubs) {
+    if ($channelIDs !== currentSubs) {
       let notFoundList: string[];
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !channelPaths.includes(elem.toLowerCase())
+          (elem) => !$channelIDs.includes(elem.toLowerCase()),
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "All those channels have already been subscribed to! There's no need to subscribe again."
+            "All those channels have already been subscribed to! There is no need to subscribe again.",
           );
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          channelPaths.includes(elem.toLowerCase())
+          $channelIDs.includes(elem.toLowerCase()),
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "No channel match with your current subscriptions channel list! NO need to unsubscribe"
+            "No channel match with your current subscriptions channel list! NO need to unsubscribe",
           );
         }
       }
@@ -170,23 +166,24 @@
       await filterUnSubs(mode);
       actionName = `${mode ? "" : "un"}subscribe`;
 
-      if (channelPaths.length === 0) {
+      if ($channelIDs.length === 0) {
         return;
       }
 
       isRunning = true;
       isSubRunning = true;
 
-      const len = channelPaths.length;
-      const copyList = Object.assign([], channelPaths);
+      const len = $channelIDs.length;
+      lastChannelIDsTotal = len;
+      const copyList = Object.assign([], $channelIDs);
 
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
         // Sending webpage change action
         if (
           !(await runtime.send({
-            type: "statusContent",
-            status: { msg: copyList[indexMain], code: "changePage" },
+            to: "content",
+            status: { code: "changeChannelID", channelID: copyList[indexMain] },
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
@@ -196,7 +193,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ready signal: ` + copyList[indexMain]
+            `Waiting for the ready signal: ` + copyList[indexMain],
           ))
         ) {
           return;
@@ -206,9 +203,9 @@
         // Sending subscribe, unsubscribe action
         if (
           !(await runtime.send({
-            type: "statusContent",
+            to: "content",
             status: {
-              msg: copyList[indexMain],
+              channelID: copyList[indexMain],
               code: mode ? "subscribe" : "unsubscribe",
             },
           }))
@@ -219,7 +216,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain]
+            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain],
           ))
         ) {
           return;
@@ -236,8 +233,8 @@
           sCList.splice(0, 1);
 
           const l = channelsIdsParse(sCList);
-          const parsedChannelPaths = await channelPathsSchema.parseAsync(l);
-          channelPathsWritable.set(parsedChannelPaths);
+          const parsedChannelIDs = await channelIDsSchema.parseAsync(l);
+          channelIDs.set(parsedChannelIDs);
 
           successCount++;
         } else {
@@ -269,60 +266,50 @@
     successCount = 0;
   }
 
-  async function parseData(dataLocal: RuntimeMessage) {
-    setStatus("...");
-
-    const validationResult = await runtimeMessageSchema.safeParseAsync(
-      dataLocal
-    );
-
-    if (!validationResult.success) {
-      setStatus("Error when parsing data", true);
-      lastStatusData = undefined;
+  async function parseData({ status, to }: RuntimeMessage) {
+    if (to !== "option") {
       return;
     }
 
-    lastStatusData = validationResult.data;
+    setStatus("...");
 
-    log.info(lastStatusData);
+    log.info(status);
 
-    if (
-      lastStatusData.type === "status" ||
-      lastStatusData.type === "statusOption"
-    ) {
-      const status = lastStatusData.status;
-      setStatus(status.msg);
-      switch (status.code) {
-        case "loading":
-        case "collecting":
-          isRunning = true;
-          return;
-        case "stop":
-          reset();
-          return;
-        case "ready":
-          ready = true;
-          await xpathSignalSend();
-          return;
-        case "unsubscribeSuccessful":
-        case "subscribeSuccessful":
-        case "accept":
-          ready = true;
-          isRunning = false;
-          return;
-        case "error":
-          setStatus(status.msg, true);
-          isRunning = false;
-          ready = true;
-          return;
-        default:
-          return;
-      }
-    } else if (dataLocal.type === "dataOption") {
-      setStatus("Channel IDs collected. Now saving...");
-      saveChannelsIds(dataLocal.channelPaths);
-      isRunning = false;
-      setStatus("Channel IDs collected successfully.");
+    setStatus("msg" in status ? status.msg : status.code);
+
+    lastStatusData = { status, to };
+
+    switch (status.code) {
+      case "loading":
+      case "collecting":
+        isRunning = true;
+        return;
+      case "stop":
+        reset();
+        return;
+      case "ready":
+        ready = true;
+        await xpathSignalSend();
+        return;
+      case "unsubscribeSuccessful":
+      case "subscribeSuccessful":
+      case "accept":
+        ready = true;
+        isRunning = false;
+        return;
+      case "error":
+        setStatus(status.msg, true);
+        isRunning = false;
+        ready = true;
+        return;
+      case "channelIDs":
+        setStatus("Channel IDs collected. Now saving...");
+        saveChannelsIds(status.channelIDs);
+        isRunning = false;
+        setStatus("Channel IDs collected successfully.");
+        return;
+      default:
+        return;
     }
   }
 
@@ -333,9 +320,7 @@
 
   function saveChannelsIds(list: string[]) {
     channelsIdsString(list);
-    channelPaths = list;
-
-    channelPathsWritable.set(list);
+    channelIDs.set(list);
   }
 
   function channelsIdsParse(listStr: string[]) {
@@ -365,25 +350,22 @@
       });
       return;
     }
-    channelPaths = l;
-    channelPathsWritable.set(l);
+    channelIDs.set(l);
     toast.success("Save successful", {
       id: toastId,
     });
   }
 
-  function channelsIdsTakeoutSave(channelIDs: string[]) {
+  function channelsIdsTakeoutSave(cIds: string[]) {
     const toastId = toast.loading("Saving...");
-    const l = channelsIdsParse(channelIDs);
+    const l = channelsIdsParse(cIds);
     if (l === undefined) {
       toast.error("Save unsuccessful", {
         id: toastId,
       });
       return;
     }
-
-    channelPaths = l;
-    channelPathsWritable.set(l);
+    channelIDs.set(l);
     toast.success("Save successful", {
       id: toastId,
     });
@@ -392,7 +374,7 @@
   async function readySignalSend() {
     // Ready signal
     await runtime.send({
-      type: "statusContent",
+      to: "content",
       status: {
         msg: "Is the content script ready?",
         code: "ready",
@@ -401,35 +383,31 @@
   }
 
   async function xpathSignalSend() {
-    if (!xpathValues) {
+    if (!$xpathsWritable) {
       setStatus(
         "Unable to send xPathValue signal to the content script...",
-        true
+        true,
       );
       return;
     }
     await runtime.send({
-      type: "dataContent",
+      to: "content",
       status: {
-        msg: "Sending XPath values",
-        code: "xpath",
+        code: "xpathValues",
+        xpathValues: $xpathsWritable,
       },
-      xpathValues,
     });
   }
 
   onMount(async () => {
-    xpathValues = get(xPathValuesWritable);
-    const storedChannelPaths = get(channelPathsWritable);
-    channelPaths = storedChannelPaths;
-    channelsIdsParse(storedChannelPaths);
-
     storageRemoveListener = runtime.addListener(parseData);
 
     isRightSiteNow = await isRightSite();
     if (isRightSiteNow) {
       await readySignalSend();
     }
+
+    channelsIdsParse($channelIDs);
   });
 
   onDestroy(() => {
@@ -437,24 +415,32 @@
   });
 </script>
 
+{#if status.msg === "Done" && successCount / lastChannelIDsTotal >= 0.6}
+  <Done />
+{/if}
+
+{#if !$closeTutorialWritable}
+  <Tutorial />
+{/if}
+
 {#if isRightSiteNow}
-  <div class="space-y-2">
+  <div class="space-y-2 relative">
     <div class="font-bold flex gap-1 items-center">
       Data <DocsLink href={docs.dataSection} />
     </div>
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
     >
-      <input type="checkbox" class="peer !min-h-8 !py-0" />
+      <input type="checkbox" class="peer !min-h-8" />
       <div
-        class="!min-h-8 !py-0 gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
+        class="!min-h-8 !py-0 after:!top-4 gap-1 flex items-center collapse-title text-sm tracking-wider font-sans"
       >
         Subscriptions:
         {#key channelPathsCount}
           <span in:blur>{channelPathsCount}</span>
         {/key}
       </div>
-      <div class="collapse-content peer-checked:py-2">
+      <div class="collapse-content">
         <span class="text-xs space-y-2">
           <p>
             Enter only channel IDs. Channel IDs start with the <span
@@ -473,10 +459,10 @@
               data-tip="Copy channel IDs to clipboard"
             >
               <button
-                class="btn btn-xs !px-1"
+                class="btn btn-xs"
                 on:click={() => {
                   const toastID = toast.loading(
-                    "Copying channels IDs to clipboard..."
+                    "Copying channels IDs to clipboard...",
                   );
                   if (channelPathsText === "") {
                     toast.error("Empty channel IDs list", {
@@ -491,7 +477,7 @@
                       id: toastID,
                     });
                   }
-                }}><ClipboardCopyIcon /></button
+                }}><CopyIcon class="h-3 w-3" /></button
               ></span
             >
           </div>
@@ -537,12 +523,12 @@
               <button
                 disabled={isStop}
                 class="btn btn-xs flex normal-case"
-                on:click={stop}
+                on:click={stopFun}
               >
                 <span class="loading loading-infinity" />
                 <span class="animate-pulse">
                   {#if isStop}
-                    <div transition:slide>Stopping...</div>
+                    <div transition:slide>Wait</div>
                   {:else}
                     <div transition:slide>Stop</div>
                   {/if}
@@ -574,7 +560,8 @@
         {/if}
       </div>
       <div
-        class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider"
+        style={`background-repeat: no-repeat; background-size: ${lastChannelIDsTotal !== 0 ? ((successCount + failedCount) / lastChannelIDsTotal) * 100 : 0}%`}
+        class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider progress-bar"
       >
         {#if status.msg}
           <div class={status.isError ? "text-red-500" : undefined}>
@@ -633,6 +620,7 @@
     class="text-justify space-y-2 justify-center flex flex-col items-center w-full h-36"
   >
     <a
+      title="Click to open YouTube.com in a new tab"
       class="btn btn-success"
       target="_blank"
       rel="noreferrer"

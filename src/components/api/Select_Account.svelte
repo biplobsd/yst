@@ -1,34 +1,25 @@
 <script lang="ts">
-  import { readySignalSend } from "src/background/helper";
   import { runtime } from "src/utils/communication";
   import { delay } from "src/utils/helper";
   import log from "src/utils/logger";
-  import type { User } from "src/utils/schema";
   import { blur } from "svelte/transition";
   import {
-    channel0OAuthTokenWritable,
-    channel1OAuthTokenWritable,
+    firstOAuthKeyWritable,
+    secondOAuthKeyWritable,
     firstUserWritable,
     secondUserWritable,
+    primaryChannelWritable,
   } from "src/utils/storage";
-  import { onMount } from "svelte";
   import Item from "./Item.svelte";
   import axios from "axios";
-  import type { PrimaryChannel } from "src/utils/types";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
+  import { SETTINGS_DEFAULT as ud } from "src/utils/default";
 
-  export let primaryChannel: PrimaryChannel;
   export let isRunning: boolean;
   export let isReady: boolean;
   export let isStop: boolean;
   export let setStatus: (msg: string, isError?: boolean) => void;
-
-  let channel0OAuthToken: string | null = null;
-  let channel1OAuthToken: string | null = null;
-
-  let firstUser: User | null = null;
-  let secondUser: User | null = null;
 
   let primaryChannelName: string;
 
@@ -51,7 +42,10 @@
     }
 
     if (!isReady) {
-      await readySignalSend();
+      runtime.send({
+        to: "background",
+        status: { code: "ready", msg: "Get ready status" },
+      });
     } else {
       return false;
     }
@@ -77,62 +71,52 @@
     }
   }
 
-  async function connectDisconnect(btnNo: 0 | 1) {
+  async function connectDisconnect(btnNo: "0" | "1") {
     isRunning = true;
-    primaryChannel = btnNo;
+    primaryChannelWritable.set(btnNo);
     try {
-      if (btnNo === 0) {
-        if (channel0OAuthToken) {
-          await revokeToken(channel0OAuthToken);
-          channel0OAuthTokenWritable.set(null);
-          firstUserWritable.set(null);
+      if (btnNo === "0") {
+        if ($firstOAuthKeyWritable) {
+          await revokeToken($firstOAuthKeyWritable);
+          firstOAuthKeyWritable.set("");
+          firstUserWritable.set(ud.firstUser);
           return;
         }
       } else {
-        if (channel1OAuthToken) {
-          await revokeToken(channel1OAuthToken);
-          channel1OAuthTokenWritable.set(null);
-          secondUserWritable.set(null);
+        if ($secondOAuthKeyWritable) {
+          await revokeToken($secondOAuthKeyWritable);
+          secondOAuthKeyWritable.set("");
+          secondUserWritable.set(ud.secondUser);
           return;
         }
       }
 
       await runtime.send({
-        type: "statusBackground",
-        status: { code: "authToken", msg: "OAuth token get" },
+        to: "background",
+        status: { code: "getAuthToken", msg: "OAuth token get" },
       });
 
       await waitingForResponseReady(`Waiting for the OAuth Token `, 30);
     } catch (error) {
       log.info(error);
-      primaryChannel = -1;
+      $primaryChannelWritable = "-1";
     } finally {
       isRunning = false;
     }
   }
 
-  onMount(() => {
-    firstUserWritable.subscribe((value) => (firstUser = value));
-    secondUserWritable.subscribe((value) => (secondUser = value));
-
-    channel0OAuthTokenWritable.subscribe(
-      (value) => (channel0OAuthToken = value)
-    );
-
-    channel1OAuthTokenWritable.subscribe(
-      (value) => (channel1OAuthToken = value)
-    );
-  });
-
   $: {
-    if (primaryChannel === 0 && firstUser) {
-      primaryChannelName = firstUser.given_name;
-    } else if (primaryChannel === 1 && secondUser) {
-      primaryChannelName = secondUser.given_name;
+    if ($primaryChannelWritable === "0" && $firstUserWritable?.given_name) {
+      primaryChannelName = $firstUserWritable.given_name;
+    } else if (
+      $primaryChannelWritable === "1" &&
+      $secondUserWritable?.given_name
+    ) {
+      primaryChannelName = $secondUserWritable.given_name;
     } else {
       primaryChannelName = "Choose an account";
       if (!isRunning) {
-        primaryChannel = -1;
+        primaryChannelWritable.set("-1");
       }
     }
   }
@@ -146,7 +130,7 @@
 >
   <input type="checkbox" class="peer !min-h-8" />
   <div
-    class="!min-h-8 !py-0 flex items-center collapse-title text-sm tracking-wider font-sans font-semibold"
+    class="!min-h-8 !py-0 flex items-center collapse-title after:!top-4 text-sm tracking-wider font-sans font-semibold"
   >
     {#key primaryChannelName}
       <span in:blur>{primaryChannelName}</span>
@@ -164,22 +148,8 @@
         </tr>
       </thead>
       <tbody>
-        <Item
-          id={0}
-          isConnect={channel0OAuthToken ? true : false}
-          bind:isRunning
-          bind:primaryChannel
-          bind:user={firstUser}
-          {connectDisconnect}
-        />
-        <Item
-          id={1}
-          isConnect={channel1OAuthToken ? true : false}
-          bind:isRunning
-          bind:primaryChannel
-          bind:user={secondUser}
-          {connectDisconnect}
-        />
+        <Item id={"0"} bind:isRunning {connectDisconnect} />
+        <Item id={"1"} bind:isRunning {connectDisconnect} />
       </tbody>
     </table>
   </div>

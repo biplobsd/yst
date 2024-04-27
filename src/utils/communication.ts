@@ -1,60 +1,9 @@
 import { delay } from "./helper";
 import log from "./logger";
-import { XPathModelSchema } from "./xpaths";
+import { fromMsgSchema, runtimeMessageSchema } from "./protocol";
 import { z } from "zod";
 
-const StatusCodeSchema = z.enum([
-  "loading",
-  "collecting",
-  "subscribe",
-  "subscribeSuccessful",
-  "unsubscribe",
-  "unsubscribeSuccessful",
-  "changePage",
-  "error",
-  "stop",
-  "ready",
-  "accept",
-  "xpath",
-  "channelIDs",
-  "contentScriptDestroy",
-  "message",
-  "authToken",
-  "authTokenSuccessful",
-]);
-
-const StatusSchema = z.object({
-  msg: z.string(),
-  code: StatusCodeSchema,
-});
-
-export const runtimeMessageSchema = z.discriminatedUnion("type", [
-  z.object({
-    type: z.literal("dataOption"),
-    status: StatusSchema,
-    channelPaths: z.string().array(),
-  }),
-  z.object({
-    type: z.literal("dataOptionAuthToken"),
-    status: StatusSchema,
-    authToken: z.string(),
-  }),
-  z.object({
-    type: z.literal("dataContent"),
-    status: StatusSchema,
-    xpathValues: XPathModelSchema,
-  }),
-  z.object({
-    type: z.enum([
-      "status",
-      "statusOption",
-      "statusContent",
-      "statusBackground",
-    ]),
-    status: StatusSchema,
-  }),
-]);
-
+export type FromMsg = z.infer<typeof fromMsgSchema>;
 export type RuntimeMessage = z.infer<typeof runtimeMessageSchema>;
 
 interface RetryOptions {
@@ -63,38 +12,52 @@ interface RetryOptions {
 }
 
 interface RuntimeModel {
-  isOptionsPage: boolean;
+  fromMsg: FromMsg;
   sendOnce: (runtimeMessage: RuntimeMessage) => Promise<boolean>;
   send: (
     runtimeMessage: RuntimeMessage,
-    options?: RetryOptions
+    options?: RetryOptions,
   ) => Promise<boolean>;
   addListener: (
-    handleFunction: (runtimeMessage: RuntimeMessage) => void
+    handleFunction: (
+      runtimeMessage: RuntimeMessage,
+      sender?: chrome.runtime.MessageSender,
+    ) => void,
   ) => () => void;
 }
 
 export const runtime: RuntimeModel = {
-  isOptionsPage: false,
+  fromMsg: "none",
   sendOnce: async function (runtimeMessage) {
     try {
-      if (this.isOptionsPage && runtimeMessage.type !== "statusBackground") {
-        const [tab] = await chrome.tabs.query({
-          active: true,
-          currentWindow: true,
-        });
-        if (tab.id) {
-          await chrome.tabs.sendMessage(tab.id, runtimeMessage);
+      if (runtimeMessage.to === "content") {
+        let tabId = runtimeMessage.tabId;
+        if (!tabId) {
+          const [tab] = await chrome.tabs.query({
+            active: true,
+            currentWindow: true,
+          });
+          tabId = tab.id;
+        }
+
+        if (tabId) {
+          await chrome.tabs.sendMessage(tabId, {
+            ...runtimeMessage,
+            from: this.fromMsg,
+          });
           return true;
         }
       } else {
-        await chrome.runtime.sendMessage(runtimeMessage);
+        await chrome.runtime.sendMessage({
+          ...runtimeMessage,
+          from: this.fromMsg,
+        });
         return true;
       }
     } catch (error) {
       // console.log(error);
       log.error(error);
-      log.info("isOptionsPage", this.isOptionsPage, "Runtime Error: ");
+      log.info("isOptionsPage", this.fromMsg, "Runtime Error: ");
       log.error(chrome.runtime.lastError);
     }
     return false;

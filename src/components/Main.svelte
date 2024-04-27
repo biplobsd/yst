@@ -4,23 +4,14 @@
   import About from "src/components/pages/About.svelte";
   import type { TabName } from "../utils/types";
   import { slide, blur } from "svelte/transition";
-  import { type MODE, modeWritable } from "src/utils/storage";
-  import { onMount } from "svelte";
   import Api from "./pages/API.svelte";
-  import { MODE_DEFAULT } from "src/utils/default";
+  import { workingModeWritable } from "src/utils/storage";
 
   let tabName: TabName = "Home";
-  let localMode: MODE = MODE_DEFAULT;
-
-  onMount(() => {
-    modeWritable.subscribe((mode) => {
-      localMode = mode;
-    });
-  });
 </script>
 
 <main>
-  <div class="tabs w-full flex items-stretch">
+  <div class="tabs tabs-lifted w-full flex items-stretch">
     <button
       on:click={() => (tabName = "Home")}
       class="tab tab-lifted w-full flex-1 {tabName === 'Home' && 'tab-active'}"
@@ -38,10 +29,10 @@
       >About
     </button>
   </div>
-  <div class="my-2 w-full">
+  <div class="my-2 w-full relative">
     {#if tabName === "Home"}
       <div in:blur out:slide>
-        {#if localMode === "xpath"}
+        {#if $workingModeWritable === "xpath"}
           <Home />
         {:else}
           <Api />

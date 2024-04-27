@@ -1,14 +1,7 @@
 <script lang="ts">
-  import type { SubscriptionsList } from "src/utils/schema";
-  import { subscriptionsWritable } from "src/utils/storage";
-  import { onMount } from "svelte";
+  import { subscriptionsListWritable } from "src/utils/storage";
   import { blur } from "svelte/transition";
   export let subscriptionCount: number;
-  let subscriptionsList: SubscriptionsList = [];
-
-  onMount(() => {
-    subscriptionsWritable.subscribe((value) => (subscriptionsList = value));
-  });
 </script>
 
 <div class="font-bold">Data</div>
@@ -17,7 +10,7 @@
 >
   <input type="checkbox" class="peer !min-h-8" />
   <div
-    class="!min-h-8 !py-0 space-x-1 flex items-center collapse-title text-sm tracking-wider font-sans"
+    class="!min-h-8 !py-0 space-x-1 flex items-center collapse-title after:!top-4 text-sm tracking-wider font-sans"
   >
     <span>Subscriptions:</span>
     {#key subscriptionCount}
@@ -36,7 +29,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each subscriptionsList.slice(0, 5) as { title, channelId, id }}
+            {#each $subscriptionsListWritable.slice(0, 5) as { title, channelId, id }}
               <tr class="hover">
                 <td>{title}</td>
                 <td>{channelId}</td>

@@ -8,7 +8,7 @@
   }
 
   .scrollbar-style {
-    @apply scrollbar-thin scrollbar-thumb-base-content/5 hover:scrollbar-thumb-base-content/30 scrollbar-track-rounded-md scrollbar-thumb-rounded;
+    @apply modern-scroll;
   }
 
   .subscribe-btn {
@@ -22,4 +22,14 @@
   .collect-channel-btn {
     @apply btn btn-success w-full rounded-full;
   }
+
+  .progress-bar {
+    @apply bg-gradient-to-r from-indigo-500/20 from-10% via-sky-500/20 via-30% to-emerald-500/20 to-90% tsd;
+  }
+}
+
+.scrollbar-style::-webkit-scrollbar {
+  width: 0.5em !important;
+  height: 0.5em !important;
+  background-color: transparent !important;
 }

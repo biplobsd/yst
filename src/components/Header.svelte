@@ -1,20 +1,10 @@
 <script lang="ts">
-  import { APP_NAME, VERSION } from "src/utils/constants";
   import icon48 from "src/assets/icons/icon128.png";
   import ThemeSwitch from "./Theme_Switch.svelte";
-
-  import { modeWritable, type MODE } from "src/utils/storage";
-  import { onMount } from "svelte";
   import { blur } from "svelte/transition";
-  import { MODE_DEFAULT } from "src/utils/default";
+  import { workingModeWritable } from "src/utils/storage";
 
-  let localMode: MODE = MODE_DEFAULT;
-
-  onMount(() => {
-    modeWritable.subscribe((mode) => {
-      localMode = mode;
-    });
-  });
+  const { name, version } = chrome.runtime.getManifest();
 </script>
 
 <div class="flex items-center gap-1 mb-3 tracking-wider font-extrabold text-xl">
@@ -24,20 +14,20 @@
       <abbr
         title={`Working mode. Learn more by pressing the "Learn more" button below.`}
       >
-        {#key localMode}
+        {#key $workingModeWritable}
           <div
             in:blur
             class="h-fit text-[8px]/[8px] text-center uppercase font-mono"
           >
-            {localMode}
+            {$workingModeWritable}
           </div>
         {/key}
       </abbr>
     </div>
-    <span class="text-sm">{APP_NAME}</span>
+    <span class="text-sm">{name}</span>
   </div>
   <div class="flex flex-col items-center">
-    <span class="text-xs">{VERSION}</span>
+    <span class="text-xs">{version}</span>
     <ThemeSwitch />
   </div>
 </div>

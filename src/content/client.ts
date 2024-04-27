@@ -1,8 +1,4 @@
-import {
-  runtime,
-  type RuntimeMessage,
-  runtimeMessageSchema,
-} from "src/utils/communication";
+import { runtime, type RuntimeMessage } from "src/utils/communication";
 import {
   isXPathExpressionExists,
   getXpathFromElement,
@@ -27,7 +23,7 @@ function getSubscribeButton(channelID: string) {
 
 async function searchChannel(channelID: string) {
   const search = getXpathFromElement(
-    xpathValues.SEARCH_INPUT
+    xpathValues.SEARCH_INPUT,
   ) as HTMLInputElement;
   if (search) {
     if (isNotTabRegister) {
@@ -69,7 +65,7 @@ function isDrawerOpened() {
     const threeLines = getXpathFromElement(xpathValues.THREE_LINES);
     if (!threeLines) {
       runtime.send({
-        type: "status",
+        to: "option",
         status: {
           msg: "Unable to found three lines",
           code: "error",
@@ -85,14 +81,14 @@ function isDrawerOpened() {
 
 async function expendedButtonClick() {
   const isAlreadyExpended = isXPathExpressionExists(
-    xpathValues.IS_EXPENDEDABLE_EXPENDED
+    xpathValues.IS_EXPENDEDABLE_EXPENDED,
   );
   if (
     isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) &&
     !isAlreadyExpended
   ) {
     const expendedItemButton = getXpathFromElement(
-      xpathValues.IS_EXPENDEDABLE_EXPENDED_BUTTON
+      xpathValues.IS_EXPENDEDABLE_EXPENDED_BUTTON,
     );
     if (expendedItemButton) {
       expendedItemButton.click();
@@ -137,7 +133,7 @@ async function drawerOpening() {
 async function isStopping() {
   if (stop) {
     await runtime.send({
-      type: "statusOption",
+      to: "option",
       status: {
         msg: "Stop back",
         code: "stop",
@@ -151,13 +147,7 @@ async function isStopping() {
 async function checking() {
   // checking is drawer open
   if (!(await drawerOpening())) {
-    runtime.send({
-      type: "status",
-      status: {
-        msg: "[Ignored error] Unable to open drawer",
-        code: "message",
-      },
-    });
+    log.info("Drawer not opened");
     // return false;
   }
 
@@ -168,7 +158,7 @@ async function checking() {
   // checking is there found subscriptions section
   if (!isXPathExpressionExists(xpathValues.SUBSCRIPTIONS_SECTION)) {
     runtime.send({
-      type: "status",
+      to: "option",
       status: {
         msg: "Unable to find Subscriptions lists",
         code: "error",
@@ -182,13 +172,7 @@ async function checking() {
   }
 
   if (!(await expendedItemsFound())) {
-    runtime.send({
-      type: "status",
-      status: {
-        msg: "[Ignored error] Unable to expended all lists",
-        code: "message",
-      },
-    });
+    log.info("Expended items not found");
     // return false;
   }
 
@@ -203,7 +187,7 @@ async function collectHref() {
   try {
     isRunning = true;
     await runtime.send({
-      type: "status",
+      to: "option",
       status: {
         msg: "Collecting channel IDs...",
         code: "loading",
@@ -222,16 +206,15 @@ async function collectHref() {
     const channelPaths = await parseHref();
     if (channelPaths) {
       await runtime.send({
-        type: "dataOption",
+        to: "option",
         status: {
-          msg: "Channel IDs data",
+          channelIDs: channelPaths,
           code: "channelIDs",
         },
-        channelPaths,
       });
     } else {
       await runtime.send({
-        type: "status",
+        to: "option",
         status: {
           msg: "Channels unable to be detected",
           code: "error",
@@ -257,7 +240,7 @@ function removeAtNSlash(path: string) {
 
 async function parseHref() {
   const rawChannelsWithoutExpend = getXpathFromElements(
-    xpathValues.GET_CHANNELS_WITHOUT_EXPEND
+    xpathValues.GET_CHANNELS_WITHOUT_EXPEND,
   );
 
   if (rawChannelsWithoutExpend) {
@@ -286,9 +269,9 @@ async function parseHref() {
 export async function readySignalSend() {
   // Ready signal
   await runtime.send({
-    type: "statusOption",
+    to: "option",
     status: {
-      msg: "Ready for accept request",
+      msg: "Ready for accept request...",
       code: "ready",
     },
   });
@@ -296,9 +279,9 @@ export async function readySignalSend() {
 
 async function acceptSignalSend() {
   await runtime.send({
-    type: "statusOption",
+    to: "option",
     status: {
-      msg: "Ready for accept request",
+      msg: "Ready for accept request...",
       code: "accept",
     },
   });
@@ -317,7 +300,7 @@ async function isAlreadySubscribe(channelID: string) {
 async function subSubNow(channelID: string) {
   if (await isAlreadySubscribe(channelID)) {
     await runtime.send({
-      type: "statusOption",
+      to: "option",
       status: {
         msg: `Already subscribed - ${channelID}`,
         code: "error",
@@ -337,7 +320,7 @@ async function subSubNow(channelID: string) {
 
   if (await isAlreadySubscribe(channelID)) {
     await runtime.send({
-      type: "statusOption",
+      to: "option",
       status: {
         msg: `Channel subscribe successful - ${channelID}`,
         code: "subscribeSuccessful",
@@ -347,7 +330,7 @@ async function subSubNow(channelID: string) {
   }
 
   await runtime.send({
-    type: "statusOption",
+    to: "option",
     status: {
       msg: `Unable to subscribe this channel - ${channelID}`,
       code: "error",
@@ -357,7 +340,7 @@ async function subSubNow(channelID: string) {
 
 async function unSubSubNow(channelID: string) {
   const errorStatus: RuntimeMessage = {
-    type: "statusOption",
+    to: "option",
     status: {
       msg: `Unable to unsubscribe this channel - ${channelID}`,
       code: "error",
@@ -366,7 +349,7 @@ async function unSubSubNow(channelID: string) {
 
   if (isXPathExpressionExists(getSubscribeButton(channelID))) {
     await runtime.send({
-      type: "statusOption",
+      to: "option",
       status: {
         msg: `Already unsubscribed - ${channelID}`,
         code: "error",
@@ -391,7 +374,7 @@ async function unSubSubNow(channelID: string) {
             await delay(50);
             if (isXPathExpressionExists(getSubscribeButton(channelID))) {
               await runtime.send({
-                type: "statusOption",
+                to: "option",
                 status: {
                   msg: `Channel unsubscribe successful - ${channelID}`,
                   code: "unsubscribeSuccessful",
@@ -412,81 +395,69 @@ async function unSubSubNow(channelID: string) {
   await runtime.send(errorStatus);
 }
 
-export async function parseData(dataLocal: RuntimeMessage) {
-  const validationResult = await runtimeMessageSchema.safeParseAsync(dataLocal);
-
-  if (!validationResult.success) {
-    log.error("Error when parsing data");
+export async function parseData({ status, to: type }: RuntimeMessage) {
+  if (type !== "content") {
     return;
   }
 
-  const dataParsed = validationResult.data;
-  const status = dataParsed.status;
-  log.info(status.msg);
-  if (dataParsed.type === "status" || dataParsed.type === "statusContent") {
-    switch (status.code) {
-      case "loading":
-        isRunning = true;
-        break;
-      case "collecting":
-        if (isRunning) {
-          alert(
-            "[Youtube Subscriptions Transfer Extension] Collecting... Wait or Refresh page"
-          );
-          return;
-        }
-        await collectHref();
-        break;
-      case "changePage":
-        if (isRunning) {
-          alert(
-            "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page"
-          );
-          return;
-        }
-        await switchChannel(status.msg);
-        break;
-      case "subscribe":
-        if (isRunning) {
-          alert(
-            "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page"
-          );
-          return;
-        }
-        await subSubNow(status.msg);
-        break;
-      case "unsubscribe":
-        if (isRunning) {
-          alert(
-            "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page"
-          );
-          return;
-        }
-        await unSubSubNow(status.msg);
-        break;
-      case "stop":
-        isRunning = false;
-        stop = false;
-        await isStopping();
-        break;
-      case "error":
-        isRunning = false;
-        stop = false;
-        break;
-      case "ready":
-        await readySignalSend();
-        break;
-      default:
-        break;
-    }
-  } else if (dataParsed.type === "dataContent") {
-    switch (status.code) {
-      case "xpath":
-        xpathValues = dataParsed.xpathValues;
-        await acceptSignalSend();
-        break;
-      default:
-        break;
-    }
+  log.info(status);
+
+  switch (status.code) {
+    case "loading":
+      isRunning = true;
+      break;
+    case "collecting":
+      if (isRunning) {
+        alert(
+          "[Youtube Subscriptions Transfer Extension] Collecting... Wait or Refresh page",
+        );
+        return;
+      }
+      await collectHref();
+      break;
+    case "changeChannelID":
+      if (isRunning) {
+        alert(
+          "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page",
+        );
+        return;
+      }
+      await switchChannel(status.channelID);
+      break;
+    case "subscribe":
+      if (isRunning) {
+        alert(
+          "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page",
+        );
+        return;
+      }
+      await subSubNow(status.channelID);
+      break;
+    case "unsubscribe":
+      if (isRunning) {
+        alert(
+          "[Youtube Subscriptions Transfer Extension] Changing page... Wait or Refresh page",
+        );
+        return;
+      }
+      await unSubSubNow(status.channelID);
+      break;
+    case "stop":
+      isRunning = false;
+      stop = false;
+      await isStopping();
+      break;
+    case "error":
+      isRunning = false;
+      stop = false;
+      break;
+    case "ready":
+      await readySignalSend();
+      break;
+    case "xpathValues":
+      xpathValues = status.xpathValues;
+      await acceptSignalSend();
+    default:
+      break;
   }
 }

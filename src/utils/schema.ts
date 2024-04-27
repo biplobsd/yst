@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { XPathModelSchema } from "./xpaths";
+
+export const themeMode = z.enum(["dark", "light"]);
+export const channelIDsSchema = z.string().array().default([]);
 
 export const UserSchema = z.object({
   email: z.string().optional(),
@@ -40,7 +44,7 @@ export const ChannelRawSchema = z
   .transform((x) =>
     x.items
       .filter((y) => y.snippet.customUrl !== undefined)
-      .map((y) => y.snippet.customUrl!)
+      .map((y) => y.snippet.customUrl!),
   );
 
 export const SubscriptionsListSchema = z
@@ -52,7 +56,24 @@ export const SubscriptionsListSchema = z
   .array()
   .default([]);
 
-export const channelPathsSchema = z.string().array().default([]);
+export const SettingsSchema = z.object({
+  themeMode,
+  channelIDs: channelIDsSchema,
+  XPaths: XPathModelSchema,
+  workingMode: z.enum(["xpath", "api"]).default("xpath"),
+  firstOAuthKey: z.string().optional(),
+  secondOAuthKey: z.string().optional(),
+  firstUser: UserSchema,
+  secondUser: UserSchema,
+  subscriptionsList: SubscriptionsListSchema,
+  primaryChannel: z.enum(["0", "1", "-1"]).default("-1"),
+  apiReqDelay: z.number().default(500),
+  closeTutorial: z.boolean().default(false),
+  clientID: z.string().optional(),
+  apiKey: z.string().optional(),
+});
 
 export type User = z.infer<typeof UserSchema>;
 export type SubscriptionsList = z.infer<typeof SubscriptionsListSchema>;
+export type Settings = z.infer<typeof SettingsSchema>;
+export const STORAGE_KEYS = SettingsSchema.keyof().Enum;

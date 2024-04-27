@@ -9,7 +9,7 @@
   import { Toaster } from "svelte-french-toast";
 
   onMount(() => {
-    runtime.isOptionsPage = true;
+    runtime.fromMsg = "option";
   });
 </script>
 
