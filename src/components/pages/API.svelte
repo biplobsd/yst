@@ -25,11 +25,9 @@
   } from "src/utils/schema";
   import Data from "../api/Data.svelte";
   import SelectAccount from "../api/Select_Account.svelte";
-  import {
-    SUBSCRIPTIONS_API_URL,
-    USERINFO_API_URL,
-  } from "src/utils/constants";
+  import { SUBSCRIPTIONS_API_URL, USERINFO_API_URL } from "src/utils/constants";
   import { SETTINGS_DEFAULT as ud } from "src/utils/default";
+  import Done from "../Done.svelte";
 
   let subscriptionsList = $subscriptionsListWritable;
   let subscriptionCount = $subscriptionsListWritable.length;
@@ -45,6 +43,7 @@
   let failedCount = 0;
   let successCount = 0;
   let actionName = "";
+  let lastChannelIDsTotal = 0;
 
   function getAccessToken() {
     return $primaryChannelWritable === "0"
@@ -136,6 +135,7 @@
       setStatus(`Starting to ${un}subscribe to the channels`);
 
       const len = subscriptionsList.length;
+      lastChannelIDsTotal = len;
       const copyList = Object.assign([], subscriptionsList);
 
       for (let index = 0; index < len; index++) {
@@ -186,7 +186,6 @@
   }
 
   async function parseData({ status, to }: RuntimeMessage) {
-
     if (to !== "option") {
       return;
     }
@@ -237,8 +236,8 @@
 
         setStatus("OAuth token receive successful");
         break;
-        default:
-          break;
+      default:
+        break;
     }
   }
 
@@ -250,7 +249,7 @@
 
     try {
       const apiKey = $apiKeyWritable;
-      if(!apiKey) {
+      if (!apiKey) {
         setStatus("API key is not set", true);
         return false;
       }
@@ -301,7 +300,7 @@
 
     try {
       const apiKey = $apiKeyWritable;
-      if(!apiKey) {
+      if (!apiKey) {
         setStatus("API key is not set", true);
         return false;
       }
@@ -496,6 +495,10 @@
   });
 </script>
 
+{#if status.msg === "Done" && successCount / lastChannelIDsTotal >= 0.6}
+  <Done />
+{/if}
+
 <div class="space-y-2">
   <SelectAccount bind:isStop bind:isReady bind:isRunning {setStatus} />
   <Data bind:subscriptionCount />
@@ -520,7 +523,7 @@
               <span class="loading loading-infinity" />
               <span class="animate-pulse">
                 {#if isStop}
-                  <div transition:slide>Stopping...</div>
+                  <div transition:slide>Wait</div>
                 {:else}
                   <div transition:slide>Stop</div>
                 {/if}
@@ -552,7 +555,8 @@
       {/if}
     </div>
     <div
-      class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider"
+      style={`background-repeat: no-repeat; background-size: ${lastChannelIDsTotal !== 0 ? ((successCount + failedCount) / lastChannelIDsTotal) * 100 : 0}%`}
+      class="border-blue-500/50 border-2 w-full py-2 px-2 rounded-md text-xs tracking-wider progress-bar"
     >
       {#if status.msg}
         <div class={status.isError ? "text-red-500" : undefined}>
