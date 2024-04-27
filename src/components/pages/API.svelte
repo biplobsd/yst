@@ -32,8 +32,6 @@
   let subscriptionsList = $subscriptionsListWritable;
   let subscriptionCount = $subscriptionsListWritable.length;
 
-  let lastStatusData: RuntimeMessage | undefined = undefined;
-
   let isRunning = true;
   let isReady = false;
   let status: { isError: boolean; msg?: string } = { isError: false };
