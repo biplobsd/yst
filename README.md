@@ -164,7 +164,7 @@ $ npm run build
 ## Setting Up Your Own YouTube Data API
 
 ### Requirements
-- Extension ID (You can find this after building and importing it to the browser extensions tab).
+- Extension ID <br>![Extension ID on about page](https://github.com/biplobsd/yst/assets/43641536/7a5dfe56-0b2f-48a3-ad38-2ad1d7353dda) <br> You can find on `About page>ID:` or after building and importing it to the browser extensions tab.
 
 First, you need to obtain a client ID and API key from the Google Console. Create a project in the Google Cloud Console by visiting https://console.cloud.google.com/projectcreate. Name the project as `YST extension` and then click `Create.` Next, enable the YouTube Data API v3 by going to https://console.cloud.google.com/apis/library/youtube.googleapis.com?project=yst-extension and click the `Enable` button.
 
