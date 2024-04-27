@@ -1,5 +1,7 @@
 <script>
   import { REPO_URL } from "src/utils/constants";
+  import SliderTips from "../tips/Slider_Tips.svelte";
+  import TutorialCard from "../Tutorial_Card.svelte";
   const { name, version, author } = chrome.runtime.getManifest();
   const extensionID = chrome.runtime.id;
 </script>
@@ -39,4 +41,11 @@
     rel="noreferrer"
     href="https://github.com/biplobsd">Biplob Kumar Sutradhar</a
   >
+</div>
+<divider class="divider !my-1" />
+<div class="pb-2">
+  <TutorialCard closingProgress={100} />
+</div>
+<div class="w-64">
+  <SliderTips />
 </div>

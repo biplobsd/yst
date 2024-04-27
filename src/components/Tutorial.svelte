@@ -1,8 +1,8 @@
 <script>
   import { slide } from "svelte/transition";
-  import { X, YoutubeIcon } from "lucide-svelte";
+  import { X } from "lucide-svelte";
   import { closeTutorialWritable } from "src/utils/storage";
-  import { TUTORIAL_LINK } from "src/utils/constants";
+  import TutorialCard from "./Tutorial_Card.svelte";
   let closingProgress = 0;
 
   const interval = setInterval(() => {
@@ -22,17 +22,7 @@
       >
         <X class=" w-4 h-4 " />
       </button>
-      <a
-        title="Click to open 60s YST tutorial video on Youtube."
-        href={TUTORIAL_LINK}
-        target="_blank"
-        rel="noreferrer"
-        style={`background-repeat: no-repeat; background-size: ${closingProgress}%`}
-        class="btn btn-outline btn-block btn-sm progress-bar"
-      >
-        <YoutubeIcon class="h-5 w-5" />
-        <span>Quick tutorial, 60 seconds.</span>
-      </a>
+      <TutorialCard bind:closingProgress />
     </div>
   </div>
 {/if}
