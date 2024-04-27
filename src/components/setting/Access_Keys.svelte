@@ -1,12 +1,14 @@
 <script>
+    import { docs } from "src/utils/docs";
   import { apiKeyWritable, clientIDWritable } from "src/utils/storage";
   import toast from "svelte-french-toast";
+    import DocsLink from "../Docs_Link.svelte";
 </script>
 
 <div
   class="capitalize font-bold tracking-wider text-base !mt-0 flex items-center gap-1"
 >
-  Google API console keys
+  Google API console keys <DocsLink href={docs.apiConsoleKey} />
 </div>
 
 <label class="form-control w-full !my-0">

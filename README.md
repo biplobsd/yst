@@ -159,7 +159,7 @@ $ npm run build
 2. Enable Developer Mode by clicking the toggle switch next to `Developer mode`.
 3. Click the `LOAD UNPACKED` button and select the `/dist` directory.
 
-![Example](https://wd.imgix.net/image/BhuKGJaIeLNPW9ehns59NfwqKxF2/vOu7iPbaapkALed96rzN.png?auto=format&w=571)
+![Example](https://github.com/biplobsd/yst/assets/43641536/e539bb9c-3a1e-45fd-a82f-e7492d499ae4)
 
 ## Setting Up Your Own YouTube Data API
 
@@ -216,7 +216,9 @@ First, select API key. A popup will display with your API key; note it down.
 
 Now, click on the "CREATE CREDENTIALS" button again and select OAuth client ID. 
 
-> **_NOTE:_** `<EXTENSION_ID>` is your Extension ID, which you can find after building and importing it from the browser extensions tab.
+> ![Extension ID on about page](https://github.com/biplobsd/yst/assets/43641536/7a5dfe56-0b2f-48a3-ad38-2ad1d7353dda) <br>
+> **_NOTE:_** `<EXTENSION_ID>` is your Extension ID, which you can find on `About page>ID:` or after building and importing it from the browser extensions tab.
+
 
 Configure the following:
 - Application type as `Web application`
@@ -227,6 +229,16 @@ Configure the following:
 Click `Create,` and a popup will appear with your OAuth client credentials. Note the `Client ID.`
 
 ### Setting Google API Credentials
+
+Now we have the `API KEY` and `Client_ID`. Here we have two ways to set up these keys. Recommended and easy way is on the setting page.
+
+#### On Setting page
+
+![Google API Console Keys](https://github.com/biplobsd/yst/assets/43641536/f4acdf32-7ff9-4258-85af-ebf389d1e89e)
+
+Click on the settings tab and below you will find the `Google API Console Keys` section. Fill out your two keys carefully.
+
+#### On build step
 
 ![.env.local file](https://github.com/biplobsd/yst/assets/43641536/34a95d7a-123e-47a0-b330-6d3f9fef91f4)
 

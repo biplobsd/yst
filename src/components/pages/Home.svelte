@@ -1,5 +1,4 @@
 <script lang="ts">
-  import "src/options/styles.css";
   import { onDestroy, onMount } from "svelte";
   import { STORIES_URL } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";

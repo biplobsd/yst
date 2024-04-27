@@ -1,5 +1,4 @@
 <script lang="ts">
-  import "src/options/styles.css";
   import { onDestroy, onMount } from "svelte";
   import { delay } from "src/utils/helper";
   import { runtime, type RuntimeMessage } from "src/utils/communication";

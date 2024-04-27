@@ -1,7 +1,7 @@
 {
   "name": "Youtube Subscriptions Transfer",
   "description": "Transferring subscriptions from one YouTube account to another",
-  "version": "1.6",
+  "version": "1.7",
   "author": "biplobsd11@gmail.com",
   "homepage_url": "https://biplobsd.github.io/apps/view/yst.md",
   "manifest_version": 3,
