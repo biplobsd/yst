@@ -324,21 +324,8 @@
   }
 
   function channelsIdsParse(listStr: string[]) {
-    const l: string[] = [];
-    for (let i of listStr) {
-      const iTrim = i.trim().toLowerCase();
-      if (!iTrim.startsWith("@")) {
-        if (iTrim.startsWith("channel/")) {
-          l.push(iTrim);
-          continue;
-        }
-        saveError = true;
-        return;
-      }
-      l.push(iTrim);
-    }
-    channelsIdsString(l);
-    return l;
+    channelsIdsString(listStr);
+    return listStr;
   }
 
   function channelsIdsStringSave(listStr: string = channelPathsText) {
