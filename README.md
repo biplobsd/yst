@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Due to rapid or unexpected changes in the YouTube website, the YST extension may stop working after these changes. To ensure continued functionality, please use the API mode as a reliable method. [Read API mode docs](https://github.com/biplobsd/yst?tab=readme-ov-file#using-api-mode)
+
 # Youtube Subscriptions Transfer
 
 ![logo](/src/assets/icons/icon128.png)
