@@ -1,5 +1,5 @@
 > [!CAUTION]
-> Due to rapid or unexpected changes in the YouTube website, the YST extension may stop working after these changes. To ensure continued functionality, please use the API mode as a reliable method. [Read API mode docs](https://github.com/biplobsd/yst?tab=readme-ov-file#using-api-mode)
+> Due to rapid or unexpected changes in the YouTube website, the YST extension may stop working after these changes. To ensure continued functionality, please use the API mode as a reliable method. [Read API mode docs](https://github.com/biplobsd/yst?tab=readme-ov-file#using-api-mode) or follow [Screen Recording Instructions](https://github.com/biplobsd/yst?tab=readme-ov-file#screen-recording-instructions)
 
 # Youtube Subscriptions Transfer
 
@@ -165,6 +165,12 @@ $ npm run build
 ![Example](https://github.com/biplobsd/yst/assets/43641536/e539bb9c-3a1e-45fd-a82f-e7492d499ae4)
 
 ## Setting Up Your Own YouTube Data API
+
+### Screen Recording Instructions
+
+In this screen recording, I demonstrate how to set up the YouTube Data API in the Google Cloud Console. I followed the instructions written below to configure the YouTube API with the YST extension.
+
+[Setting Up Your Own YouTube Data API Screenrecod.webm](https://github.com/user-attachments/assets/db48bef5-bd0c-48c6-9db6-6dc72827d938)
 
 ### Requirements
 - Extension ID <br>![Extension ID on about page](https://github.com/biplobsd/yst/assets/43641536/7a5dfe56-0b2f-48a3-ad38-2ad1d7353dda) <br> You can find on `About page>ID:` or after building and importing it to the browser extensions tab.
