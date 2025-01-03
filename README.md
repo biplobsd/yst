@@ -5,6 +5,10 @@
 
 ![logo](/src/assets/icons/icon128.png)
 
+| Chrome Web Store | Edge Add-ons | Opera Addons |
+| ----------- | ----------- | ----------- |
+| <a href="https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa"><img src="https://github.com/user-attachments/assets/6e72a907-3c74-4983-af22-3dacbf0ff9b7" alt="Get YST on Chrome Web Store" width="224px"></a> | <a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj"><img src="https://get.microsoft.com/images/en-us%20light.svg" alt="Get YST on Microsoft Edge" width="224px"></a> | <a href="https://addons.opera.com/en/extensions/details/youtube-subscriptions-transfer/"><img src="https://raw.githubusercontent.com/kazcfz/Browser-Promotional-Badges/refs/heads/main/Opera/Add-ons/addons_206x58_en%402x.png" alt="Get it from Opera add-ons" width="224px"></a> |
+
 YouTube Subscriptions Transfer is a browser extension that allows you to transfer or move subscriptions from one account to another using XPath or API. The extension collects a list of channels and enables you to subscribe or unsubscribe to each channel. It interacts with the DOM using xpath and YouTube Data API v3.
 
 **_`Note: When using XPath mode, YST only works when the YouTube webpage language is set to English (US).`_**
@@ -27,12 +31,11 @@ Read more: [#4](https://github.com/biplobsd/yst/issues/4)
 Suppose you regularly watch YouTube videos, and you are subscribed to many of your favorite YouTube channels. Those channels are really good. Now your friend also wants to follow your subscriptions. Your friend requests you to share all of your YouTube subscriptions with their account. In this case, you can show your entire subscription list to your friend, and they can then subscribe to those channels one by one. In this case, the 'YouTube Subscription Transfer Extension' can help you transfer all of your subscriptions to their account automatically.
 
 ### Case 2  - Work account to new account
-Suppose you are using your personal YouTube account, and you also use an ad blocker in your browser to skip YouTube video ads. Currently, you are posting your videos to your channel. However, in this case, YouTube might block you, possibly in a few days. Now that you are aware of this, you decide to create a new YouTube account to keep your personal and work accounts separate. You want to transfer your work account subscriptions to your new account. You have the option to do this manually, one by one, or you can use the "YouTube Subscription Transfer Extension" to automatically transfer or move them to your new account
+Suppose you are using your personal YouTube account, and you also use an ad blocker in your browser to skip YouTube video ads. Currently, you are posting your videos to your channel. However, in this case, YouTube might block you, possibly in a few days. Now that you are aware of this, you decide to create a new YouTube account to keep your personal and work accounts separate. You want to transfer your work account subscriptions to your new account. You have the option to do this manually, one by one, or you can use the "YouTube Subscription Transfer Extension" to automatically transfer or move them to your new account.
 
 ## Installation
-| Edge Add-ons | Chrome Web Store |
-| ----------- | ----------- |
-| <a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj"><img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get YST on Microsoft Edge" width="224px"></a> | <a href="https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa"><img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/HRs9MPufa1J1h5glNhut.png" alt="Get YST on Chrome Web Store" width="224px"></a> |
+
+[YST on Chrome Web Store](https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa) | [YST on Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj) | [YST on Opera Add-ons](https://addons.opera.com/en/extensions/details/youtube-subscriptions-transfer/)
 
 Or get the built zip from the [release](https://github.com/biplobsd/yst/releases/latest) tab. Then follow the instructions in the [Load unpacked extensions](#load-unpacked-extensions) section. The **_/dist_** folder should be considered as the unpacked zip files.
 
