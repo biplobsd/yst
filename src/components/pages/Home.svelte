@@ -3,11 +3,7 @@
   import { STORIES_URL } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
   import { runtime, type RuntimeMessage } from "src/utils/communication";
-  import {
-    channelIDsWritable as channelIDs,
-    closeTutorialWritable,
-    xpathsWritable,
-  } from "src/utils/storage";
+  import { channelIDsWritable as channelIDs, closeTutorialWritable, xpathsWritable } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
   import toast from "svelte-french-toast";
@@ -16,7 +12,7 @@
   import ZipReader from "../data/Zip_Reader.svelte";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
-  import { ExternalLinkIcon, CopyIcon } from "lucide-svelte";
+  import { CopyIcon, ExternalLinkIcon } from "lucide-svelte";
   import { channelIDsSchema } from "src/utils/schema";
   import Done from "../Done.svelte";
   import Tutorial from "../Tutorial.svelte";
@@ -41,7 +37,7 @@
     isStop = true;
     runtime.send({
       to: "content",
-      status: { msg: "Stop signal sended", code: "stop" },
+      status: { msg: "Stop signal sended", code: "stop" }
     });
   }
 
@@ -55,7 +51,7 @@
 
     const isRequestSent = await runtime.send({
       to: "content",
-      status: { msg: "Collecting channel ids", code: "collecting" },
+      status: { msg: "Collecting channel ids", code: "collecting" }
     });
     if (isRequestSent) {
       return true;
@@ -76,7 +72,7 @@
     }
     setStatus(
       "Unable to get the subscriptions list from the content client",
-      true,
+      true
     );
     return false;
   }
@@ -91,22 +87,22 @@
       let notFoundList: string[];
       if (mode) {
         notFoundList = currentSubs.filter(
-          (elem) => !$channelIDs.includes(elem.toLowerCase()),
+          (elem) => !$channelIDs.includes(elem.toLowerCase())
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "All those channels have already been subscribed to! There is no need to subscribe again.",
+            "All those channels have already been subscribed to! There is no need to subscribe again."
           );
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          $channelIDs.includes(elem.toLowerCase()),
+          $channelIDs.includes(elem.toLowerCase())
         );
 
         if (notFoundList.length === 0) {
           setStatus(
-            "No channel match with your current subscriptions channel list! NO need to unsubscribe",
+            "No channel match with your current subscriptions channel list! NO need to unsubscribe"
           );
         }
       }
@@ -180,21 +176,21 @@
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
         // Sending webpage change action
-        if (
+        if (mode &&
           !(await runtime.send({
             to: "content",
-            status: { code: "changeChannelID", channelID: copyList[indexMain] },
+            status: { code: "changeChannelID", channelID: copyList[indexMain] }
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
           return;
         }
 
-        if (
-          isStop ||
-          (await waitingForResponseReady(
-            `Waiting for the ready signal: ` + copyList[indexMain],
-          ))
+        if (mode &&
+          (isStop ||
+            (await waitingForResponseReady(
+              `Waiting for the ready signal: ` + copyList[indexMain]
+            )))
         ) {
           return;
         }
@@ -205,9 +201,9 @@
           !(await runtime.send({
             to: "content",
             status: {
-              channelID: copyList[indexMain],
-              code: mode ? "subscribe" : "unsubscribe",
-            },
+              channelID: (copyList[indexMain] as String).toLowerCase(),
+              code: mode ? "subscribe" : "unsubscribe"
+            }
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
@@ -216,7 +212,7 @@
         if (
           isStop ||
           (await waitingForResponseReady(
-            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain],
+            `Waiting for the ${un}subscribe signal: ` + copyList[indexMain]
           ))
         ) {
           return;
@@ -227,7 +223,7 @@
         if (
           lastStatusData &&
           lastStatusData.status.code ===
-            (mode ? "subscribeSuccessful" : "unsubscribeSuccessful")
+          (mode ? "subscribeSuccessful" : "unsubscribeSuccessful")
         ) {
           const sCList = channelPathsText.split(", ");
           sCList.splice(0, 1);
@@ -330,16 +326,16 @@
 
   function channelsIdsStringSave(listStr: string = channelPathsText) {
     const toastId = toast.loading("Saving...");
-    const l = channelsIdsParse(listStr.split(","));
+    const l = channelsIdsParse(listStr.split(",").map(value => value.trim().toLowerCase()));
     if (l === undefined) {
       toast.error("Save unsuccessful", {
-        id: toastId,
+        id: toastId
       });
       return;
     }
     channelIDs.set(l);
     toast.success("Save successful", {
-      id: toastId,
+      id: toastId
     });
   }
 
@@ -348,13 +344,13 @@
     const l = channelsIdsParse(cIds);
     if (l === undefined) {
       toast.error("Save unsuccessful", {
-        id: toastId,
+        id: toastId
       });
       return;
     }
     channelIDs.set(l);
     toast.success("Save successful", {
-      id: toastId,
+      id: toastId
     });
   }
 
@@ -364,8 +360,8 @@
       to: "content",
       status: {
         msg: "Is the content script ready?",
-        code: "ready",
-      },
+        code: "ready"
+      }
     });
   }
 
@@ -373,7 +369,7 @@
     if (!$xpathsWritable) {
       setStatus(
         "Unable to send xPathValue signal to the content script...",
-        true,
+        true
       );
       return;
     }
@@ -381,8 +377,8 @@
       to: "content",
       status: {
         code: "xpathValues",
-        xpathValues: $xpathsWritable,
-      },
+        xpathValues: $xpathsWritable
+      }
     });
   }
 
@@ -413,7 +409,8 @@
 {#if isRightSiteNow}
   <div class="space-y-2 relative">
     <div class="font-bold flex gap-1 items-center">
-      Data <DocsLink href={docs.dataSection} />
+      Data
+      <DocsLink href={docs.dataSection} />
     </div>
     <div
       class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box"
@@ -431,8 +428,8 @@
         <span class="text-xs space-y-2">
           <p>
             Enter only channel IDs. Channel IDs start with the <span
-              class="font-bold">@</span
-            >
+            class="font-bold">@</span
+          >
             symbol.
           </p>
           <div class="flex justify-between items-center pb-1">
@@ -488,7 +485,8 @@
             </div>
           {/if}
           <button disabled={!ready || isSubRunning} class="btn w-full"
-            >Save</button
+          >Save
+          </button
           >
         </form>
         <ZipReader {channelsIdsTakeoutSave} />
@@ -564,7 +562,8 @@
     <div class="w-[17rem] space-y-2">
       <div class="capitalize flex justify-between">
         <div class="font-bold flex items-center gap-1">
-          Actions <DocsLink href={docs.action} />
+          Actions
+          <DocsLink href={docs.action} />
         </div>
         {#if actionName !== ""}
           <div
@@ -582,23 +581,26 @@
       <button
         disabled={!isRightSiteNow || !ready || isSubRunning || isRunning}
         class="collect-channel-btn"
-        on:click={collectSubs}>Collect channel</button
+        on:click={collectSubs}>Collect channel
+      </button
       >
       <button
-        disabled={(channelPathsCount ? false : true) ||
+        disabled={(!channelPathsCount) ||
           isSubRunning ||
           !ready ||
           isRunning}
         class="subscribe-btn"
-        on:click={() => subUnSub(true)}>Subscribe</button
+        on:click={() => subUnSub(true)}>Subscribe
+      </button
       >
       <button
-        disabled={(channelPathsCount ? false : true) ||
+        disabled={(!channelPathsCount) ||
           isSubRunning ||
           !ready ||
           isRunning}
         class="unsubscribe-btn"
-        on:click={() => subUnSub(false)}>Unsubscribe</button
+        on:click={() => subUnSub(false)}>Unsubscribe
+      </button
       >
     </div>
   </div>

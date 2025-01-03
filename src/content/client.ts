@@ -202,6 +202,24 @@ async function checking() {
   return !await isStopping();
 }
 
+
+async function changeToAllSubscriptionsPage() {
+  const targetURL = 'https://www.youtube.com/feed/channels';
+  if (window.location.href === targetURL) {
+    return true;
+  }
+
+  if (!(await checking())) {
+    return false;
+  }
+
+  if (await isStopping()) {
+    return false;
+  }
+
+  return await isExistAllSubscriptionsButton();
+}
+
 async function collectHref() {
   try {
     isRunning = true;
@@ -213,16 +231,8 @@ async function collectHref() {
       },
     });
 
-    if (!(await checking())) {
+    if(!(await changeToAllSubscriptionsPage())){
       return false;
-    }
-
-    if (await isStopping()) {
-      return false;
-    }
-
-    if(!(await isExistAllSubscriptionsButton())){
-     return false;
     }
 
     if (await isStopping()) {
@@ -402,10 +412,10 @@ async function unSubSubNow(channelID: string) {
             }
             return;
           }
-          await delay(500);
+          await delay(50);
         }
       }
-      await delay(500);
+      await delay(50);
     }
   }
 
