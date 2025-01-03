@@ -13,5 +13,8 @@
   "UNSUB1": "//yt-formatted-string[text()='Unsubscribe']",
   "UNSUB2": "//button[@aria-label='Unsubscribe']",
   "SEARCH_INPUT": "//input[@id='search']",
-  "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[not(@hidden)]"
+  "SEARCH_INPUT_QUERY": "//input[@name='search_query' and not(contains(@id, 'search'))]",
+  "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[not(@hidden)]",
+  "ALL_SUBSCRIPTIONS_BTN": "//*[contains(normalize-space(), 'All subscriptions') and @id='endpoint']",
+  "ALL_SUBSCRIPTIONS_ITEMS": "//div[@id='grid-container']/ytd-channel-renderer//a[@href and @id='main-link']"
 }

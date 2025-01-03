@@ -26,7 +26,10 @@ export const XPathModelSchema = z.object({
   UPDATE_DATE: z.string().optional(),
   REMOTE_DISABLE: z.boolean().optional().default(false),
   SEARCH_INPUT: z.string().default(xpathJson.SEARCH_INPUT),
+  SEARCH_INPUT_QUERY: z.string().default(xpathJson.SEARCH_INPUT_QUERY),
   NAVIGATION_PROGRESS: z.string().default(xpathJson.NAVIGATION_PROGRESS),
+  ALL_SUBSCRIPTIONS_BTN: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_BTN),
+  ALL_SUBSCRIPTIONS_ITEMS: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_ITEMS),
 });
 
 export type XPathModel = z.infer<typeof XPathModelSchema>;

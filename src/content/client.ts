@@ -23,7 +23,7 @@ function getSubscribeButton(channelID: string) {
 
 async function searchChannel(channelID: string) {
   const search = getXpathFromElement(
-    xpathValues.SEARCH_INPUT,
+    xpathValues.SEARCH_INPUT_QUERY,
   ) as HTMLInputElement;
   if (search) {
     if (isNotTabRegister) {
@@ -79,6 +79,31 @@ function isDrawerOpened() {
   return true;
 }
 
+async function isExistAllSubscriptionsButton() {
+  const allSubButton = getXpathFromElement(xpathValues.ALL_SUBSCRIPTIONS_BTN);
+  if (!allSubButton) {
+    await runtime.send({
+      to: "option",
+      status: {
+        msg: "Unable to found all subscription button in drawer",
+        code: "error",
+      },
+    });
+    return false;
+  }
+  allSubButton.click();
+
+  await runtime.send({
+    to: "option",
+    status: {
+      msg: "Please wait for page loading...",
+      code: "loading",
+    },
+  });
+
+  return await waitingForProgressEnd();
+}
+
 async function expendedButtonClick() {
   const isAlreadyExpended = isXPathExpressionExists(
     xpathValues.IS_EXPENDEDABLE_EXPENDED,
@@ -94,10 +119,8 @@ async function expendedButtonClick() {
       expendedItemButton.click();
     }
     await delay(1000);
-    if (isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)) {
-      return true;
-    }
-    return false;
+    return isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS);
+    
   } else if (
     isAlreadyExpended &&
     isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)
@@ -176,11 +199,7 @@ async function checking() {
     // return false;
   }
 
-  if (await isStopping()) {
-    return false;
-  }
-
-  return true;
+  return !await isStopping();
 }
 
 async function collectHref() {
@@ -202,7 +221,14 @@ async function collectHref() {
       return false;
     }
 
-    // collecting href
+    if(!(await isExistAllSubscriptionsButton())){
+     return false;
+    }
+
+    if (await isStopping()) {
+      return false;
+    }
+
     const channelPaths = await parseHref();
     if (channelPaths) {
       await runtime.send({
@@ -239,19 +265,10 @@ function removeAtNSlash(path: string) {
 }
 
 async function parseHref() {
-  const rawChannelsWithoutExpend = getXpathFromElements(
-    xpathValues.GET_CHANNELS_WITHOUT_EXPEND,
-  );
+  const fullEle = getXpathFromElements(xpathValues.ALL_SUBSCRIPTIONS_ITEMS);
 
-  if (rawChannelsWithoutExpend) {
-    let rawChannelsWithExpend: HTMLElement[] = [];
-    const rawcwe = getXpathFromElements(xpathValues.GET_CHANNELS_IN_EXPEND);
-    if (isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) && rawcwe) {
-      rawChannelsWithExpend = rawcwe;
-    }
-
+  if (fullEle) {
     const channelsPaths: string[] = [];
-    const fullEle = rawChannelsWithoutExpend.concat(rawChannelsWithExpend);
     for (let l of fullEle) {
       if (await isStopping()) {
         return undefined;
@@ -457,6 +474,7 @@ export async function parseData({ status, to: type }: RuntimeMessage) {
     case "xpathValues":
       xpathValues = status.xpathValues;
       await acceptSignalSend();
+      break;
     default:
       break;
   }
