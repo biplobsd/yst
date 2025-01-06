@@ -11,6 +11,7 @@ export const StatusCodeSchema = z.enum([
   "subscribeSuccessful",
   "unsubscribeSuccessful",
   "getAuthToken",
+  "langError",
 ]);
 
 export const StatusSchema = z.object({

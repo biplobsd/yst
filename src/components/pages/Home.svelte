@@ -304,6 +304,10 @@
         isRunning = false;
         setStatus("Channel IDs collected successfully.");
         return;
+      case "langError":
+        await stopFun();
+        setStatus(status.msg, true);
+        return;
       default:
         return;
     }
