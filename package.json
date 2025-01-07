@@ -9,7 +9,9 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run check && vite build",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "clean": "npx rimraf node_modules dist",
+    "postbuild": "npx rimraf ./dist/.vite"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.28",
