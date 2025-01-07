@@ -7,6 +7,7 @@
   import { onMount } from "svelte";
   import { runtime } from "src/utils/communication";
   import { Toaster } from "svelte-french-toast";
+  import ExpiredAlert from "src/components/Expired_Alert.svelte";
 
   onMount(() => {
     runtime.fromMsg = "option";
@@ -14,6 +15,7 @@
 </script>
 
 <Update_XPath />
+<ExpiredAlert />
 <div
   class="w-72 h-full mt-4 mx-3 px-1 items-center overflow-hidden justify-between flex flex-col gap-2 tracking-wider"
 >

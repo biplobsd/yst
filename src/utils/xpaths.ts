@@ -1,4 +1,4 @@
-import xpathJson from "../../data/xpaths/v1.6.json";
+import xpathJson from "../../data/xpaths/v1.8.json";
 import { z } from "zod";
 
 export const XPathModelSchema = z.object({
@@ -30,6 +30,9 @@ export const XPathModelSchema = z.object({
   NAVIGATION_PROGRESS: z.string().default(xpathJson.NAVIGATION_PROGRESS),
   ALL_SUBSCRIPTIONS_BTN: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_BTN),
   ALL_SUBSCRIPTIONS_ITEMS: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_ITEMS),
+  XPATH_ENABLE: z.boolean().default(xpathJson.XPATH_ENABLE),
+  API_ENABLE: z.boolean().default(xpathJson.API_ENABLE),
+  EXPIRE_DATE: z.number().default(xpathJson.EXPIRE_DATE),
 });
 
 export type XPathModel = z.infer<typeof XPathModelSchema>;

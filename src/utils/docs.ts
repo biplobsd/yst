@@ -12,5 +12,7 @@ export const docs = {
     "https://github.com/biplobsd/yst/blob/main/README.md#api-delay-per-request",
   connectAccount:
     "https://github.com/biplobsd/yst/blob/main/README.md#connect-your-account",
-    apiConsoleKey: "https://github.com/biplobsd/yst/blob/main/README.md#on-setting-page",
+  apiConsoleKey:
+    "https://github.com/biplobsd/yst/blob/main/README.md#on-setting-page",
+  issuesLink: "https://github.com/biplobsd/yst/issues",
 };
