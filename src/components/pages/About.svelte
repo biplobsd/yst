@@ -2,6 +2,7 @@
   import { REPO_URL } from "src/utils/constants";
   import SliderTips from "../tips/Slider_Tips.svelte";
   import TutorialCard from "../Tutorial_Card.svelte";
+
   const { name, version, author } = chrome.runtime.getManifest();
   const extensionID = chrome.runtime.id;
 </script>
@@ -15,12 +16,12 @@
     class="link link-hover"
     target="_blank"
     rel="noreferrer"
-    href={`mailto:${author}`}>{author}</a
+    href={`mailto:${author?.email}`}>{author?.email}</a
   >
 </div>
 <div>
   <span class="font-bold">Source code:</span>
-  <a class="link link-hover" target="_blank" rel="noreferrer" href={REPO_URL}
+  <a class="link link-hover" href={`https://${REPO_URL}`} rel="noreferrer" target="_blank"
     >{REPO_URL}</a
   >
 </div>
@@ -30,7 +31,7 @@
     class="link link-hover"
     target="_blank"
     rel="noreferrer"
-    href="https://biplobsd.github.io">https://biplobsd.github.io</a
+    href="https://biplobsd.github.io">biplobsd.github.io</a
   >
 </div>
 <div>
