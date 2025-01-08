@@ -38,6 +38,7 @@
   let successCount = 0;
   let actionName = "";
   let lastChannelIDsTotal = 0;
+  let isError = false;
 
   function getAccessToken() {
     return $primaryChannelWritable === "0"
@@ -190,12 +191,14 @@
       case "accept":
         isReady = true;
         isRunning = false;
+        isError = false;
         return;
       case "error":
         setStatus(status.msg, true);
         isRunning = false;
         isReady = true;
         primaryChannelWritable.set("-1");
+        isError = true;
         return;
       case "authToken":
         if ($primaryChannelWritable === "-1") {
@@ -203,6 +206,7 @@
             "Received OAuth token, but it was rejected due to not arriving on time",
             true,
           );
+          isError = true;
           return;
         }
 
@@ -214,6 +218,7 @@
             if (userData0) {
               firstUserWritable.set(userData0);
             }
+            isError = false;
             break;
           case "1":
             secondOAuthKeyWritable.set(status.authToken);
@@ -221,6 +226,8 @@
             if (userData1) {
               secondUserWritable.set(userData1);
             }
+            isError = false;
+            break;
           default:
             break;
         }
@@ -229,6 +236,7 @@
         isReady = true;
 
         setStatus("OAuth token receive successful");
+        isError = false;
         break;
       default:
         break;
@@ -489,8 +497,8 @@
   });
 </script>
 
-{#if !$closeTutorialWritable}
-  <Tutorial />
+{#if !$closeTutorialWritable || isError}
+  <Tutorial forceOpen={isError} />
 {/if}
 
 {#if status.msg === "Done" && successCount / lastChannelIDsTotal >= 0.6}
