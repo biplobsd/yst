@@ -1,12 +1,25 @@
-<script>
-  import { xpathValues } from "src/utils/xpaths";
+<script lang="ts">
   import ExternalLink from "src/components/External_Link.svelte";
   import { docs } from "src/utils/docs";
+  import { xpathsWritable } from "src/utils/storage";
+  import { onMount } from "svelte";
+  import { SETTINGS_DEFAULT } from "src/utils/default";
 
   const today = new Date();
-  const epochDate = new Date(xpathValues.EXPIRE_DATE);
-  const isTodayAfterEpoch = today > epochDate;
+  let epochDate = new Date(SETTINGS_DEFAULT.XPaths.EXPIRE_DATE);
+  let isTodayAfterEpoch = today > epochDate;
 
+
+  function checkExpireDate(value: number) {
+    epochDate = new Date(value);
+    isTodayAfterEpoch = today > epochDate;
+  }
+
+  onMount(() => {
+    xpathsWritable.subscribe((value) => {
+      checkExpireDate(value.EXPIRE_DATE);
+    });
+  });
 </script>
 
 {#if isTodayAfterEpoch}

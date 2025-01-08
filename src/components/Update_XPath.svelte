@@ -3,6 +3,7 @@
   import { slide } from "svelte/transition";
   import { fetchXPathUpdate } from "src/popup/helper";
   import { workingModeWritable, xpathsWritable } from "src/utils/storage";
+  import { delay } from "src/utils/helper";
 
   let isXPathUpdating = false;
 
@@ -13,6 +14,7 @@
   }
 
   onMount(async () => {
+    await delay(1000);
     if ($workingModeWritable === "xpath" && !$xpathsWritable.REMOTE_DISABLE) {
       await xpathUpdateHandler();
     }

@@ -1,5 +1,5 @@
 import type { Settings } from "./schema";
-import xpathJson from "../../data/xpaths/v1.6.json";
+import xpathJson from "../../data/xpaths/v1.8.json";
 
 export const SETTINGS_DEFAULT: Settings = {
   themeMode: "dark",
