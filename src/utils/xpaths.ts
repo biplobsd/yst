@@ -3,13 +3,9 @@ import { z } from "zod";
 
 export const XPathModelSchema = z.object({
   SUBSCRIPTIONS_SECTION: z.string().default(xpathJson.SUBSCRIPTIONS_SECTION),
-  GET_CHANNELS_WITHOUT_EXPEND: z
-    .string()
-    .default(xpathJson.GET_CHANNELS_WITHOUT_EXPEND),
   SUB_CHANNELS_EXPENDED_ITEMS: z
     .string()
     .default(xpathJson.SUB_CHANNELS_EXPENDED_ITEMS),
-  GET_CHANNELS_IN_EXPEND: z.string().default(xpathJson.GET_CHANNELS_IN_EXPEND),
   IS_EXPENDEDABLE: z.string().default(xpathJson.IS_EXPENDEDABLE),
   IS_EXPENDEDABLE_EXPENDED: z
     .string()
@@ -25,11 +21,12 @@ export const XPathModelSchema = z.object({
   UNSUB2: z.string().default(xpathJson.UNSUB2),
   UPDATE_DATE: z.string().optional(),
   REMOTE_DISABLE: z.boolean().optional().default(false),
-  SEARCH_INPUT: z.string().default(xpathJson.SEARCH_INPUT),
   SEARCH_INPUT_QUERY: z.string().default(xpathJson.SEARCH_INPUT_QUERY),
   NAVIGATION_PROGRESS: z.string().default(xpathJson.NAVIGATION_PROGRESS),
   ALL_SUBSCRIPTIONS_BTN: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_BTN),
-  ALL_SUBSCRIPTIONS_ITEMS: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_ITEMS),
+  ALL_SUBSCRIPTIONS_ITEMS: z
+    .string()
+    .default(xpathJson.ALL_SUBSCRIPTIONS_ITEMS),
   XPATH_ENABLE: z.boolean().default(xpathJson.XPATH_ENABLE),
   API_ENABLE: z.boolean().default(xpathJson.API_ENABLE),
   EXPIRE_DATE: z.number().default(xpathJson.EXPIRE_DATE),
