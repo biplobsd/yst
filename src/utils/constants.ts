@@ -13,3 +13,5 @@ export const BMC_LINK = "https://www.buymeacoffee.com/biplobsd";
 export const STORE_LINK =
   "https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa";
 export const TUTORIAL_LINK = "https://youtu.be/EsouSNQOALQ";
+export const API_MODE_VIDEO_TUTORIAL_LINK =
+  "https://github.com/biplobsd/yst?tab=readme-ov-file#screen-recording-instructions";

@@ -3,30 +3,27 @@
   import { delay } from "src/utils/helper";
   import { runtime, type RuntimeMessage } from "src/utils/communication";
   import {
-    apiReqDelayWritable,
-    firstOAuthKeyWritable,
-    secondOAuthKeyWritable,
-    firstUserWritable,
-    secondUserWritable,
-    subscriptionsListWritable,
-    primaryChannelWritable,
     apiKeyWritable,
+    apiReqDelayWritable,
+    closeTutorialWritable,
+    firstOAuthKeyWritable,
+    firstUserWritable,
+    primaryChannelWritable,
+    secondOAuthKeyWritable,
+    secondUserWritable,
+    subscriptionsListWritable
   } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
   import Timer from "../Timer.svelte";
   import axios, { AxiosError } from "axios";
-  import {
-    UserSchema,
-    type User,
-    SubscriptionsRawSchema,
-    type SubscriptionsList,
-  } from "src/utils/schema";
+  import { type SubscriptionsList, SubscriptionsRawSchema, type User, UserSchema } from "src/utils/schema";
   import Data from "../api/Data.svelte";
   import SelectAccount from "../api/Select_Account.svelte";
   import { SUBSCRIPTIONS_API_URL, USERINFO_API_URL } from "src/utils/constants";
   import { SETTINGS_DEFAULT as ud } from "src/utils/default";
   import Done from "../Done.svelte";
+  import Tutorial from "../Tutorial.svelte";
 
   let subscriptionsList = $subscriptionsListWritable;
   let subscriptionCount = $subscriptionsListWritable.length;
@@ -491,6 +488,10 @@
     storageRemoveListener();
   });
 </script>
+
+{#if !$closeTutorialWritable}
+  <Tutorial />
+{/if}
 
 {#if status.msg === "Done" && successCount / lastChannelIDsTotal >= 0.6}
   <Done />
