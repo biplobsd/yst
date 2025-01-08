@@ -3,9 +3,10 @@
   import Home from "src/components/pages/Home.svelte";
   import About from "src/components/pages/About.svelte";
   import type { TabName } from "../utils/types";
-  import { slide, blur } from "svelte/transition";
+  import { blur, slide } from "svelte/transition";
   import Api from "./pages/API.svelte";
-  import { workingModeWritable } from "src/utils/storage";
+  import { workingModeWritable, xpathsWritable } from "src/utils/storage";
+  import FeatureUnavailable from "src/components/Feature_Unavailable.svelte";
 
   let tabName: TabName = "Home";
 </script>
@@ -15,27 +16,39 @@
     <button
       on:click={() => (tabName = "Home")}
       class="tab tab-lifted w-full flex-1 {tabName === 'Home' && 'tab-active'}"
-      >Home
+    >Home
     </button>
     <button
       on:click={() => (tabName = "Settings")}
       class="tab tab-lifted w-full flex-1 {tabName === 'Settings' &&
         'tab-active'}"
-      >Settings
+    >Settings
     </button>
     <button
       on:click={() => (tabName = "About")}
       class="tab tab-lifted w-full flex-1 {tabName === 'About' && 'tab-active'}"
-      >About
+    >About
     </button>
   </div>
   <div class="my-2 w-full relative">
     {#if tabName === "Home"}
       <div in:blur out:slide>
-        {#if $workingModeWritable === "xpath"}
-          <Home />
+        {#if !$xpathsWritable.API_ENABLE && !$xpathsWritable.XPATH_ENABLE}
+          <FeatureUnavailable />
         {:else}
-          <Api />
+          {#if $workingModeWritable === "xpath"}
+            {#if $xpathsWritable.XPATH_ENABLE}
+              <Home />
+            {:else}
+              <FeatureUnavailable featureName="XPath" />
+            {/if}
+          {:else}
+            {#if $xpathsWritable.API_ENABLE}
+              <Api />
+            {:else}
+              <FeatureUnavailable featureName="API" />
+            {/if}
+          {/if}
         {/if}
       </div>
     {/if}
