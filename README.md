@@ -3,7 +3,7 @@
 
 # Youtube Subscriptions Transfer
 
-![logo](/src/assets/icons/icon128.png)
+![Youtube Subscriptions Transfer Marquee promo tile](https://github.com/user-attachments/assets/4b70c863-2653-4d65-98e7-46b2ceb0e00a)
 
 | Chrome Web Store | Edge Add-ons | Opera Addons |
 | ----------- | ----------- | ----------- |
