@@ -14,7 +14,7 @@
   "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[not(@hidden)]",
   "ALL_SUBSCRIPTIONS_BTN": "//*[contains(normalize-space(), 'All subscriptions') and @id='endpoint']",
   "ALL_SUBSCRIPTIONS_ITEMS": "//div[@id='notification-preference-button' and not(@invisible)]//span[text()='Subscribed']/ancestor::ytd-channel-renderer//a[@href and @id='main-link']",
-  "XPATH_ENABLE": false,
+  "XPATH_ENABLE": true,
   "API_ENABLE": true,
   "EXPIRE_DATE": 1738345140000
 }
