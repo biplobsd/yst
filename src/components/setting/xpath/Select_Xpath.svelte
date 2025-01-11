@@ -7,7 +7,7 @@
 
 <button on:click={() => (selected = "xpath")} class="btn w-full"
   ><div class="flex justify-between items-center w-full">
-    <span>XPath</span>
+    <span class="text-sm">XPath</span>
     <ChevronRightIcon class="h-5 w-5" />
   </div>
 </button>

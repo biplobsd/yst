@@ -134,7 +134,7 @@
 </script>
 
 <div class="space-y-2 my-2 form-control">
-  <div class="font-bold text-sm flex items-center gap-1">
+  <div class="font-bold flex items-center gap-1 text-sm">
     Takeout import <DocsLink href={docs.googleTakeout} />
   </div>
   <div class="relative w-full h-full">

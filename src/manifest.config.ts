@@ -15,7 +15,6 @@ export default defineManifest({
   name: "Youtube Subscriptions Transfer",
   description: "Transferring subscriptions from one YouTube account to another",
   version: `${major}.${minor}.${patch}`,
-  version_name: version,
   author: {
     email: "biplobsd11@gmail.com",
   },
@@ -34,6 +33,7 @@ export default defineManifest({
   ],
   background: {
     service_worker: "src/background/index.ts",
+    scripts: ["src/background/index.ts"]
   },
   options_ui: {
     page: "src/options/options.html",

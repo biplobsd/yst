@@ -6,7 +6,7 @@
 </script>
 
 <div
-  class="capitalize font-bold tracking-wider text-base !mt-0 flex items-center gap-1"
+  class="capitalize font-bold tracking-wider !mt-0 flex items-center gap-1 text-sm"
 >
   Google API console keys <DocsLink href={docs.apiConsoleKey} />
 </div>

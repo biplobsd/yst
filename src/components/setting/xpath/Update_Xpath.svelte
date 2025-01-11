@@ -78,7 +78,7 @@
   <ExternalLink>
     <div class="flex gap-1 items-center">
       <DocsLink href={docs.updateXPathValue} />
-      <span>Read docs about xpath</span>
+      <span class="text-sm">Read docs about xpath</span>
     </div>
   </ExternalLink>
 </a>

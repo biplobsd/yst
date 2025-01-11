@@ -8,7 +8,7 @@
 <div class="form-control w-full max-w-xs !my-0">
   <label class="label">
     <p class="flex items-center gap-1">
-      <span class="label-text">API delay per request</span>
+      <span class="text-sm">API delay per request</span>
       <DocsLink href={docs.apiDelay} />
     </p>
     <input

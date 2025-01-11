@@ -412,7 +412,7 @@
 
 {#if isRightSiteNow}
   <div class="space-y-2 relative">
-    <div class="font-bold flex gap-1 items-center">
+    <div class="font-bold flex gap-1 items-center text-sm">
       Data
       <DocsLink href={docs.dataSection} />
     </div>
@@ -500,7 +500,7 @@
         transition:slide
         class="font-bold flex items-center justify-between w-full h-6 mb-[2px]"
       >
-        <div class="flex items-start gap-1 h-full">
+        <div class="flex items-start gap-1 h-full text-sm">
           Status
           {#if isRunning || !ready || isSubRunning}
             <div
@@ -514,7 +514,7 @@
                 on:click={stopFun}
               >
                 <span class="loading loading-infinity"></span>
-                <span class="animate-pulse">
+                <span class="animate-pulse label-text">
                   {#if isStop}
                     <div transition:slide>Wait</div>
                   {:else}
@@ -528,7 +528,7 @@
         {#if failedCount !== 0 || successCount !== 0}
           <div
             transition:slide
-            class="text-base-content/70 font-normal flex gap-1"
+            class="text-base-content/70 font-normal flex gap-1 text-xs"
           >
             <div class="flex gap-1 h-full">
               Failed :
@@ -564,14 +564,14 @@
     </div>
     <div class="w-[17rem] space-y-2">
       <div class="capitalize flex justify-between">
-        <div class="font-bold flex items-center gap-1">
+        <div class="font-bold flex items-center gap-1 text-sm">
           Actions
           <DocsLink href={docs.action} />
         </div>
         {#if actionName !== ""}
           <div
             transition:blur
-            class="font-normal text-base-content/70 flex gap-1"
+            class="font-normal text-base-content/70 flex gap-1 text-xs"
           >
             {#if !(isRunning || !ready || isSubRunning)}
               <span transition:blur>Last run:</span>
@@ -621,9 +621,9 @@
       <ExternalLinkIcon />
       Open Youtube</a
     >
-    <div>
+    <span class="text-xs">
       This page is not a YouTube page. Click the button above to open
       YouTube.com in a new tab. Then reopen this extension for options.
-    </div>
+    </span>
   </div>
 {/if}

@@ -9,24 +9,26 @@
   import FeatureUnavailable from "src/components/Feature_Unavailable.svelte";
 
   let tabName: TabName = "Home";
+  let isFirefox = import.meta.env.VITE_BROWSER_NAME === "firefox";
+
 </script>
 
 <main>
   <div class="tabs tabs-lifted w-full flex items-stretch">
     <button
-      on:click={() => (tabName = "Home")}
       class="tab tab-lifted w-full flex-1 {tabName === 'Home' && 'tab-active'}"
+      on:click={() => (tabName = "Home")}
     >Home
     </button>
     <button
-      on:click={() => (tabName = "Settings")}
       class="tab tab-lifted w-full flex-1 {tabName === 'Settings' &&
         'tab-active'}"
+      on:click={() => (tabName = "Settings")}
     >Settings
     </button>
     <button
-      on:click={() => (tabName = "About")}
       class="tab tab-lifted w-full flex-1 {tabName === 'About' && 'tab-active'}"
+      on:click={() => (tabName = "About")}
     >About
     </button>
   </div>
@@ -43,10 +45,10 @@
               <FeatureUnavailable featureName="XPath" />
             {/if}
           {:else}
-            {#if $xpathsWritable.API_ENABLE}
+            {#if $xpathsWritable.API_ENABLE && !isFirefox}
               <Api />
             {:else}
-              <FeatureUnavailable featureName="API" />
+              <FeatureUnavailable featureName={isFirefox ? "" : "API"} />
             {/if}
           {/if}
         {/if}
