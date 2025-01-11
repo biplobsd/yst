@@ -8,6 +8,7 @@
   import { runtime } from "src/utils/communication";
   import { Toaster } from "svelte-sonner";
   import ExpiredAlert from "src/components/Expired_Alert.svelte";
+  import { themeModeWritable } from "src/utils/storage";
 
   onMount(() => {
     runtime.fromMsg = "option";
@@ -26,5 +27,9 @@
   <Footer />
 </div>
 <Toaster
-  class="ring ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content"
+  position="top-center"
+  theme={$themeModeWritable}
+  toastOptions={{
+		class: "ring-1 ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content",
+	}}
 />
