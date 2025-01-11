@@ -42,7 +42,7 @@
     }
 
     if (!isReady) {
-      runtime.send({
+      await runtime.send({
         to: "background",
         status: { code: "ready", msg: "Get ready status" },
       });
@@ -142,7 +142,7 @@
     <table class="table table-xs w-full">
       <thead>
         <tr>
-          <th />
+          <th></th>
           <th>Name</th>
           <th class="text-center">Status</th>
         </tr>

@@ -526,7 +526,7 @@
               class="btn btn-xs flex normal-case"
               on:click={stop}
             >
-              <span class="loading loading-infinity" />
+              <span class="loading loading-infinity"></span>
               <span class="animate-pulse">
                 {#if isStop}
                   <div transition:slide>Wait</div>
@@ -601,7 +601,7 @@
     >
     <button
       disabled={$primaryChannelWritable === "-1" ||
-        (subscriptionCount ? false : true) ||
+        (!subscriptionCount) ||
         isSubRunning ||
         !isReady ||
         isRunning}
@@ -610,7 +610,7 @@
     >
     <button
       disabled={$primaryChannelWritable === "-1" ||
-        (subscriptionCount ? false : true) ||
+        (!subscriptionCount) ||
         isSubRunning ||
         !isReady ||
         isRunning}

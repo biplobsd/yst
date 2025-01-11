@@ -23,11 +23,11 @@
     </div>
   {:else}
     <SelectXpath bind:selected />
-    <div class="divider" />
+    <div class="divider"></div>
     <ModeSwitch />
-    <div class="divider" />
+    <div class="divider"></div>
     <APIDelay />
-    <div class="divider" />
+    <div class="divider"></div>
     <AccessKeys/>
   {/if}
 

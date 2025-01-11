@@ -142,7 +142,7 @@
       <div
         class="absolute w-full flex justify-center items-center backdrop-blur-sm h-full rounded"
       >
-        <div class="loading" />
+        <div class="loading"></div>
       </div>
     {/if}
     <div class="flex items-center justify-center w-full">

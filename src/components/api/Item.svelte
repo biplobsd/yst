@@ -46,7 +46,7 @@
             {#if user?.picture}
               <img src={user.picture} alt={user.name} />
             {:else}
-              <div class="bg-base-content/10 w-full" />
+              <div class="bg-base-content/10 w-full"></div>
             {/if}
           </div>
         </div>
@@ -55,7 +55,7 @@
         {#if user?.given_name}
           <div class="font-bold">{user.given_name}</div>
         {:else}
-          <div class="bg-base-content/10 h-4 rounded-md w-full" />
+          <div class="bg-base-content/10 h-4 rounded-md w-full"></div>
         {/if}
       </div>
     </div>
@@ -71,7 +71,7 @@
       class="btn btn-xs normal-case relative"
     >
       {#if isLocalRunning}
-        <span class="loading loading-spinner loading-xs absolute" />
+        <span class="loading loading-spinner loading-xs absolute"></span>
       {/if}
       {#if isConnect}
         Disconnect

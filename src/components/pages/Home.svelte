@@ -481,8 +481,7 @@
             bind:value={channelPathsText}
             class="textarea textarea-accent w-full text-xs scrollbar-style"
             placeholder="@google, @youtube"
-            required
-          />
+            required></textarea>
           {#if saveError}
             <div class="alert alert-error shadow-lg mb-4">
               <span>Make sure your input channels start with @</span>
@@ -514,7 +513,7 @@
                 class="btn btn-xs flex normal-case"
                 on:click={stopFun}
               >
-                <span class="loading loading-infinity" />
+                <span class="loading loading-infinity"></span>
                 <span class="animate-pulse">
                   {#if isStop}
                     <div transition:slide>Wait</div>

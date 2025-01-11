@@ -43,7 +43,7 @@
     href="https://github.com/biplobsd">Biplob Kumar Sutradhar</a
   >
 </div>
-<divider class="divider !my-1" />
+<divider class="divider !my-1"></divider>
 <div class="pb-2">
   <TutorialCard closingProgress={100} />
 </div>
