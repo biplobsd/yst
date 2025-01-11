@@ -3,7 +3,7 @@
   import { docs } from "src/utils/docs";
   import ExternalLink from "src/components/External_Link.svelte";
   import { workingModeWritable } from "src/utils/storage";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
 
   export let featureName = "";
 </script>

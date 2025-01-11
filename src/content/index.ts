@@ -1,4 +1,5 @@
 import Overlay from "../components/Content.svelte";
+import { mount } from "svelte";
 
 // Some svelte component on the page
-new Overlay({ target: document.body });
+mount(Overlay, { target: document.body });

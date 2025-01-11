@@ -6,7 +6,7 @@
     promisedStringifyJSON,
   } from "src/utils/helper";
   import log from "src/utils/logger";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
   import { XPathModelSchema, type XPathModel } from "src/utils/xpaths";
   import { xpathsWritable } from "src/utils/storage";
   import { fetchXPathUpdate } from "src/background/helper";

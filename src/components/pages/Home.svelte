@@ -6,7 +6,7 @@
   import { channelIDsWritable as channelIDs, closeTutorialWritable, xpathsWritable } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
   import ZipReader from "../data/Zip_Reader.svelte";

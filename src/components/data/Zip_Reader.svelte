@@ -8,7 +8,7 @@
   import log from "src/utils/logger";
   import { ChannelRawSchema } from "src/utils/schema";
   import qs from "qs";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
     import { apiKeyWritable } from "src/utils/storage";

@@ -1,7 +1,7 @@
 <script>
     import { docs } from "src/utils/docs";
   import { apiKeyWritable, clientIDWritable } from "src/utils/storage";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
     import DocsLink from "../Docs_Link.svelte";
 </script>
 

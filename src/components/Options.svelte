@@ -6,7 +6,7 @@
   import Update_XPath from "src/components/Update_XPath.svelte";
   import { onMount } from "svelte";
   import { runtime } from "src/utils/communication";
-  import { Toaster } from "svelte-french-toast";
+  import { Toaster } from "svelte-sonner";
   import ExpiredAlert from "src/components/Expired_Alert.svelte";
 
   onMount(() => {
@@ -26,8 +26,5 @@
   <Footer />
 </div>
 <Toaster
-  toastOptions={{
-    className:
-      "ring ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content",
-  }}
+  class="ring ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content"
 />

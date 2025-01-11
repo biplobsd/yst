@@ -2,7 +2,7 @@
   import DocsLink from "src/components/Docs_Link.svelte";
   import { docs } from "src/utils/docs";
   import { apiReqDelayWritable, workingModeWritable } from "src/utils/storage";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
 </script>
 
 <div class="form-control w-full max-w-xs !my-0">
