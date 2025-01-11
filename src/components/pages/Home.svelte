@@ -35,9 +35,9 @@
 
   async function stopFun() {
     isStop = true;
-    runtime.send({
+    await runtime.send({
       to: "content",
-      status: { msg: "Stop signal sended", code: "stop" }
+      status: { msg: "Stop signal sent", code: "stop" }
     });
   }
 
@@ -617,6 +617,7 @@
       target="_blank"
       rel="noreferrer"
       href={STORIES_URL[0]}
+      on:click={()=>window.close()}
     >
       <ExternalLinkIcon />
       Open Youtube</a
