@@ -2,6 +2,7 @@
   import { blur } from "svelte/transition";
   import SliderTips from "./tips/Slider_Tips.svelte";
   import { XIcon } from "lucide-svelte";
+  import Confetti from "src/components/Confetti.svelte";
 
   let open = true;
 </script>
@@ -21,7 +22,14 @@ pointer-events: none;
 z-index: 1000;
 "
   >
-
+    <Confetti
+      x={[-5, 5]}
+      y={[0, 0.1]}
+      delay={[0, 1000]}
+      duration={3000}
+      amount={1000}
+      fallDistance="100vh"
+    />
   </div>
   <div
     transition:blur
@@ -36,7 +44,9 @@ z-index: 1000;
           title="Close support popup"
           on:click={() => (open = false)}
           class="btn btn-xs btn-circle btn-outline"
-          ><XIcon class="w-4 h-4" /></button
+        >
+          <XIcon class="w-4 h-4" />
+        </button
         >
       </div>
       <SliderTips />
