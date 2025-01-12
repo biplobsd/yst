@@ -114,7 +114,6 @@
 
   async function waitingForResponse(msg: string, sec: number, ms: number) {
     let timeoutSub = true;
-    ready = false;
     for (let index = sec; index >= 0; index--) {
       setStatus(msg + " T-" + index);
       if (ready) {
@@ -176,6 +175,9 @@
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
         // Sending webpage change action
+        if(mode){
+          ready = false;
+        }
         if (mode &&
           !(await runtime.send({
             to: "content",
@@ -197,6 +199,7 @@
         // ------------------------------------
 
         // Sending subscribe, unsubscribe action
+        ready = false;
         if (
           !(await runtime.send({
             to: "content",
