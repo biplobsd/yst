@@ -531,7 +531,7 @@
         {#if failedCount !== 0 || successCount !== 0}
           <div
             transition:slide
-            class="text-base-content/70 font-normal flex gap-1 text-xs"
+            class="text-base-content/70 font-normal flex gap-1 text-[10px]"
           >
             <div class="flex gap-1 h-full">
               Failed :
@@ -574,7 +574,7 @@
         {#if actionName !== ""}
           <div
             transition:blur
-            class="font-normal text-base-content/70 flex gap-1 text-xs"
+            class="font-normal text-base-content/70 flex gap-1 text-[10px]"
           >
             {#if !(isRunning || !ready || isSubRunning)}
               <span transition:blur>Last run:</span>
