@@ -26,19 +26,19 @@
   import Tutorial from "../Tutorial.svelte";
 
   let subscriptionsList = $subscriptionsListWritable;
-  let subscriptionCount = $subscriptionsListWritable.length;
+  let subscriptionCount = $state($subscriptionsListWritable.length);
 
-  let isRunning = true;
-  let isReady = false;
-  let status: { isError: boolean; msg?: string } = { isError: false };
+  let isRunning = $state(true);
+  let isReady = $state(false);
+  let status: { isError: boolean; msg?: string } = $state({ isError: false });
   let storageRemoveListener: () => void;
-  let isStop = false;
-  let isSubRunning = false;
-  let failedCount = 0;
-  let successCount = 0;
-  let actionName = "";
-  let lastChannelIDsTotal = 0;
-  let isError = false;
+  let isStop = $state(false);
+  let isSubRunning = $state(false);
+  let failedCount = $state(0);
+  let successCount = $state(0);
+  let actionName = $state("");
+  let lastChannelIDsTotal = $state(0);
+  let isError = $state(false);
 
   function getAccessToken() {
     return $primaryChannelWritable === "0"
@@ -524,7 +524,7 @@
             <button
               disabled={isStop}
               class="btn btn-xs flex normal-case"
-              on:click={stop}
+              onclick={stop}
             >
               <span class="loading loading-infinity"></span>
               <span class="animate-pulse">
@@ -597,7 +597,8 @@
         isSubRunning ||
         isRunning}
       class="collect-channel-btn"
-      on:click={collectSubs}>Collect channel</button
+      onclick={collectSubs}>Collect channel
+    </button
     >
     <button
       disabled={$primaryChannelWritable === "-1" ||
@@ -606,7 +607,8 @@
         !isReady ||
         isRunning}
       class="subscribe-btn"
-      on:click={() => subUnSub(true)}>Subscribe</button
+      onclick={() => subUnSub(true)}>Subscribe
+    </button
     >
     <button
       disabled={$primaryChannelWritable === "-1" ||
@@ -615,7 +617,8 @@
         !isReady ||
         isRunning}
       class="unsubscribe-btn"
-      on:click={() => subUnSub(false)}>Unsubscribe</button
+      onclick={() => subUnSub(false)}>Unsubscribe
+    </button
     >
   </div>
 </div>

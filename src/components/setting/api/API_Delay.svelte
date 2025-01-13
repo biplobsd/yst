@@ -17,7 +17,7 @@
       placeholder="ms"
       value={$apiReqDelayWritable}
       min="0"
-      on:change={(e) => {
+      onchange={(e) => {
         const delay = +e.currentTarget.value;
         toast.success("Delay : " + delay);
         apiReqDelayWritable.set(delay);

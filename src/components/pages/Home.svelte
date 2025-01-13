@@ -18,20 +18,20 @@
   import Tutorial from "../Tutorial.svelte";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
-  let isRunning = true;
-  let ready = false;
-  let isRightSiteNow = false;
-  let status: { isError: boolean; msg?: string } = { isError: false };
+  let isRunning = $state(true);
+  let ready = $state(false);
+  let isRightSiteNow = $state(false);
+  let status: { isError: boolean; msg?: string } = $state({ isError: false });
   let storageRemoveListener: () => void;
-  let channelPathsText = "";
-  let saveError = false;
-  let isStop = false;
-  let isSubRunning = false;
-  let channelPathsCount = 0;
-  let lastChannelIDsTotal = 0;
-  let failedCount = 0;
-  let successCount = 0;
-  let actionName = "";
+  let channelPathsText = $state("");
+  let saveError = $state(false);
+  let isStop = $state(false);
+  let isSubRunning = $state(false);
+  let channelPathsCount = $state(0);
+  let lastChannelIDsTotal = $state(0);
+  let failedCount = $state(0);
+  let successCount = $state(0);
+  let actionName = $state("");
 
   async function stopFun() {
     isStop = true;
@@ -451,7 +451,7 @@
             >
               <button
                 class="btn btn-xs"
-                on:click={() => {
+                onclick={() => {
                   const toastID = toast.loading(
                     "Copying channels IDs to clipboard...",
                   );
@@ -474,7 +474,7 @@
           </div>
         </span>
         <form
-          on:submit={(e) => {
+          onsubmit={(e) => {
             e.preventDefault();
             saveError = false;
             channelsIdsStringSave();
@@ -514,7 +514,7 @@
               <button
                 disabled={isStop}
                 class="btn btn-xs flex normal-case"
-                on:click={stopFun}
+                onclick={stopFun}
               >
                 <span class="loading loading-infinity"></span>
                 <span class="animate-pulse label-text">
@@ -587,7 +587,7 @@
       <button
         disabled={!isRightSiteNow || !ready || isSubRunning || isRunning}
         class="collect-channel-btn"
-        on:click={collectSubs}>Collect channel
+        onclick={collectSubs}>Collect channel
       </button
       >
       <button
@@ -596,7 +596,7 @@
           !ready ||
           isRunning}
         class="subscribe-btn"
-        on:click={() => subUnSub(true)}>Subscribe
+        onclick={() => subUnSub(true)}>Subscribe
       </button
       >
       <button
@@ -605,7 +605,7 @@
           !ready ||
           isRunning}
         class="unsubscribe-btn"
-        on:click={() => subUnSub(false)}>Unsubscribe
+        onclick={() => subUnSub(false)}>Unsubscribe
       </button
       >
     </div>
@@ -620,7 +620,7 @@
       target="_blank"
       rel="noreferrer"
       href={STORIES_URL[0]}
-      on:click={()=>window.close()}
+      onclick={()=>window.close()}
     >
       <ExternalLinkIcon />
       Open Youtube</a

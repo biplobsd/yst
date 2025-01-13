@@ -25,7 +25,7 @@
       class="radio radio-xs checked:bg-success"
       disabled={!$xpathsWritable.XPATH_ENABLE}
       checked={$workingModeWritable === "xpath"}
-      on:change={() => {
+      onchange={() => {
         workingModeWritable.set("xpath");
       }}
     />
@@ -44,7 +44,7 @@
       class="radio radio-xs checked:bg-info"
       disabled={!$xpathsWritable.API_ENABLE || isFirefox}
       checked={$workingModeWritable === "api"}
-      on:change={() => {
+      onchange={() => {
         workingModeWritable.set("api");
       }}
     />

@@ -5,7 +5,11 @@
   import { workingModeWritable } from "src/utils/storage";
   import { toast } from "svelte-sonner";
 
-  export let featureName = "";
+  interface Props {
+    featureName?: string;
+  }
+
+  let { featureName = "" }: Props = $props();
 </script>
 
 <div class="card bg-base-100 shadow-lg max-w-lg mx-auto">
@@ -23,7 +27,7 @@
       {#if featureName === "XPath"}
         <button
           class="btn btn-outline btn-info"
-          on:click={() => {
+          onclick={() => {
             toast.success("Switching API mode");
             workingModeWritable.set("api");
           }}>
@@ -32,7 +36,7 @@
       {:else if featureName === "API"}
         <button
           class="btn btn-outline btn-info"
-          on:click={() => {
+          onclick={() => {
             toast.success("Switching XPath mode");
             workingModeWritable.set("xpath");
           }}>

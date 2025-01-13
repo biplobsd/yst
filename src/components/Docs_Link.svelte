@@ -1,7 +1,11 @@
 <script lang="ts">
   import { HelpCircleIcon } from "lucide-svelte";
 
-  export let href: string;
+  interface Props {
+    href: string;
+  }
+
+  let { href }: Props = $props();
 </script>
 
 <span class="tooltip tooltip-right" data-tip="Read docs">

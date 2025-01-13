@@ -4,7 +4,7 @@
   import { XIcon } from "lucide-svelte";
   import Confetti from "src/components/Confetti.svelte";
 
-  let open = true;
+  let open = $state(true);
 </script>
 
 {#if open}
@@ -42,7 +42,7 @@ z-index: 1000;
         <span class="ml-2 text-info font-bold">Last run was successful.</span>
         <button
           title="Close support popup"
-          on:click={() => (open = false)}
+          onclick={() => (open = false)}
           class="btn btn-xs btn-circle btn-outline"
         >
           <XIcon class="w-4 h-4" />

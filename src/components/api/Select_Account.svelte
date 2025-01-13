@@ -5,10 +5,10 @@
   import { blur } from "svelte/transition";
   import {
     firstOAuthKeyWritable,
-    secondOAuthKeyWritable,
     firstUserWritable,
-    secondUserWritable,
     primaryChannelWritable,
+    secondOAuthKeyWritable,
+    secondUserWritable
   } from "src/utils/storage";
   import Item from "./Item.svelte";
   import axios from "axios";
@@ -16,12 +16,21 @@
   import { docs } from "src/utils/docs";
   import { SETTINGS_DEFAULT as ud } from "src/utils/default";
 
-  export let isRunning: boolean;
-  export let isReady: boolean;
-  export let isStop: boolean;
-  export let setStatus: (msg: string, isError?: boolean) => void;
+  interface Props {
+    isRunning: boolean;
+    isReady: boolean;
+    isStop: boolean;
+    setStatus: (msg: string, isError?: boolean) => void;
+  }
 
-  let primaryChannelName: string;
+  let {
+    isRunning = $bindable(),
+    isReady = $bindable(),
+    isStop = $bindable(),
+    setStatus
+  }: Props = $props();
+
+  let primaryChannelName: string = $state("");
 
   async function waitingForResponse(msg: string, sec: number, ms: number) {
     isReady = false;
@@ -105,7 +114,7 @@
     }
   }
 
-  $: {
+  $effect.pre(() => {
     if ($primaryChannelWritable === "0" && $firstUserWritable?.given_name) {
       primaryChannelName = $firstUserWritable.given_name;
     } else if (
@@ -119,7 +128,7 @@
         primaryChannelWritable.set("-1");
       }
     }
-  }
+  });
 </script>
 
 <div class="font-bold flex items-center gap-1">

@@ -12,13 +12,13 @@
   import { docs } from "src/utils/docs";
   import ExternalLink from "src/components/External_Link.svelte";
 
-  let isLoadingSave = false;
-  let isErrorSave = false;
+  let isLoadingSave = $state(false);
+  let isErrorSave = $state(false);
 
-  let isLoadingFetch = false;
-  let isErrorFetch = false;
+  let isLoadingFetch = $state(false);
+  let isErrorFetch = $state(false);
 
-  let userInput = "";
+  let userInput = $state("");
 
   async function update(xPaths: XPathModel) {
     userInput = (await promisedStringifyJSON(xPaths)) as string;
@@ -111,14 +111,14 @@
   <div class="join mt-2">
     <button
       disabled={isLoadingSave || isLoadingFetch}
-      on:click={saveXPathHandler}
+      onclick={saveXPathHandler}
       class="btn join-item"
     >
       <span class={isLoadingSave ? "loading loading-ring" : ""}></span>
       Save</button
     >
     <button
-      on:click={fetchXPathUpdateHandler}
+      onclick={fetchXPathUpdateHandler}
       disabled={isLoadingSave || isLoadingFetch}
       class="btn-success btn join-item"
     >

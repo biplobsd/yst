@@ -5,22 +5,26 @@
     firstUserWritable,
     primaryChannelWritable,
     secondOAuthKeyWritable,
-    secondUserWritable,
+    secondUserWritable
   } from "src/utils/storage";
 
-  export let connectDisconnect: (btnNo: "0" | "1") => Promise<void>;
-  export let id: "0" | "1";
-  export let isRunning: boolean;
+  interface Props {
+    connectDisconnect: (btnNo: "0" | "1") => Promise<void>;
+    id: "0" | "1";
+    isRunning: boolean;
+  }
 
-  let user: User | null = null;
-  let isConnect: boolean;
-  let isLocalRunning: boolean;
+  let { connectDisconnect, id, isRunning = $bindable() }: Props = $props();
 
-  $: {
+  let user: User | null = $state(null);
+  let isConnect: boolean = $state(false);
+  let isLocalRunning: boolean = $state(false);
+
+  $effect.pre(() => {
     user = id === "0" ? $firstUserWritable : $secondUserWritable;
     let token = id === "0" ? $firstOAuthKeyWritable : $secondOAuthKeyWritable;
     isConnect = !!token;
-  }
+  });
 </script>
 
 <tr>
@@ -63,7 +67,7 @@
   <td class="text-right">
     <button
       disabled={isRunning}
-      on:click={async () => {
+      onclick={async () => {
         isLocalRunning = true;
         await connectDisconnect(id);
         isLocalRunning = false;

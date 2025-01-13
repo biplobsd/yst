@@ -1,7 +1,17 @@
 <script lang="ts">
-  export let text: string;
-  export let href: string;
-  export let title: string;
+  interface Props {
+    text: string;
+    href: string;
+    title: string;
+    children?: import("svelte").Snippet;
+  }
+
+  let {
+    text,
+    href,
+    title,
+    children
+  }: Props = $props();
 </script>
 
 <a
@@ -11,7 +21,7 @@
   {title}
   class="mx-1 flex justify-center flex-row h-32 w-[16.3rem] btn gap-3 p-3 btn-info"
 >
-  <slot />
+  {@render children?.()}
   <div class="text-center space-y-2">
     <p>
       {text}

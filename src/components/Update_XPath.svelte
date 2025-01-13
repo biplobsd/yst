@@ -5,7 +5,7 @@
   import { workingModeWritable, xpathsWritable } from "src/utils/storage";
   import { delay } from "src/utils/helper";
 
-  let isXPathUpdating = false;
+  let isXPathUpdating = $state(false);
 
   async function xpathUpdateHandler() {
     isXPathUpdating = true;

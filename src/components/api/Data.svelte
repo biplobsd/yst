@@ -1,7 +1,12 @@
 <script lang="ts">
   import { subscriptionsListWritable } from "src/utils/storage";
   import { blur } from "svelte/transition";
-  export let subscriptionCount: number;
+
+  interface Props {
+    subscriptionCount: number;
+  }
+
+  let { subscriptionCount = $bindable() }: Props = $props();
 </script>
 
 <div class="font-bold">Data</div>
