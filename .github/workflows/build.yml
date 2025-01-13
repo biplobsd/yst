@@ -44,9 +44,15 @@ jobs:
           zip -r "../${OUTPUT_NAME}" .
         shell: bash
 
-      # Step 6: Upload artifacts
+      # Step 6: Upload artifacts with dynamic names
+      - name: Upload Artifact
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          OUTPUT_NAME="yst_v${VERSION}_${{ matrix.browser_name }}.zip"
+        shell: bash
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: yst_${{ matrix.browser_name }}
-          path: yst_v*.zip
+          name: ${{ steps.package.outputs.OUTPUT_NAME }}
+          path: ./*.zip
