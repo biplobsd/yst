@@ -1,0 +1,52 @@
+name: Build and Package
+
+on:
+  push:
+    branches:
+      - main
+      - svelte-5-upgrading
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser_name: [ chrome, firefox ]
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22.13.0 # Use a version compatible with your dependencies
+          cache: 'npm'
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 4: Build for the current environment
+      - name: Build for ${{ matrix.browser_name }}
+        env:
+          VITE_BROWSER_NAME: ${{ matrix.browser_name }}
+        run: npm run build
+
+      # Step 5: Package the build
+      - name: Package Build
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          OUTPUT_NAME="yst_v${VERSION}_${{ matrix.browser_name }}.zip"
+          cd dist
+          zip -r "../${OUTPUT_NAME}" .
+        shell: bash
+
+      # Step 6: Upload artifacts
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: yst_${{ matrix.browser_name }}
+          path: yst_v*.zip
