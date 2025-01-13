@@ -1,4 +1,5 @@
 <script lang="ts">
+
   import { PassthroughBlobProvider, ZipReader } from "async-zip-reader";
   import axios, { AxiosError } from "axios";
   import { csv_async_iter } from "csv-iter-parse";
@@ -8,14 +9,17 @@
   import log from "src/utils/logger";
   import { ChannelRawSchema } from "src/utils/schema";
   import qs from "qs";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
-    import { apiKeyWritable } from "src/utils/storage";
+  import { apiKeyWritable } from "src/utils/storage";
 
-  export let channelsIdsTakeoutSave: (channelIDs: string[]) => void;
-  let files: FileList | null = null;
-  let isLoading = false;
+  interface Props {
+    channelsIdsTakeoutSave: (channelIDs: string[]) => void;
+  }
+
+  let { channelsIdsTakeoutSave }: Props = $props();
+  let isLoading = $state(false);
   const subCsvPath =
     "Takeout/YouTube and YouTube Music/subscriptions/subscriptions.csv";
 
@@ -111,9 +115,8 @@
     }
   }
 
-  const fileCheck = async () => {
-    if (files && !isLoading) {
-      const file = files.item(0);
+  const fileCheck = async (file: File | null) => {
+    if (file && !isLoading) {
       if (file) {
         try {
           isLoading = true;
@@ -128,13 +131,15 @@
     }
   };
 
-  $: {
-    if (files) fileCheck();
+  function handleFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let files = input.files ? Array.from(input.files) : [];
+    fileCheck(files[0]);
   }
 </script>
 
 <div class="space-y-2 my-2 form-control">
-  <div class="font-bold text-sm flex items-center gap-1">
+  <div class="font-bold flex items-center gap-1 text-sm">
     Takeout import <DocsLink href={docs.googleTakeout} />
   </div>
   <div class="relative w-full h-full">
@@ -142,7 +147,7 @@
       <div
         class="absolute w-full flex justify-center items-center backdrop-blur-sm h-full rounded"
       >
-        <div class="loading" />
+        <div class="loading"></div>
       </div>
     {/if}
     <div class="flex items-center justify-center w-full">
@@ -155,11 +160,11 @@
         </p>
         <input
           id="dropzone-file"
-          bind:files
           name="Takeout"
           type="file"
           class="hidden"
           accept=".zip"
+          onchange={handleFileChange}
         />
       </label>
     </div>

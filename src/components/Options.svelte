@@ -6,8 +6,9 @@
   import Update_XPath from "src/components/Update_XPath.svelte";
   import { onMount } from "svelte";
   import { runtime } from "src/utils/communication";
-  import { Toaster } from "svelte-french-toast";
+  import { Toaster } from "svelte-sonner";
   import ExpiredAlert from "src/components/Expired_Alert.svelte";
+  import { themeModeWritable } from "src/utils/storage";
 
   onMount(() => {
     runtime.fromMsg = "option";
@@ -26,8 +27,9 @@
   <Footer />
 </div>
 <Toaster
+  position="top-center"
+  theme={$themeModeWritable}
   toastOptions={{
-    className:
-      "ring ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content",
-  }}
+		class: "ring-1 ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content",
+	}}
 />

@@ -1,13 +1,9 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import {
-    addDate,
-    promisedParseJSON,
-    promisedStringifyJSON,
-  } from "src/utils/helper";
+  import { addDate, promisedParseJSON, promisedStringifyJSON } from "src/utils/helper";
   import log from "src/utils/logger";
-  import toast from "svelte-french-toast";
-  import { XPathModelSchema, type XPathModel } from "src/utils/xpaths";
+  import { toast } from "svelte-sonner";
+  import { type XPathModel, XPathModelSchema } from "src/utils/xpaths";
   import { xpathsWritable } from "src/utils/storage";
   import { fetchXPathUpdate } from "src/background/helper";
   import { onMount } from "svelte";
@@ -15,17 +11,17 @@
   import DocsLink from "src/components/Docs_Link.svelte";
   import { docs } from "src/utils/docs";
   import ExternalLink from "src/components/External_Link.svelte";
-  let isLoadingSave = false;
-  let isErrorSave = false;
 
-  let isLoadingFetch = false;
-  let isErrorFetch = false;
+  let isLoadingSave = $state(false);
+  let isErrorSave = $state(false);
 
-  let userInput = "";
+  let isLoadingFetch = $state(false);
+  let isErrorFetch = $state(false);
+
+  let userInput = $state("");
 
   async function update(xPaths: XPathModel) {
-    const xpathsString = (await promisedStringifyJSON(xPaths)) as string;
-    userInput = xpathsString;
+    userInput = (await promisedStringifyJSON(xPaths)) as string;
     xpathsWritable.set(xPaths);
   }
 
@@ -82,7 +78,7 @@
   <ExternalLink>
     <div class="flex gap-1 items-center">
       <DocsLink href={docs.updateXPathValue} />
-      <span>Read docs about xpath</span>
+      <span class="text-sm">Read docs about xpath</span>
     </div>
   </ExternalLink>
 </a>
@@ -108,26 +104,25 @@
     <textarea
       bind:value={userInput}
       class="min-h-[14.5rem] scrollbar-style textarea textarea-bordered h-24 text-xs whitespace-nowrap"
-      placeholder="XPaths"
-    />
+      placeholder="XPaths"></textarea>
   </div>
 </div>
 <div class="flex justify-center">
   <div class="join mt-2">
     <button
       disabled={isLoadingSave || isLoadingFetch}
-      on:click={saveXPathHandler}
+      onclick={saveXPathHandler}
       class="btn join-item"
     >
-      <span class={isLoadingSave ? "loading loading-ring" : ""} />
+      <span class={isLoadingSave ? "loading loading-ring" : ""}></span>
       Save</button
     >
     <button
-      on:click={fetchXPathUpdateHandler}
+      onclick={fetchXPathUpdateHandler}
       disabled={isLoadingSave || isLoadingFetch}
       class="btn-success btn join-item"
     >
-      <span class={isLoadingSave ? "loading loading-ring" : ""} />
+      <span class={isLoadingSave ? "loading loading-ring" : ""}></span>
       Fetch Update</button
     >
   </div>

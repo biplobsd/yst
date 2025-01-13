@@ -24,21 +24,24 @@
   import { SETTINGS_DEFAULT as ud } from "src/utils/default";
   import Done from "../Done.svelte";
   import Tutorial from "../Tutorial.svelte";
+  import { ExternalLinkIcon } from "lucide-svelte";
 
   let subscriptionsList = $subscriptionsListWritable;
-  let subscriptionCount = $subscriptionsListWritable.length;
+  let subscriptionCount = $state($subscriptionsListWritable.length);
 
-  let isRunning = true;
-  let isReady = false;
-  let status: { isError: boolean; msg?: string } = { isError: false };
+  let isRunning = $state(true);
+  let isReady = $state(false);
+  let status: { isError: boolean; msg?: string } = $state({ isError: false });
   let storageRemoveListener: () => void;
-  let isStop = false;
-  let isSubRunning = false;
-  let failedCount = 0;
-  let successCount = 0;
-  let actionName = "";
-  let lastChannelIDsTotal = 0;
-  let isError = false;
+  let isStop = $state(false);
+  let isSubRunning = $state(false);
+  let failedCount = $state(0);
+  let successCount = $state(0);
+  let actionName = $state("");
+  let lastChannelIDsTotal = $state(0);
+  let isError = $state(false);
+  const optionsPagePath = "src/options/options.html";
+  let isExtensionOptionPage = $state(false);
 
   function getAccessToken() {
     return $primaryChannelWritable === "0"
@@ -73,7 +76,7 @@
     }
     setStatus(
       "Unable to get the subscriptions list from the content client",
-      true,
+      true
     );
     return false;
   }
@@ -88,20 +91,20 @@
       if (mode) {
         notFoundList = currentSubs.filter(
           (elem) =>
-            !subscriptionsList.map((y) => y.channelId).includes(elem.channelId),
+            !subscriptionsList.map((y) => y.channelId).includes(elem.channelId)
         );
         if (notFoundList.length === 0) {
           setStatus(
-            "All those channels have already been subscribed to! There's no need to subscribe again.",
+            "All those channels have already been subscribed to! There's no need to subscribe again."
           );
         }
       } else {
         notFoundList = currentSubs.filter((elem) =>
-          subscriptionsList.map((y) => y.channelId).includes(elem.channelId),
+          subscriptionsList.map((y) => y.channelId).includes(elem.channelId)
         );
         if (notFoundList.length === 0) {
           setStatus(
-            "No channel match with your current subscriptions channel list! NO need to unsubscribe",
+            "No channel match with your current subscriptions channel list! NO need to unsubscribe"
           );
         }
       }
@@ -204,7 +207,7 @@
         if ($primaryChannelWritable === "-1") {
           setStatus(
             "Received OAuth token, but it was rejected due to not arriving on time",
-            true,
+            true
           );
           isError = true;
           return;
@@ -246,7 +249,7 @@
   async function deleteSubscription(id: string) {
     const headers = {
       Authorization: "Bearer " + getAccessToken(),
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     };
 
     try {
@@ -258,9 +261,9 @@
       await axios.delete(SUBSCRIPTIONS_API_URL, {
         params: {
           id,
-          key: apiKey,
+          key: apiKey
         },
-        headers,
+        headers
       });
       return true;
     } catch (err) {
@@ -272,7 +275,7 @@
           case 401:
             setStatus(
               "Reconnect your account. OAuth token might be expired!",
-              true,
+              true
             );
             resetAccount();
             isStop = true;
@@ -280,7 +283,7 @@
           case 404:
             setStatus(
               "The subscriber identified with the request cannot be found.",
-              true,
+              true
             );
 
             return false;
@@ -297,7 +300,7 @@
   async function insertSubscription(channelId: string) {
     const headers = {
       Authorization: "Bearer " + getAccessToken(),
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     };
 
     try {
@@ -313,17 +316,17 @@
           snippet: {
             resourceId: {
               kind: "youtube#channel",
-              channelId,
-            },
-          },
+              channelId
+            }
+          }
         },
         {
           params: {
             part: "snippet",
-            key: apiKey,
+            key: apiKey
           },
-          headers,
-        },
+          headers
+        }
       );
       return true;
     } catch (err) {
@@ -335,7 +338,7 @@
           case 401:
             setStatus(
               "Reconnect your account. OAuth token might be expired!",
-              true,
+              true
             );
             resetAccount();
             isStop = true;
@@ -343,14 +346,14 @@
           case 400:
             setStatus(
               "You have reached your maximum number of subscriptions.",
-              true,
+              true
             );
             isStop = true;
             return false;
           case 404:
             setStatus(
               "The subscriber identified with the request cannot be found.",
-              true,
+              true
             );
 
             return false;
@@ -367,7 +370,7 @@
   async function getChannelsList() {
     const headers = {
       Authorization: "Bearer " + getAccessToken(),
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     };
 
     let pageToken = undefined;
@@ -389,9 +392,9 @@
             key: apiKey,
             fields:
               "nextPageToken, items(id, snippet(title, resourceId(channelId)))",
-            maxResults: 50,
+            maxResults: 50
           },
-          headers,
+          headers
         });
       } catch (err) {
         const errors = err as Error | AxiosError;
@@ -401,14 +404,14 @@
             case 401:
               setStatus(
                 "Reconnect your account. OAuth token might be expired!",
-                true,
+                true
               );
               resetAccount();
               return;
             case 404:
               setStatus(
                 "The subscriber identified with the request cannot be found.",
-                true,
+                true
               );
               return;
           }
@@ -432,7 +435,7 @@
         subscriptionsList.push({
           id: id,
           channelId: snippet.resourceId.channelId,
-          title: snippet.title,
+          title: snippet.title
         });
       }
 
@@ -468,8 +471,8 @@
     try {
       const res = await axios.get(USERINFO_API_URL, {
         params: {
-          access_token: getAccessToken(),
-        },
+          access_token: getAccessToken()
+        }
       });
 
       const userData = await UserSchema.safeParseAsync(res.data);
@@ -488,8 +491,9 @@
     storageRemoveListener = runtime.addListener(parseData);
     await runtime.send({
       to: "background",
-      status: { code: "ready", msg: "Get ready status" },
+      status: { code: "ready", msg: "Get ready status" }
     });
+    isExtensionOptionPage = window.location.href === chrome.runtime.getURL(optionsPagePath);
   });
 
   onDestroy(() => {
@@ -506,6 +510,21 @@
 {/if}
 
 <div class="space-y-2">
+  {#if !isExtensionOptionPage}
+    <div class="flex justify-center">
+      <a
+        title="Click to open API mode in a new tab"
+        class="btn btn-info"
+        target="_blank"
+        rel="noreferrer"
+        href={chrome.runtime.getURL(optionsPagePath)}
+        onclick={()=>window.close()}
+      >
+        <ExternalLinkIcon />
+        Open in new tab</a
+      >
+    </div>
+  {/if}
   <SelectAccount bind:isStop bind:isReady bind:isRunning {setStatus} />
   <Data bind:subscriptionCount />
   <div>
@@ -524,9 +543,9 @@
             <button
               disabled={isStop}
               class="btn btn-xs flex normal-case"
-              on:click={stop}
+              onclick={stop}
             >
-              <span class="loading loading-infinity" />
+              <span class="loading loading-infinity"></span>
               <span class="animate-pulse">
                 {#if isStop}
                   <div transition:slide>Wait</div>
@@ -597,25 +616,28 @@
         isSubRunning ||
         isRunning}
       class="collect-channel-btn"
-      on:click={collectSubs}>Collect channel</button
+      onclick={collectSubs}>Collect channel
+    </button
     >
     <button
       disabled={$primaryChannelWritable === "-1" ||
-        (subscriptionCount ? false : true) ||
+        (!subscriptionCount) ||
         isSubRunning ||
         !isReady ||
         isRunning}
       class="subscribe-btn"
-      on:click={() => subUnSub(true)}>Subscribe</button
+      onclick={() => subUnSub(true)}>Subscribe
+    </button
     >
     <button
       disabled={$primaryChannelWritable === "-1" ||
-        (subscriptionCount ? false : true) ||
+        (!subscriptionCount) ||
         isSubRunning ||
         !isReady ||
         isRunning}
       class="unsubscribe-btn"
-      on:click={() => subUnSub(false)}>Unsubscribe</button
+      onclick={() => subUnSub(false)}>Unsubscribe
+    </button
     >
   </div>
 </div>

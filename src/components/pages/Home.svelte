@@ -6,7 +6,7 @@
   import { channelIDsWritable as channelIDs, closeTutorialWritable, xpathsWritable } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
-  import toast from "svelte-french-toast";
+  import { toast } from "svelte-sonner";
   import copy from "copy-text-to-clipboard";
   import Timer from "../Timer.svelte";
   import ZipReader from "../data/Zip_Reader.svelte";
@@ -18,26 +18,26 @@
   import Tutorial from "../Tutorial.svelte";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
-  let isRunning = true;
-  let ready = false;
-  let isRightSiteNow = false;
-  let status: { isError: boolean; msg?: string } = { isError: false };
+  let isRunning = $state(true);
+  let ready = $state(false);
+  let isRightSiteNow = $state(false);
+  let status: { isError: boolean; msg?: string } = $state({ isError: false });
   let storageRemoveListener: () => void;
-  let channelPathsText = "";
-  let saveError = false;
-  let isStop = false;
-  let isSubRunning = false;
-  let channelPathsCount = 0;
-  let lastChannelIDsTotal = 0;
-  let failedCount = 0;
-  let successCount = 0;
-  let actionName = "";
+  let channelPathsText = $state("");
+  let saveError = $state(false);
+  let isStop = $state(false);
+  let isSubRunning = $state(false);
+  let channelPathsCount = $state(0);
+  let lastChannelIDsTotal = $state(0);
+  let failedCount = $state(0);
+  let successCount = $state(0);
+  let actionName = $state("");
 
   async function stopFun() {
     isStop = true;
-    runtime.send({
+    await runtime.send({
       to: "content",
-      status: { msg: "Stop signal sended", code: "stop" }
+      status: { msg: "Stop signal sent", code: "stop" }
     });
   }
 
@@ -114,7 +114,6 @@
 
   async function waitingForResponse(msg: string, sec: number, ms: number) {
     let timeoutSub = true;
-    ready = false;
     for (let index = sec; index >= 0; index--) {
       setStatus(msg + " T-" + index);
       if (ready) {
@@ -176,6 +175,9 @@
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
         // Sending webpage change action
+        if(mode){
+          ready = false;
+        }
         if (mode &&
           !(await runtime.send({
             to: "content",
@@ -197,6 +199,7 @@
         // ------------------------------------
 
         // Sending subscribe, unsubscribe action
+        ready = false;
         if (
           !(await runtime.send({
             to: "content",
@@ -412,7 +415,7 @@
 
 {#if isRightSiteNow}
   <div class="space-y-2 relative">
-    <div class="font-bold flex gap-1 items-center">
+    <div class="font-bold flex gap-1 items-center text-sm">
       Data
       <DocsLink href={docs.dataSection} />
     </div>
@@ -448,7 +451,7 @@
             >
               <button
                 class="btn btn-xs"
-                on:click={() => {
+                onclick={() => {
                   const toastID = toast.loading(
                     "Copying channels IDs to clipboard...",
                   );
@@ -471,7 +474,7 @@
           </div>
         </span>
         <form
-          on:submit={(e) => {
+          onsubmit={(e) => {
             e.preventDefault();
             saveError = false;
             channelsIdsStringSave();
@@ -481,8 +484,7 @@
             bind:value={channelPathsText}
             class="textarea textarea-accent w-full text-xs scrollbar-style"
             placeholder="@google, @youtube"
-            required
-          />
+            required></textarea>
           {#if saveError}
             <div class="alert alert-error shadow-lg mb-4">
               <span>Make sure your input channels start with @</span>
@@ -501,7 +503,7 @@
         transition:slide
         class="font-bold flex items-center justify-between w-full h-6 mb-[2px]"
       >
-        <div class="flex items-start gap-1 h-full">
+        <div class="flex items-start gap-1 h-full text-sm">
           Status
           {#if isRunning || !ready || isSubRunning}
             <div
@@ -512,10 +514,10 @@
               <button
                 disabled={isStop}
                 class="btn btn-xs flex normal-case"
-                on:click={stopFun}
+                onclick={stopFun}
               >
-                <span class="loading loading-infinity" />
-                <span class="animate-pulse">
+                <span class="loading loading-infinity"></span>
+                <span class="animate-pulse label-text">
                   {#if isStop}
                     <div transition:slide>Wait</div>
                   {:else}
@@ -529,7 +531,7 @@
         {#if failedCount !== 0 || successCount !== 0}
           <div
             transition:slide
-            class="text-base-content/70 font-normal flex gap-1"
+            class="text-base-content/70 font-normal flex gap-1 text-[10px]"
           >
             <div class="flex gap-1 h-full">
               Failed :
@@ -565,14 +567,14 @@
     </div>
     <div class="w-[17rem] space-y-2">
       <div class="capitalize flex justify-between">
-        <div class="font-bold flex items-center gap-1">
+        <div class="font-bold flex items-center gap-1 text-sm">
           Actions
           <DocsLink href={docs.action} />
         </div>
         {#if actionName !== ""}
           <div
             transition:blur
-            class="font-normal text-base-content/70 flex gap-1"
+            class="font-normal text-base-content/70 flex gap-1 text-[10px]"
           >
             {#if !(isRunning || !ready || isSubRunning)}
               <span transition:blur>Last run:</span>
@@ -585,7 +587,7 @@
       <button
         disabled={!isRightSiteNow || !ready || isSubRunning || isRunning}
         class="collect-channel-btn"
-        on:click={collectSubs}>Collect channel
+        onclick={collectSubs}>Collect channel
       </button
       >
       <button
@@ -594,7 +596,7 @@
           !ready ||
           isRunning}
         class="subscribe-btn"
-        on:click={() => subUnSub(true)}>Subscribe
+        onclick={() => subUnSub(true)}>Subscribe
       </button
       >
       <button
@@ -603,7 +605,7 @@
           !ready ||
           isRunning}
         class="unsubscribe-btn"
-        on:click={() => subUnSub(false)}>Unsubscribe
+        onclick={() => subUnSub(false)}>Unsubscribe
       </button
       >
     </div>
@@ -618,13 +620,14 @@
       target="_blank"
       rel="noreferrer"
       href={STORIES_URL[0]}
+      onclick={()=>window.close()}
     >
       <ExternalLinkIcon />
       Open Youtube</a
     >
-    <div>
+    <span class="text-xs">
       This page is not a YouTube page. Click the button above to open
       YouTube.com in a new tab. Then reopen this extension for options.
-    </div>
+    </span>
   </div>
 {/if}

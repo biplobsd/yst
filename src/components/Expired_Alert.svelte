@@ -7,7 +7,7 @@
 
   const today = new Date();
   let epochDate = new Date(SETTINGS_DEFAULT.XPaths.EXPIRE_DATE);
-  let isTodayAfterEpoch = today > epochDate;
+  let isTodayAfterEpoch = $state(today > epochDate);
 
 
   function checkExpireDate(value: number) {

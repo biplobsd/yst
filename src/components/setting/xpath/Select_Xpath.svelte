@@ -2,12 +2,16 @@
   import type { SettingSelected } from "src/utils/types";
   import { ChevronRightIcon } from "lucide-svelte";
 
-  export let selected: SettingSelected;
+  interface Props {
+    selected: SettingSelected;
+  }
+
+  let { selected = $bindable() }: Props = $props();
 </script>
 
-<button on:click={() => (selected = "xpath")} class="btn w-full"
+<button class="btn w-full" onclick={() => (selected = "xpath")}
   ><div class="flex justify-between items-center w-full">
-    <span>XPath</span>
+    <span class="text-sm">XPath</span>
     <ChevronRightIcon class="h-5 w-5" />
   </div>
 </button>

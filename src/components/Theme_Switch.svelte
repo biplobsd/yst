@@ -5,8 +5,8 @@
   import { SETTINGS_DEFAULT } from "src/utils/default";
   import log from "src/utils/logger";
 
-  let isLight = false;
-  let themeMode = SETTINGS_DEFAULT.themeMode;
+  let isLight = $state(false);
+  let themeMode = $state(SETTINGS_DEFAULT.themeMode);
   const toggleThemeMode = (modeValue: string) =>
     modeValue === "dark" ? "light" : "dark";
 
@@ -27,7 +27,7 @@
 
 <abbr title={`Switch to ${toggleThemeMode(themeMode)} theme`}>
   <button
-    on:click={() => themeModeWritable.update(toggleThemeMode)}
+    onclick={() => themeModeWritable.update(toggleThemeMode)}
     class={`${
       isLight ? "swap-active" : ""
     } swap-rotate btn btn-xs btn-ghost btn-circle swap`}
