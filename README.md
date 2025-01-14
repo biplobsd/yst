@@ -3,11 +3,11 @@
 
 # Youtube Subscriptions Transfer
 
-![Youtube Subscriptions Transfer Marquee promo tile](https://github.com/user-attachments/assets/4b70c863-2653-4d65-98e7-46b2ceb0e00a)
+![Youtube Subscriptions Transfer Marquee promo tile](assets/yst_1400.jpg)
 
-| Chrome Web Store | Edge Add-ons | Opera Addons |
-| ----------- | ----------- | ----------- |
-| <a href="https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa"><img src="https://github.com/user-attachments/assets/6e72a907-3c74-4983-af22-3dacbf0ff9b7" alt="Get YST on Chrome Web Store" width="224px"></a> | <a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj"><img src="https://get.microsoft.com/images/en-us%20light.svg" alt="Get YST on Microsoft Edge" width="224px"></a> | <a href="https://addons.opera.com/en/extensions/details/youtube-subscriptions-transfer/"><img src="https://raw.githubusercontent.com/kazcfz/Browser-Promotional-Badges/refs/heads/main/Opera/Add-ons/addons_206x58_en%402x.png" alt="Get it from Opera add-ons" width="224px"></a> |
+| Chrome Web Store                                                                                                                                                                                                                     | Edge Add-ons                                                                                                                                                                                                  | Opera Add-ons                                                                                                                                                                                                                                                                      | Firefox Add-ons                                                                                                                                                                                                                                                  |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa"><img src="https://github.com/user-attachments/assets/6e72a907-3c74-4983-af22-3dacbf0ff9b7" alt="Get YST on Chrome Web Store" width="224px"></a> | <a href="https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj"><img src="https://get.microsoft.com/images/en-us%20light.svg" alt="Get YST on Microsoft Edge" width="224px"></a> | <a href="https://addons.opera.com/en/extensions/details/youtube-subscriptions-transfer/"><img src="https://raw.githubusercontent.com/kazcfz/Browser-Promotional-Badges/refs/heads/main/Opera/Add-ons/addons_206x58_en%402x.png" alt="Get it from Opera add-ons" width="224px"></a> | <a href="https://addons.mozilla.org/addon/youtube-subscriptions-transfer/"><img src="https://github.com/kazcfz/Browser-Promotional-Badges/raw/refs/heads/main/Mozilla/Firefox/Get%20The%20Add-On.svg" height="60px" alt="Get it from Firefox add-ons"></img></a> |
 
 YouTube Subscriptions Transfer is a browser extension that allows you to transfer or move subscriptions from one account to another using XPath or API. The extension collects a list of channels and enables you to subscribe or unsubscribe to each channel. It interacts with the DOM using xpath and YouTube Data API v3.
 
@@ -35,13 +35,14 @@ Suppose you are using your personal YouTube account, and you also use an ad bloc
 
 ## Installation
 
-[YST on Chrome Web Store](https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa) | [YST on Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj) | [YST on Opera Add-ons](https://addons.opera.com/en/extensions/details/youtube-subscriptions-transfer/)
+[Chrome Web Store](https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa) | [Microsoft Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/ojnekffpabpincdklmmmlnoanffkfahj) | [Opera Add-ons](https://addons.opera.com/en/extensions/details/youtube-subscriptions-transfer/) | [Firefox Add-ons](https://addons.mozilla.org/addon/youtube-subscriptions-transfer/)
 
 Or get the built zip from the [release](https://github.com/biplobsd/yst/releases/latest) tab. Then follow the instructions in the [Load unpacked extensions](#load-unpacked-extensions) section. The **_/dist_** folder should be considered as the unpacked zip files.
 
 
 ## YST has two modes
-Below is a comparison:
+
+Below is a comparison:a
 
 | XPath      | API |
 | ----------- | ----------- |

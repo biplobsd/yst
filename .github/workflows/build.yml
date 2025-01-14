@@ -41,10 +41,8 @@ jobs:
         id: package
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          OUTPUT_NAME="yst_v${VERSION}_${{ matrix.browser_name }}.zip"
+          OUTPUT_NAME="yst_v${VERSION}_${{ matrix.browser_name }}"
           echo "output_name=${OUTPUT_NAME}" >> $GITHUB_ENV
-          cd dist
-          zip -r "../${OUTPUT_NAME}" .
         shell: bash
 
       # Step 6: Upload artifacts
@@ -52,4 +50,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.output_name }}
-          path: yst_v*.zip
+          path: ./dist/**
