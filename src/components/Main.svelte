@@ -3,7 +3,7 @@
   import Home from "src/components/pages/Home.svelte";
   import About from "src/components/pages/About.svelte";
   import type { TabName } from "../utils/types";
-  import { blur, slide } from "svelte/transition";
+  import { slide } from "svelte/transition";
   import Api from "./pages/API.svelte";
   import { workingModeWritable, xpathsWritable } from "src/utils/storage";
   import FeatureUnavailable from "src/components/Feature_Unavailable.svelte";
@@ -34,7 +34,7 @@
   </div>
   <div class="my-2 w-full relative">
     {#if tabName === "Home"}
-      <div in:blur out:slide>
+      <div transition:slide>
         {#if !$xpathsWritable.API_ENABLE && !$xpathsWritable.XPATH_ENABLE}
           <FeatureUnavailable />
         {:else}
@@ -55,12 +55,12 @@
       </div>
     {/if}
     {#if tabName === "Settings"}
-      <div in:blur out:slide>
+      <div transition:slide>
         <Settings />
       </div>
     {/if}
     {#if tabName === "About"}
-      <div in:blur out:slide>
+      <div transition:slide>
         <About />
       </div>
     {/if}
