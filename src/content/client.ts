@@ -1,9 +1,9 @@
 import { runtime, type RuntimeMessage } from "src/utils/communication";
 import {
-  isXPathExpressionExists,
-  getXpathFromElement,
   delay,
+  getXpathFromElement,
   getXpathFromElements,
+  isXPathExpressionExists,
 } from "src/utils/helper";
 import log from "src/utils/logger";
 import type { XPathModel } from "src/utils/xpaths";
@@ -120,7 +120,6 @@ async function expendedButtonClick() {
     }
     await delay(1000);
     return isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS);
-    
   } else if (
     isAlreadyExpended &&
     isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)
@@ -199,12 +198,11 @@ async function checking() {
     // return false;
   }
 
-  return !await isStopping();
+  return !(await isStopping());
 }
 
-
 async function changeToAllSubscriptionsPage() {
-  const targetURL = 'https://www.youtube.com/feed/channels';
+  const targetURL = "https://www.youtube.com/feed/channels";
   if (window.location.href === targetURL) {
     return true;
   }
@@ -231,7 +229,7 @@ async function collectHref() {
       },
     });
 
-    if(!(await changeToAllSubscriptionsPage())){
+    if (!(await changeToAllSubscriptionsPage())) {
       return false;
     }
 
@@ -422,9 +420,9 @@ async function unSubSubNow(channelID: string) {
   await runtime.send(errorStatus);
 }
 
-async function isInEnglishLanguage() {
+async function isInSupportedLanguage() {
   const lang = document.documentElement.lang;
-  return lang === "en";
+  return xpathValues.SUPPORTED_LANGS.includes(lang);
 }
 
 export async function parseData({ status, to: type }: RuntimeMessage) {
@@ -434,17 +432,6 @@ export async function parseData({ status, to: type }: RuntimeMessage) {
 
   log.info(status);
 
-  if (status.code !== "stop" && !(await isInEnglishLanguage())) {
-    await runtime.send({
-      to: "option",
-      status: {
-        code: "langError",
-        msg: "Unfortunately, YST currently only works when the YouTube page language is set to English (US). Please click on your profile icon (in the top right corner) > Language to switch to English (US).",
-      },
-    });
-    return;
-  }
-  
   switch (status.code) {
     case "loading":
       isRunning = true;
@@ -499,6 +486,16 @@ export async function parseData({ status, to: type }: RuntimeMessage) {
       break;
     case "xpathValues":
       xpathValues = status.xpathValues;
+      if (!(await isInSupportedLanguage())) {
+        await runtime.send({
+          to: "option",
+          status: {
+            code: "langError",
+            msg: "Unfortunately, YST currently only works when the YouTube page language is set to English (US). Please click on your profile icon (in the top right corner) > Language to switch to English (US).",
+          },
+        });
+        return;
+      }
       await acceptSignalSend();
       break;
     default:

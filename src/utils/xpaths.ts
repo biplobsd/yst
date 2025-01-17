@@ -30,6 +30,7 @@ export const XPathModelSchema = z.object({
   XPATH_ENABLE: z.boolean().default(xpathJson.XPATH_ENABLE),
   API_ENABLE: z.boolean().default(xpathJson.API_ENABLE),
   EXPIRE_DATE: z.number().default(xpathJson.EXPIRE_DATE),
+  SUPPORTED_LANGS: z.array(z.string()).default(xpathJson.SUPPORTED_LANGS)
 });
 
 export type XPathModel = z.infer<typeof XPathModelSchema>;
