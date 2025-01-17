@@ -4,6 +4,7 @@ import {
   getXpathFromElement,
   getXpathFromElements,
   isXPathExpressionExists,
+  replaceLangKeys, type SupportedLangs
 } from "src/utils/helper";
 import log from "src/utils/logger";
 import type { XPathModel } from "src/utils/xpaths";
@@ -12,6 +13,7 @@ let isRunning: boolean = false;
 let stop: boolean = false;
 let xpathValues: XPathModel;
 let isNotTabRegister = true;
+let lang = "en";
 
 function getAlreadySubscribeXpath(channelID: string) {
   return xpathValues.ALREADY_SUBSCRIBE.replace("{{channelID}}", channelID);
@@ -19,6 +21,25 @@ function getAlreadySubscribeXpath(channelID: string) {
 
 function getSubscribeButton(channelID: string) {
   return xpathValues.SUBSCRIBE_BTN.replace("{{channelID}}", channelID);
+}
+
+function replaceLang(str: string, supportedLangs: SupportedLangs) {
+  lang = document.documentElement.lang;
+  return replaceLangKeys(supportedLangs, lang, str);
+}
+
+function replaceAllLangKeysFlat(xpathValues: XPathModel): XPathModel {
+  const updatedValues: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(xpathValues)) {
+    if (typeof value === "string") {
+      updatedValues[key] = replaceLang(value, xpathValues.SUPPORTED_LANGS);
+    } else {
+      updatedValues[key] = value;
+    }
+  }
+
+  return updatedValues as XPathModel;
 }
 
 async function searchChannel(channelID: string) {
@@ -421,8 +442,8 @@ async function unSubSubNow(channelID: string) {
 }
 
 async function isInSupportedLanguage() {
-  const lang = document.documentElement.lang;
-  return xpathValues.SUPPORTED_LANGS.includes(lang);
+  lang = document.documentElement.lang;
+  return lang in xpathValues.SUPPORTED_LANGS;
 }
 
 export async function parseData({ status, to: type }: RuntimeMessage) {
@@ -485,7 +506,7 @@ export async function parseData({ status, to: type }: RuntimeMessage) {
       await readySignalSend();
       break;
     case "xpathValues":
-      xpathValues = status.xpathValues;
+      xpathValues = replaceAllLangKeysFlat(status.xpathValues);
       if (!(await isInSupportedLanguage())) {
         await runtime.send({
           to: "option",

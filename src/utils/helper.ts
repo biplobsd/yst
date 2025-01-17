@@ -1,6 +1,8 @@
 import { STORIES_URL as SELECTED_URLS } from "./constants";
 import { type XPathModel } from "./xpaths";
 
+export type SupportedLangs = Record<string, Record<string, string> | { __same__: string | null }>;
+
 export function isXPathExpressionExists(expression: string): boolean {
   const result = document.evaluate(
     expression,
@@ -108,5 +110,33 @@ export async function promisedStringifyJSON(value: any) {
     } catch (e) {
       reject(e);
     }
+  });
+}
+
+export function replaceLangKeys(
+  supportedLangs: SupportedLangs,
+  lang: string,
+  str: string
+): string {
+  const resolveLang = (language: string): Record<string, string> | null => {
+    const entry = supportedLangs[language];
+    if (!entry) return null; // Language not found.
+
+    if (typeof entry === "object" && "__same__" in entry) {
+      const sameLang = entry.__same__;
+      return sameLang ? resolveLang(sameLang) : null; // Resolve the referenced language.
+    }
+
+    return entry as Record<string, string>;
+  };
+
+  const resolvedLang = resolveLang(lang);
+  if (!resolvedLang) {
+    console.warn(`Language "${lang}" not found or could not be resolved.`);
+    return str;
+  }
+
+  return str.replace(/\{\{(.*?)\}\}/g, (match, key) => {
+    return resolvedLang[key] || match;
   });
 }
