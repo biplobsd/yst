@@ -288,7 +288,7 @@
         return;
       case "ready":
         ready = true;
-        await xpathSignalSend();
+        if(!isSubRunning) await xpathSignalSend();
         return;
       case "unsubscribeSuccessful":
       case "subscribeSuccessful":
