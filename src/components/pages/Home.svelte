@@ -150,7 +150,7 @@
   }
 
   async function subUnSub(mode = true) {
-    const un = !mode && "un";
+    const un = mode ? '' : "un";
     if (isRunning) {
       return;
     }
