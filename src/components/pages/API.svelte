@@ -82,6 +82,7 @@
   }
 
   async function filterUnSubs(mode = true) {
+    subscriptionsList = $subscriptionsListWritable;
     const currentSubs = subscriptionsList;
     if (!(await collectAndWait())) {
       return;
@@ -108,6 +109,7 @@
           );
         }
       }
+
       subscriptionsListWritable.set(notFoundList);
       subscriptionsList = notFoundList;
       subscriptionCount = notFoundList.length;
@@ -246,7 +248,8 @@
     }
   }
 
-  async function deleteSubscription(id: string) {
+  async function deleteSubscription(id?: string) {
+    if(!id) return;
     const headers = {
       Authorization: "Bearer " + getAccessToken(),
       "Content-Type": "application/json"

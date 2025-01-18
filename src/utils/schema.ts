@@ -49,7 +49,7 @@ export const ChannelRawSchema = z
 
 export const SubscriptionsListSchema = z
   .object({
-    id: z.string(),
+    id: z.string().nullable().optional(),
     channelId: z.string(),
     title: z.string(),
   })
