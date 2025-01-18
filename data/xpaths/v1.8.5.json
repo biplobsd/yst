@@ -9,7 +9,7 @@
   "ALREADY_SUBSCRIBE": "//*[translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{{channelID}}' and @id='subscribers']/ancestor::div[@id='info-section']//div[@id='notification-preference-button' and not(@invisible)]//span[text()='{{subscribed}}']",
   "SUBSCRIBE_BTN": "//*[translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{{channelID}}' and @id='subscribers']/ancestor::div[@id='info-section']//div[@id='subscribe-button']//span[text()=\"{{subscribe}}\"]/ancestor::button",
   "UNSUB1": "//yt-formatted-string[text()='{{unsubscribe}}']",
-  "UNSUB2": "//button[@aria-label='{{unsubscribe}}']",
+  "UNSUB2": "//*[@id='confirm-button']//button",
   "SEARCH_INPUT_QUERY": "//input[@name='search_query' and not(contains(@id, 'search'))]",
   "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[not(@hidden)]",
   "ALL_SUBSCRIPTIONS_BTN": "//*[contains(normalize-space(), '{{allSubscriptions}}') and @id='endpoint']",
@@ -40,6 +40,13 @@
     },
     "fr-CA": {
       "__same__": "fr-FR"
+    },
+    "ru-RU": {
+      "subscriptions": "Подписки",
+      "unsubscribe": "Отменить подписку",
+      "allSubscriptions": "Все подписки",
+      "subscribed": "Вы подписаны",
+      "subscribe": "Подписаться"
     }
   }
 }
