@@ -31,7 +31,7 @@ export const XPathModelSchema = z.object({
   UNSUB1: z.string().default(xpathJson.UNSUB1),
   UNSUB2: z.string().default(xpathJson.UNSUB2),
   UPDATE_DATE: z.string().optional(),
-  REMOTE_DISABLE: z.boolean().default(false).optional(),
+  REMOTE_DISABLE: z.boolean().default(import.meta.env.DEV).optional(),
   SEARCH_INPUT_QUERY: z.string().default(xpathJson.SEARCH_INPUT_QUERY),
   NAVIGATION_PROGRESS: z.string().default(xpathJson.NAVIGATION_PROGRESS),
   ALL_SUBSCRIPTIONS_BTN: z.string().default(xpathJson.ALL_SUBSCRIPTIONS_BTN),

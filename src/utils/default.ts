@@ -4,7 +4,7 @@ import xpathJson from "../../data/xpaths/v1.8.5.json";
 export const SETTINGS_DEFAULT: Settings = {
   themeMode: "dark",
   channelIDs: [],
-  XPaths: { ...xpathJson, REMOTE_DISABLE: false },
+  XPaths: { ...xpathJson, REMOTE_DISABLE: import.meta.env.DEV },
   workingMode: "xpath",
   firstOAuthKey: "",
   secondOAuthKey: "",
