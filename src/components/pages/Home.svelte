@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { STORIES_URL } from "src/utils/constants";
+  import { SELECTED_URLS } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
   import { runtime, type RuntimeMessage } from "src/utils/communication";
   import { channelIDsWritable as channelIDs, closeTutorialWritable, xpathsWritable } from "src/utils/storage";
@@ -619,7 +619,7 @@
       class="btn btn-success"
       target="_blank"
       rel="noreferrer"
-      href={STORIES_URL[0]}
+      href={SELECTED_URLS[1]}
       onclick={()=>window.close()}
     >
       <ExternalLinkIcon />

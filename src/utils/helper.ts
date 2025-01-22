@@ -1,17 +1,32 @@
-import { STORIES_URL as SELECTED_URLS } from "./constants";
+import { SELECTED_URLS } from "./constants";
 import { type XPathModel } from "./xpaths";
 
-export type SupportedLangs = Record<string, Record<string, string> | { __same__: string | null }>;
+export type SupportedLangs = Record<
+  string,
+  Record<string, string> | { __same__: string | null }
+>;
 
-export function isXPathExpressionExists(expression: string): boolean {
-  const result = document.evaluate(
-    expression,
-    document,
-    null,
-    XPathResult.ANY_TYPE,
-    null,
-  );
-  return result.iterateNext() !== null;
+const xpathCache = new Map<string, HTMLElement | undefined>();
+
+export async function isXPathExpressionExists(
+  expression: string,
+  contextNode: Node = document,
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      const result = document.evaluate(
+        expression,
+        contextNode,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null,
+      );
+      resolve(result.singleNodeValue !== null);
+    } catch (e) {
+      console.error(`Invalid XPath expression: ${expression}`, e);
+      resolve(false);
+    }
+  });
 }
 
 export async function delay(ms: number) {
@@ -41,45 +56,67 @@ export async function isRightSite(isOptions = true) {
   return SELECTED_URLS.includes(url.slice(0, 24));
 }
 
-export function getXpathFromElement(xpath: string) {
-  const dom = document.evaluate(
-    xpath,
-    document,
-    null,
-    XPathResult.ANY_TYPE,
-    null,
-  );
-  const reactNode = dom.iterateNext();
-  if (reactNode && reactNode instanceof HTMLElement) {
-    return reactNode;
-  } else {
-    return undefined;
+export async function getXpathFromElement(
+  xpath: string,
+  contextNode: Node = document,
+): Promise<HTMLElement | undefined> {
+  if (xpathCache.has(xpath)) {
+    return xpathCache.get(xpath);
   }
+
+  return new Promise((resolve) => {
+    try {
+      const dom = document.evaluate(
+        xpath,
+        contextNode,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null,
+      );
+
+      const reactNode = dom.singleNodeValue;
+      const result = reactNode instanceof HTMLElement ? reactNode : undefined;
+
+      xpathCache.set(xpath, result);
+
+      resolve(result);
+    } catch (e) {
+      console.error(`Invalid XPath: ${xpath}`, e);
+      resolve(undefined);
+    }
+  });
 }
 
-export function getXpathFromElements(xpath: string) {
-  const dom = document.evaluate(
-    xpath,
-    document,
-    null,
-    XPathResult.ANY_TYPE,
-    null,
-  );
+export async function getXpathFromElements(
+  xpath: string,
+  contextNode: Node = document,
+): Promise<HTMLElement[] | undefined> {
+  return new Promise((resolve) => {
+    try {
+      const dom = document.evaluate(
+        xpath,
+        contextNode,
+        null,
+        XPathResult.ORDERED_NODE_ITERATOR_TYPE,
+        null,
+      );
 
-  const listNodes: HTMLElement[] = [];
-  let reactNode = dom.iterateNext();
-  while (reactNode) {
-    if (reactNode instanceof HTMLElement) {
-      listNodes.push(reactNode);
+      const listNodes: HTMLElement[] = [];
+      let reactNode = dom.iterateNext();
+
+      while (reactNode) {
+        if (reactNode instanceof HTMLElement) {
+          listNodes.push(reactNode);
+        }
+        reactNode = dom.iterateNext();
+      }
+
+      resolve(listNodes.length > 0 ? listNodes : undefined);
+    } catch (e) {
+      console.error(`Invalid XPath: ${xpath}`, e);
+      resolve(undefined);
     }
-    reactNode = dom.iterateNext();
-  }
-
-  if (listNodes.length) {
-    return listNodes;
-  }
-
-  return undefined;
+  });
 }
 
 export function addDate(xpathValues: XPathModel) {
@@ -116,15 +153,15 @@ export async function promisedStringifyJSON(value: any) {
 export function replaceLangKeys(
   supportedLangs: SupportedLangs,
   lang: string,
-  str: string
+  str: string,
 ): string {
   const resolveLang = (language: string): Record<string, string> | null => {
     const entry = supportedLangs[language];
-    if (!entry) return null; // Language not found.
+    if (!entry) return null;
 
     if (typeof entry === "object" && "__same__" in entry) {
       const sameLang = entry.__same__;
-      return sameLang ? resolveLang(sameLang) : null; // Resolve the referenced language.
+      return sameLang ? resolveLang(sameLang) : null;
     }
 
     return entry as Record<string, string>;

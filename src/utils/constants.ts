@@ -1,4 +1,4 @@
-export const STORIES_URL = ["https://www.youtube.com/"];
+export const SELECTED_URLS = ["https://www.youtube.com/", "https://www.youtube.com/feed/channels"];
 export const REPO_URL = "github.com/biplobsd/yst";
 export const XPATH_URL = `https://raw.githubusercontent.com/biplobsd/yst/main/data/xpaths/v1.8.5.json`;
 export const AUTH_URL = "https://accounts.google.com/o/oauth2/auth";

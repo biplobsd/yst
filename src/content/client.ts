@@ -43,7 +43,7 @@ function replaceAllLangKeysFlat(xpathValues: XPathModel): XPathModel {
 }
 
 async function searchChannel(channelID: string) {
-  const search = getXpathFromElement(
+  const search = await getXpathFromElement(
     xpathValues.SEARCH_INPUT_QUERY,
   ) as HTMLInputElement;
   if (search) {
@@ -69,7 +69,7 @@ async function switchChannel(channelID: string) {
 async function waitingForProgressEnd() {
   await delay(100);
   for (let index = 0; index < 50; index++) {
-    if (!isXPathExpressionExists(xpathValues.NAVIGATION_PROGRESS)) {
+    if (!await isXPathExpressionExists(xpathValues.NAVIGATION_PROGRESS)) {
       return true;
     }
     if (isNotTabRegister) {
@@ -80,10 +80,10 @@ async function waitingForProgressEnd() {
   return false;
 }
 
-function isDrawerOpened() {
-  if (!isXPathExpressionExists(xpathValues.DRAWER_OPENED)) {
+async function isDrawerOpened() {
+  if (!(await isXPathExpressionExists(xpathValues.DRAWER_OPENED))) {
     // Try opening drawer
-    const threeLines = getXpathFromElement(xpathValues.THREE_LINES);
+    const threeLines = await getXpathFromElement(xpathValues.THREE_LINES);
     if (!threeLines) {
       runtime.send({
         to: "option",
@@ -101,7 +101,7 @@ function isDrawerOpened() {
 }
 
 async function isExistAllSubscriptionsButton() {
-  const allSubButton = getXpathFromElement(xpathValues.ALL_SUBSCRIPTIONS_BTN);
+  const allSubButton = await getXpathFromElement(xpathValues.ALL_SUBSCRIPTIONS_BTN);
   if (!allSubButton) {
     await runtime.send({
       to: "option",
@@ -126,24 +126,24 @@ async function isExistAllSubscriptionsButton() {
 }
 
 async function expendedButtonClick() {
-  const isAlreadyExpended = isXPathExpressionExists(
+  const isAlreadyExpended = await isXPathExpressionExists(
     xpathValues.IS_EXPENDEDABLE_EXPENDED,
   );
   if (
-    isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) &&
+    await isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) &&
     !isAlreadyExpended
   ) {
-    const expendedItemButton = getXpathFromElement(
+    const expendedItemButton = await getXpathFromElement(
       xpathValues.IS_EXPENDEDABLE_EXPENDED_BUTTON,
     );
     if (expendedItemButton) {
       expendedItemButton.click();
     }
     await delay(1000);
-    return isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS);
+    return await isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS);
   } else if (
     isAlreadyExpended &&
-    isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)
+    await isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)
   ) {
     return true;
   }
@@ -165,7 +165,7 @@ async function expendedItemsFound() {
 
 async function drawerOpening() {
   for (let index = 0; index < 3; index++) {
-    if (isDrawerOpened()) {
+    if (await isDrawerOpened()) {
       return true;
     }
     await delay(500);
@@ -199,7 +199,7 @@ async function checking() {
   }
 
   // checking is there found subscriptions section
-  if (!isXPathExpressionExists(xpathValues.SUBSCRIPTIONS_SECTION)) {
+  if (!(await isXPathExpressionExists(xpathValues.SUBSCRIPTIONS_SECTION))) {
     runtime.send({
       to: "option",
       status: {
@@ -294,7 +294,7 @@ function removeAtNSlash(path: string) {
 }
 
 async function parseHref() {
-  const fullEle = getXpathFromElements(xpathValues.ALL_SUBSCRIPTIONS_ITEMS);
+  const fullEle = await getXpathFromElements(xpathValues.ALL_SUBSCRIPTIONS_ITEMS);
 
   if (fullEle) {
     const channelsPaths: string[] = [];
@@ -335,7 +335,7 @@ async function acceptSignalSend() {
 
 async function isAlreadySubscribe(channelID: string) {
   for (let index = 0; index < 2; index++) {
-    if (isXPathExpressionExists(getAlreadySubscribeXpath(channelID))) {
+    if (await isXPathExpressionExists(getAlreadySubscribeXpath(channelID))) {
       return true;
     }
     await delay(500);
@@ -356,7 +356,7 @@ async function subSubNow(channelID: string) {
   }
 
   for (let index = 0; index < 2; index++) {
-    const subButton = getXpathFromElement(getSubscribeButton(channelID));
+    const subButton = await getXpathFromElement(getSubscribeButton(channelID));
     if (subButton) {
       subButton.click();
       break;
@@ -393,7 +393,7 @@ async function unSubSubNow(channelID: string) {
     },
   };
 
-  if (isXPathExpressionExists(getSubscribeButton(channelID))) {
+  if (await isXPathExpressionExists(getSubscribeButton(channelID))) {
     await runtime.send({
       to: "option",
       status: {
@@ -404,21 +404,21 @@ async function unSubSubNow(channelID: string) {
     return;
   }
 
-  const unSubButton = getXpathFromElement(getAlreadySubscribeXpath(channelID));
+  const unSubButton = await getXpathFromElement(getAlreadySubscribeXpath(channelID));
   if (unSubButton) {
     unSubButton.click();
     await delay(50);
     for (let index = 0; index < 3; index++) {
-      const unSub1 = getXpathFromElement(xpathValues.UNSUB1);
+      const unSub1 = await getXpathFromElement(xpathValues.UNSUB1);
       if (unSub1) {
         unSub1.click();
         await delay(50);
         for (let index = 0; index < 5; index++) {
-          const unSub2 = getXpathFromElement(xpathValues.UNSUB2);
+          const unSub2 = await getXpathFromElement(xpathValues.UNSUB2);
           if (unSub2) {
             unSub2.click();
             await delay(50);
-            if (isXPathExpressionExists(getSubscribeButton(channelID))) {
+            if (await isXPathExpressionExists(getSubscribeButton(channelID))) {
               await runtime.send({
                 to: "option",
                 status: {
