@@ -12,6 +12,7 @@ export const USERINFO_API_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 export const BMC_LINK = "https://www.buymeacoffee.com/biplobsd";
 export const STORE_LINK =
   "https://chrome.google.com/webstore/detail/fanknehiohibiphenfaigbmefncbheaa";
+export const CHROME_WEB_STORE_REVIEW_LINK = `${STORE_LINK}/reviews`;
 export const TUTORIAL_LINK = "https://youtu.be/EsouSNQOALQ";
 export const API_MODE_VIDEO_TUTORIAL_LINK =
   "https://github.com/biplobsd/yst?tab=readme-ov-file#screen-recording-instructions";

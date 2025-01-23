@@ -4,7 +4,7 @@
   import Item from "./Item.svelte";
   import CoffeeIcon from "src/components/icons/Coffee_Icon.svelte";
   import { GitForkIcon, StarIcon } from "lucide-svelte";
-  import { BMC_LINK, REPO_URL, STORE_LINK } from "src/utils/constants";
+  import { BMC_LINK, CHROME_WEB_STORE_REVIEW_LINK, REPO_URL } from "src/utils/constants";
 </script>
 
 <Splide
@@ -18,7 +18,7 @@
 >
   <SplideSlide>
     <Item
-      href={STORE_LINK}
+      href={CHROME_WEB_STORE_REVIEW_LINK}
       text={"Give 5 star review & share your feedback."}
       title="Click to open Chrome Web Store page"
     >
