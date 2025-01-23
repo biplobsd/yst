@@ -10,6 +10,7 @@ const env = loadEnv("all", process.cwd());
 type Browser = "firefox" | "chrome";
 const srcDir = resolve(__dirname, "src");
 const browserName = env.VITE_BROWSER_NAME || "chrome";
+const isDev = process.env.NODE_ENV === "development";
 
 function updateManifest() {
   try {
@@ -29,7 +30,7 @@ function updateManifest() {
 
       manifest.browser_specific_settings = {
         gecko: {
-          id: geckoId
+          id: geckoId,
         },
       };
 
@@ -70,4 +71,11 @@ export default defineConfig({
       clientPort: 5173,
     },
   },
+  ...(isDev
+    ? {
+      legacy: {
+        skipWebSocketTokenCheck: tru,
+      ,
+    }
+    : {},
 });

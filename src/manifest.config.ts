@@ -10,6 +10,8 @@ const [major, minor, patch] = version
   // split into version parts
   .split(/[.-]/);
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default defineManifest({
   manifest_version: 3,
   name: "Youtube Subscriptions Transfer",
@@ -33,7 +35,7 @@ export default defineManifest({
   ],
   background: {
     service_worker: "src/background/index.ts",
-    scripts: ["src/background/index.ts"]
+    scripts: ["src/background/index.ts"],
   },
   options_ui: {
     page: "src/options/options.html",
@@ -53,4 +55,9 @@ export default defineManifest({
     "identity",
     "storage",
   ] as chrome.runtime.ManifestPermissions[],
+  ...(isDev
+    ? {
+        host_permissions: ["<all_urls"],
+      }
+     {}),
 });
