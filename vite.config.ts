@@ -73,9 +73,9 @@ export default defineConfig({
   },
   ...(isDev
     ? {
-      legacy: {
-        skipWebSocketTokenCheck: tru,
-      ,
-    }
-    : {},
+        legacy: {
+          skipWebSocketTokenCheck: true,
+        },
+      }
+    : {}),
 });

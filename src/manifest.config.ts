@@ -57,7 +57,7 @@ export default defineManifest({
   ] as chrome.runtime.ManifestPermissions[],
   ...(isDev
     ? {
-        host_permissions: ["<all_urls"],
+        host_permissions: ["<all_urls>"],
       }
-     {}),
+    : {}),
 });
