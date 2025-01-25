@@ -2,6 +2,7 @@
   import { REPO_URL } from "src/utils/constants";
   import SliderTips from "../tips/Slider_Tips.svelte";
   import TutorialCard from "../Tutorial_Card.svelte";
+  import BDIcon from "src/components/icons/BD_Icon.svelte";
 
   const { name, version, author } = chrome.runtime.getManifest();
   const extensionID = chrome.runtime.id;
@@ -44,6 +45,12 @@
       target="_blank">Biplob Kumar Sutradhar</a
     >
   </div>
+  <a class="link link-hover font-bold flex justify-start gap-1 my-1 items-center" href="https://en.wikipedia.org/wiki/Bangladesh"
+     rel="noreferrer"
+     target="_blank" title="Open Bangladesh Wikipedia page">Made in
+    <BDIcon />
+    Bangladesh
+  </a>
   <divider class="divider !my-1"></divider>
   <div class="pb-2">
     <TutorialCard closingProgress={100} />
