@@ -50,6 +50,9 @@ Below is a comparison:a
 | Only works on youtube.com   | No need to go to any page |
 | Slow on webpage loading   | API requests, so this is fast |
 
+### Important: API Quota Limitation
+When using the API mode, please note that YouTube Data API v3 imposes a daily quota limit. New projects receive a default allocation of 10,000 quota units per day. For example, each subscription insertion or deletion costs 50 units, meaning you can transfer approximately 200 subscriptions per day. You can check the quota details in the official [Quota and Compliance Audits](https://developers.google.com/youtube/v3/guides/quota_and_compliance_audits) and [Quota Calculator](https://developers.google.com/youtube/v3/determine_quota_cost) documentation.
+
 ## Usages
 ### Using XPath mode (Default)
 To use the extension, open the Y (yst) icon from the extension panel. If you are not on the https://www.youtube.com page, click the Open YouTube button.
