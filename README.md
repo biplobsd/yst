@@ -74,6 +74,17 @@ In the Data section, you can see how many subscriptions the extension has collec
 
 YST now supports importing a Google Takeout ZIP file to import a `subscription.csv` file in XPath mode. The `subscription.csv` file contains channel IDs. During the import of the ZIP file, all `channel IDs` are converted to `custom URLs` for similarity checks with the YouTube page's subscription list. The conversion process utilizes the YouTube Data API.
 
+##### Compatibility Table
+
+| OS                        | Chrome/Edge | Firefox | Notes                                           |
+|---------------------------|-------------|---------|--------------------------------------------------|
+| **Windows 10**            | ✅ Yes      | ❌ No    | Fully working with Takeout import               |
+| **Windows 11 (24H2)**     | ✅ Yes      | ❌ No    | Verified at 5K resolution                       |
+| **macOS 15.4.1 (Sequoia)**| ✅ Yes      | ❌ No    | Verified at 5K resolution                       |
+| **Linux (Pop!_OS 22.04)** | ❌ No       | ❌ No    | Basic features work, Takeout import fails       |
+
+These issues are tracked and will be addressed in a future update. Special thanks to [@mastazi](https://github.com/mastazi) for the detailed report in issue [#18](https://github.com/biplobsd/yst/issues/18)
+
 ##### Here are the steps to import a Takeout ZIP file:
 
 1. Go to the [Google takeout manager](https://takeout.google.com/takeout/custom/youtube)
