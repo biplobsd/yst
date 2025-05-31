@@ -1,0 +1,89 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v[0-9].[0-9]+.[0-9]+" # e.g. v1.0.0
+      - "v[0-9].[0-9]+.[0-9]+\\+[0-9]+" # e.g. v1.0.6+4
+  workflow_dispatch:
+
+jobs:
+  release-extension:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required for softprops/action-gh-release
+
+    name: 🔗 Release Chrome Extension
+
+    strategy:
+      matrix:
+        browser_name: [chrome, firefox]
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm install
+
+      - name: 🛠️ Build for ${{ matrix.browser_name }}
+        env:
+          VITE_BROWSER_NAME: ${{ matrix.browser_name }}
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+        run: npm run build
+
+      - name: 🧾 Extract version info
+        id: version_info
+        run: |
+          TAG=${{ github.ref_name }}
+          VERSION=$(node -p "require('./package.json').version")
+          if [[ $TAG == *"+"* ]]; then
+            VERSION_TAG=$(echo $TAG | cut -d'+' -f1)
+            BUILD_NUMBER=$(echo $TAG | cut -d'+' -f2)
+          else
+            VERSION_TAG=$TAG
+            BUILD_NUMBER=""
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_tag=$VERSION_TAG" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: 📁 Package and rename release files
+        run: |
+          VERSION=${{ steps.version_info.outputs.version }}
+          BUILD_NUMBER=${{ steps.version_info.outputs.build_number }}
+          mkdir -p release_files
+          
+          # Create zip file for the extension
+          if [[ -n "$BUILD_NUMBER" ]]; then
+            OUTPUT_NAME="yst_v${VERSION}+${BUILD_NUMBER}_${{ matrix.browser_name }}"
+          else
+            OUTPUT_NAME="yst_v${VERSION}_${{ matrix.browser_name }}"
+          fi
+          
+          cd dist
+          zip -r "../release_files/${OUTPUT_NAME}.zip" ./*
+          cd ..
+          
+          echo "output_name=${OUTPUT_NAME}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: 📤 Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.output_name }}
+          path: ./dist/**
+
+      - name: 🚀 Upload to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release_files/${{ env.output_name }}.zip
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true
