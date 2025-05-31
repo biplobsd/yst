@@ -45,7 +45,7 @@
             class="btn btn-xs btn-ghost btn-circle"
             onclick={async () => {
               if (isFirefox) {
-                browser.sidebarAction.open();
+                await browser.sidebarAction.open();
               } else {
                 const [tab] = await chrome.tabs.query({
                   active: true,
@@ -57,9 +57,9 @@
                   return;
                 }
 
-                chrome.sidePanel.open({
-                  tabId: tab.id,
-                });
+                await chrome.sidePanel.open({
+                   tabId: tab.id,
+                 });
               }
               window.close();
             }}
