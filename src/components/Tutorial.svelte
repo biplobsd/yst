@@ -5,6 +5,7 @@
   import TutorialCard from "./Tutorial_Card.svelte";
   import { onMount } from "svelte";
   import { toast } from "svelte-sonner";
+  import { isSidePanelOpen } from "../utils/sidePanel";
 
   interface Props {
     forceOpen?: boolean;
@@ -23,22 +24,7 @@
   }, 1000);
 
   onMount(async () => {
-    if (isFirefox) {
-      isSideBarOpen = await browser.sidebarAction.isOpen({
-        windowId: browser.windows.WINDOW_ID_CURRENT,
-      });
-    } else {
-      const sideBars = await chrome.runtime.getContexts({
-        contextTypes: [chrome.runtime.ContextType.SIDE_PANEL],
-      });
-
-      for (const sidebar of sideBars) {
-        if (sidebar.contextType === chrome.runtime.ContextType.SIDE_PANEL) {
-          isSideBarOpen = true;
-          break;
-        }
-      }
-    }
+    isSideBarOpen = await isSidePanelOpen(isFirefox);
   });
 </script>
 
@@ -64,7 +50,7 @@
         class="btn btn-info"
         onclick={async () => {
           if (isFirefox) {
-            browser.sidebarAction.open();
+            await browser.sidebarAction.open();
           } else {
             const [tab] = await chrome.tabs.query({
               active: true,
@@ -76,7 +62,7 @@
               return;
             }
 
-            chrome.sidePanel.open({
+            await chrome.sidePanel.open({
               tabId: tab.id,
             });
           }
