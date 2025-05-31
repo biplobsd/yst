@@ -1,5 +1,6 @@
 import { defineManifest } from "@crxjs/vite-plugin";
 import packageJson from "../package.json";
+import { loadEnv } from "vite";
 
 const { version } = packageJson;
 
@@ -10,7 +11,11 @@ const [major, minor, patch] = version
   // split into version parts
   .split(/[.-]/);
 
+const env = loadEnv("all", process.cwd());
+const browserName = env.VITE_BROWSER_NAME || "chrome";
+
 const isDev = process.env.NODE_ENV === "development";
+const isChrome = browserName === "chrome";
 
 export default defineManifest({
   manifest_version: 3,
@@ -50,14 +55,16 @@ export default defineManifest({
       "128": "src/assets/icons/icon128.png",
     },
   },
-  side_panel: {
-    default_path: "src/options/options.html",
-  },
+  ...(isChrome ? {
+    side_panel: {
+      default_path: "src/options/options.html",
+    },
+  } : {}),
   permissions: [
     "tabs",
     "identity",
     "storage",
-    "sidePanel",
+    ...(isChrome ? ["sidePanel"] : []),
   ] as chrome.runtime.ManifestPermissions[],
   ...(isDev
     ? {
