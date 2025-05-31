@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run check && vite build",
+    "buildWatch": "npm run check && vite build --watch",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "clean": "npx rimraf node_modules package-lock.json pnpm-lock.yaml bun.lockb dist",
     "postbuild": "npx rimraf ./dist/.vite"
@@ -46,7 +47,8 @@
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "zod": "^3.25.42"
+    "zod": "^3.25.42",
+    "@types/firefox-webext-browser": "^120.0.4"
   },
   "trustedDependencies": [
     "svelte-preprocess",

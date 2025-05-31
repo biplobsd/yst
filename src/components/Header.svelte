@@ -3,8 +3,31 @@
   import ThemeSwitch from "./Theme_Switch.svelte";
   import { blur } from "svelte/transition";
   import { workingModeWritable } from "src/utils/storage";
+  import { ExternalLinkIcon } from "lucide-svelte";
+  import { toast } from "svelte-sonner";
+  import { onMount } from "svelte";
 
   const { name, version } = chrome.runtime.getManifest();
+  let isFirefox = import.meta.env.VITE_BROWSER_NAME === "firefox";
+  let isSideBarOpen = $state(false);
+  onMount(async () => {
+    if (isFirefox) {
+      isSideBarOpen = await browser.sidebarAction.isOpen({
+        windowId: browser.windows.WINDOW_ID_CURRENT,
+      });
+    } else {
+      const sideBars = await chrome.runtime.getContexts({
+        contextTypes: [chrome.runtime.ContextType.SIDE_PANEL],
+      });
+
+      for (const sidebar of sideBars) {
+        if (sidebar.contextType === chrome.runtime.ContextType.SIDE_PANEL) {
+          isSideBarOpen = true;
+          break;
+        }
+      }
+    }
+  });
 </script>
 
 <div class="flex items-center gap-1 mb-3 tracking-wider font-extrabold text-xl">
@@ -28,7 +51,38 @@
   </div>
   <div class="flex flex-col items-center">
     <span class="text-xs">{version}</span>
-    <ThemeSwitch />
+    <div class="flex items-center">
+      <ThemeSwitch />
+      {#if !isSideBarOpen}
+        <abbr title="Open in side panel/bar" class="tooltip tooltip-bottom">
+          <button
+            class="btn btn-xs btn-ghost btn-circle"
+            onclick={async () => {
+              if (isFirefox) {
+                browser.sidebarAction.open();
+              } else {
+                const [tab] = await chrome.tabs.query({
+                  active: true,
+                  currentWindow: true,
+                });
+
+                if (!tab.id) {
+                  toast.error("No active tab found to open the side panel.");
+                  return;
+                }
+
+                chrome.sidePanel.open({
+                  tabId: tab.id,
+                });
+              }
+              window.close();
+            }}
+          >
+            <ExternalLinkIcon class="h-4 w-4" />
+          </button>
+        </abbr>
+      {/if}
+    </div>
   </div>
 </div>
 

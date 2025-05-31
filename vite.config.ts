@@ -35,6 +35,18 @@ function updateManifest() {
       };
 
       console.log("Using gecko ID:", geckoId);
+
+      manifest.sidebar_action = {
+        default_icon: {
+          "16": "src/assets/icons/icon16.png",
+          "32": "src/assets/icons/icon32.png",
+          "48": "src/assets/icons/icon48.png",
+          "128": "src/assets/icons/icon128.png",
+        },
+        default_title: "Youtube Subscriptions Transfer",
+        default_panel: "src/options/options.html",
+        open_at_install: false
+      }
     }
 
     if (typeof manifest.author === "object" && "email" in manifest.author) {
@@ -73,9 +85,9 @@ export default defineConfig({
   },
   ...(isDev
     ? {
-        legacy: {
-          skipWebSocketTokenCheck: true,
-        },
-      }
+      legacy: {
+        skipWebSocketTokenCheck: true,
+      },
+    }
     : {}),
 });

@@ -50,14 +50,18 @@ export default defineManifest({
       "128": "src/assets/icons/icon128.png",
     },
   },
+  side_panel: {
+    default_path: "src/options/options.html",
+  },
   permissions: [
     "tabs",
     "identity",
     "storage",
+    "sidePanel",
   ] as chrome.runtime.ManifestPermissions[],
   ...(isDev
     ? {
-        host_permissions: ["<all_urls>"],
-      }
+      host_permissions: ["<all_urls>"],
+    }
     : {}),
 });
