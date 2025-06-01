@@ -85,5 +85,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: release_files/${{ env.output_name }}.zip
-          name: Release ${{ github.ref_name }}
+          name: YST ${{ github.ref_name }}
           generate_release_notes: true
