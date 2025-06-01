@@ -36,7 +36,7 @@
   let failedCount = $state(0);
   let successCount = $state(0);
   let actionName = $state("");
- 
+
   async function stopFun() {
     isStop = true;
     await runtime.send({
@@ -276,11 +276,13 @@
       return;
     }
 
-    setStatus("...");
+    if (status.code !== "tabChanged") {
+      setStatus("...");
 
-    log.info(status);
+      log.info(status);
 
-    setStatus("msg" in status ? status.msg : status.code);
+      setStatus("msg" in status ? status.msg : status.code);
+    }
 
     lastStatusData = { status, to };
 
@@ -316,6 +318,16 @@
       case "langError":
         await stopFun();
         setStatus(status.msg, true);
+        return;
+      case "tabChanged":
+        isRightSiteNow = await isRightSite();
+        if (!isRightSiteNow) {
+          await stopFun();
+          setStatus(
+            "Please refresh the page or open a YouTube page to use this extension.",
+            true,
+          );
+        }
         return;
       default:
         return;
@@ -406,8 +418,6 @@
     }
 
     channelsIdsParse($channelIDs);
-
-    
   });
 
   onDestroy(() => {
