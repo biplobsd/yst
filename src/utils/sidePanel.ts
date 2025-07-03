@@ -1,6 +1,3 @@
-// src/utils/sidePanel.ts
-// Helper to detect if the side panel is open in Chrome or Firefox, with error handling
-
 export async function isSidePanelOpen(isFirefox: boolean): Promise<boolean> {
   try {
     if (isFirefox) {
@@ -24,8 +21,22 @@ export async function isSidePanelOpen(isFirefox: boolean): Promise<boolean> {
       }
     }
   } catch (err) {
-    // Optionally log error
     console.error('Error detecting side panel:', err);
   }
   return false;
+}
+
+export function isInSidebarContext(): boolean {
+  const pathname: string = window.location.pathname;
+
+  const isChromeSidePanel: boolean = pathname.endsWith("sidebar.html");
+
+  const isFirefoxSidebar: boolean = pathname.endsWith("sidebar.html");
+
+  const isTopLevel: boolean = window.top === window;
+
+  return (
+    isTopLevel &&
+    (isChromeSidePanel || isFirefoxSidebar)
+  );
 }

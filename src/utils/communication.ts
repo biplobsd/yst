@@ -13,6 +13,7 @@ interface RetryOptions {
 
 interface RuntimeModel {
   fromMsg: FromMsg;
+  tabId?: number;
   sendOnce: (runtimeMessage: RuntimeMessage) => Promise<boolean>;
   send: (
     runtimeMessage: RuntimeMessage,
@@ -31,7 +32,7 @@ export const runtime: RuntimeModel = {
   sendOnce: async function (runtimeMessage) {
     try {
       if (runtimeMessage.to === "content") {
-        let tabId = runtimeMessage.tabId;
+        let tabId = runtimeMessage.tabId || this.tabId;
         if (!tabId) {
           const [tab] = await chrome.tabs.query({
             active: true,

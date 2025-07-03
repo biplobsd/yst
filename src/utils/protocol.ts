@@ -13,6 +13,7 @@ export const StatusCodeSchema = z.enum([
   "getAuthToken",
   "langError",
   "tabChanged",
+  "windowClose"
 ]);
 
 export const StatusSchema = z.object({

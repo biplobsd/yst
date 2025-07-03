@@ -9,9 +9,10 @@
 
   interface Props {
     forceOpen?: boolean;
+    isRightSiteNow: boolean;
   }
 
-  let { forceOpen = false }: Props = $props();
+  let { forceOpen = false, isRightSiteNow = $bindable() }: Props = $props();
   let closingProgress = $state(0);
   let isSideBarOpen = $state(false);
   let isFirefox = import.meta.env.VITE_BROWSER_NAME === "firefox";
@@ -43,7 +44,7 @@
     </div>
   </div>
 
-  {#if !isSideBarOpen}
+  {#if !isSideBarOpen && isRightSiteNow}
     <div class="flex justify-center my-2">
       <button
         title="Click to open in side bar"

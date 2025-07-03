@@ -9,6 +9,7 @@
   import { Toaster } from "svelte-sonner";
   import ExpiredAlert from "src/components/Expired_Alert.svelte";
   import { themeModeWritable } from "src/utils/storage";
+  import OverLayer from "src/components/Over_Layer.svelte";
 
   onMount(() => {
     runtime.fromMsg = "option";
@@ -33,3 +34,4 @@
 		class: "ring-1 ring-base-content !tracking-wider !font-bold !bg-base-300/40 !backdrop-blur !text-base-content",
 	}}
 />
+<OverLayer />

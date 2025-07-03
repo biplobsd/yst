@@ -36,6 +36,8 @@ function updateManifest() {
 
       console.log("Using gecko ID:", geckoId);
 
+      delete manifest.side_panel;
+
       manifest.sidebar_action = {
         default_icon: {
           "16": "src/assets/icons/icon16.png",
@@ -44,7 +46,7 @@ function updateManifest() {
           "128": "src/assets/icons/icon128.png",
         },
         default_title: "Youtube Subscriptions Transfer",
-        default_panel: "src/options/options.html",
+        default_panel: "src/sidebar/sidebar.html",
         open_at_install: false
       }
     }

@@ -505,7 +505,7 @@
 </script>
 
 {#if !$closeTutorialWritable || isError}
-  <Tutorial forceOpen={isError} />
+  <Tutorial forceOpen={isError} isRightSiteNow={false} />
 {/if}
 
 {#if status.msg === "Done" && successCount / lastChannelIDsTotal >= 0.6}

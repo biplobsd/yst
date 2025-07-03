@@ -55,11 +55,9 @@ export default defineManifest({
       "128": "src/assets/icons/icon128.png",
     },
   },
-  ...(isChrome ? {
-    side_panel: {
-      default_path: "src/options/options.html",
-    },
-  } : {}),
+  side_panel: {
+    default_path: "src/sidebar/sidebar.html",
+  },
   permissions: [
     "tabs",
     "identity",

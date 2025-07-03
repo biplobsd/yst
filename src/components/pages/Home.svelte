@@ -6,7 +6,7 @@
   import {
     channelIDsWritable as channelIDs,
     closeTutorialWritable,
-    xpathsWritable,
+    xpathsWritable
   } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
@@ -36,6 +36,7 @@
   let failedCount = $state(0);
   let successCount = $state(0);
   let actionName = $state("");
+  let tabChangeToastId: string | number = -1;
 
   async function stopFun() {
     isStop = true;
@@ -271,7 +272,7 @@
     successCount = 0;
   }
 
-  async function parseData({ status, to }: RuntimeMessage) {
+  async function parseData({ status, to }: RuntimeMessage, sender?: chrome.runtime.MessageSender) {
     if (to !== "option") {
       return;
     }
@@ -295,6 +296,10 @@
         reset();
         return;
       case "ready":
+        const tabId = sender?.tab?.id;
+        if (tabId && !runtime.tabId) {
+          runtime.tabId = tabId;
+        }
         ready = true;
         if (!isSubRunning) await xpathSignalSend();
         return;
@@ -328,6 +333,9 @@
             true,
           );
         }
+        return;
+      case "windowClose":
+        window.close();
         return;
       default:
         return;
@@ -418,6 +426,39 @@
     }
 
     channelsIdsParse($channelIDs);
+
+
+    chrome.tabs.onActivated.addListener(async (activeInfo) => {
+      if (activeInfo.tabId !== runtime.tabId) {
+        if(tabChangeToastId === -1) {
+          tabChangeToastId = toast.loading("Tab changed...");
+        }
+        toast.error("Please do not change the tab while using this extension.", {
+          id: tabChangeToastId,
+          duration: 10000,
+        });
+      }else{
+        if(tabChangeToastId !== -1) {
+          toast.dismiss(tabChangeToastId);
+          tabChangeToastId = -1;
+        }
+      }
+    });
+  });
+
+  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    if(isRightSiteNow){
+      return;
+    }
+
+    if (tabId !== runtime.tabId || changeInfo.status !== "complete") {
+      return;
+    }
+
+    isRightSiteNow = await isRightSite();
+    if (isRightSiteNow) {
+      await readySignalSend();
+    }
   });
 
   onDestroy(() => {
@@ -430,7 +471,7 @@
 {/if}
 
 {#if !$closeTutorialWritable}
-  <Tutorial />
+  <Tutorial bind:isRightSiteNow={isRightSiteNow} />
 {/if}
 
 {#if isRightSiteNow}
