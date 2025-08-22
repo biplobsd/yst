@@ -12,7 +12,13 @@
     "buildWatch": "npm run check && vite build --watch",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "clean": "npx rimraf node_modules package-lock.json pnpm-lock.yaml bun.lockb dist",
-    "postbuild": "npx rimraf ./dist/.vite"
+    "postbuild": "npx rimraf ./dist/.vite",
+    "outdated": "npm outdated",
+    "update-check": "npm outdated && npm audit",
+    "update-minor": "npm update",
+    "update-major": "npx npm-check-updates -u && npm install",
+    "update-safe": "npm update && npm audit fix",
+    "update-interactive": "npx npm-check-updates -i"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.2",

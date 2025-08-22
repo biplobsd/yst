@@ -170,6 +170,67 @@ npm run dev
 $ npm run build
 ```
 
+## Package Management
+
+This section describes how to update npm packages/dependencies for this extension.
+
+### Check for Outdated Packages
+
+```bash
+# Check which packages have updates available
+npm run outdated
+
+# Check for both outdated packages and security vulnerabilities
+npm run update-check
+```
+
+### Update Packages
+
+**Safe Updates (Recommended):**
+```bash
+# Update to compatible versions within semver ranges
+npm run update-safe
+```
+
+**Minor and Patch Updates:**
+```bash
+# Update packages to latest minor/patch versions
+npm run update-minor
+```
+
+**Interactive Updates:**
+```bash
+# Interactively choose which packages to update
+npm run update-interactive
+```
+
+**Major Updates (Use with Caution):**
+```bash
+# Update all packages to latest versions (including major version changes)
+npm run update-major
+```
+
+### After Updating Packages
+
+Always test the extension after updating packages:
+
+```bash
+# 1. Build the extension
+npm run build
+
+# 2. Test in development mode
+npm run dev
+
+# 3. Load the unpacked extension in your browser (see instructions below)
+```
+
+**Important Notes:**
+- Always commit your changes before major updates
+- Test thoroughly after any package updates
+- Major version updates may introduce breaking changes
+- Check the extension's functionality in both Chrome and Firefox after updates
+- See [PACKAGE_UPDATES.md](./PACKAGE_UPDATES.md) for detailed update history and notes
+
 ## Load unpacked extensions
 
 [Getting Started Tutorial](https://developer.chrome.com/docs/extensions/mv3/getstarted/)
