@@ -182,6 +182,9 @@ npm run outdated
 
 # Check for both outdated packages and security vulnerabilities
 npm run update-check
+
+# Run the demo script to see all available options
+./scripts/update-demo.sh
 ```
 
 ### Update Packages
@@ -215,6 +218,10 @@ npm run update-major
 Always test the extension after updating packages:
 
 ```bash
+# Run automated verification
+./scripts/verify-update.sh
+
+# Or manually test each step:
 # 1. Build the extension
 npm run build
 

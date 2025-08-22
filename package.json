@@ -18,7 +18,9 @@
     "update-minor": "npm update",
     "update-major": "npx npm-check-updates -u && npm install",
     "update-safe": "npm update && npm audit fix",
-    "update-interactive": "npx npm-check-updates -i"
+    "update-interactive": "npx npm-check-updates -i",
+    "update-demo": "./scripts/update-demo.sh",
+    "verify-update": "./scripts/verify-update.sh"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.2",
