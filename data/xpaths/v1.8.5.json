@@ -1,9 +1,9 @@
 {
-  "SUBSCRIPTIONS_SECTION": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::div[@id='items']",
-  "SUB_CHANNELS_EXPENDED_ITEMS": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer",
-  "IS_EXPENDEDABLE": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer",
-  "IS_EXPENDEDABLE_EXPENDED": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer[@expanded]",
-  "IS_EXPENDEDABLE_EXPENDED_BUTTON": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::div[@id='items']/ytd-guide-collapsible-entry-renderer/ytd-guide-entry-renderer",
+  "SUBSCRIPTIONS_SECTION": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::ytd-guide-section-renderer/div[@id='items']",
+  "SUB_CHANNELS_EXPENDED_ITEMS": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::ytd-guide-section-renderer/div[@id='items']/ytd-guide-collapsible-entry-renderer/div/div/ytd-guide-entry-renderer",
+  "IS_EXPENDEDABLE": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::ytd-guide-section-renderer/div[@id='items']/ytd-guide-collapsible-entry-renderer",
+  "IS_EXPENDEDABLE_EXPENDED": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::ytd-guide-section-renderer/div[@id='items']/ytd-guide-collapsible-entry-renderer[@expanded]",
+  "IS_EXPENDEDABLE_EXPENDED_BUTTON": "//*[contains(normalize-space(), '{{subscriptions}}')]/following-sibling::ytd-guide-section-renderer/div[@id='items']/ytd-guide-collapsible-entry-renderer/ytd-guide-entry-renderer",
   "THREE_LINES": "//yt-icon-button[@id='guide-button']",
   "DRAWER_OPENED": "//div[@id='contentContainer' and @opened]",
   "ALREADY_SUBSCRIBE": "//*[translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{{channelID}}' and @id='subscribers']/ancestor::div[@id='info-section']//div[@id='notification-preference-button' and not(@invisible)]//span[text()='{{subscribed}}']",
@@ -16,7 +16,7 @@
   "ALL_SUBSCRIPTIONS_ITEMS": "//div[@id='notification-preference-button' and not(@invisible)]//span[text()='{{subscribed}}']/ancestor::ytd-channel-renderer//a[@href and @id='main-link']",
   "XPATH_ENABLE": true,
   "API_ENABLE": true,
-  "EXPIRE_DATE": 1756632060000,
+  "EXPIRE_DATE": 1759194660000,
   "SUPPORTED_LANGS": {
     "en": {
       "subscriptions": "Subscriptions",
