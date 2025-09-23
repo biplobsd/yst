@@ -18,11 +18,20 @@ Read more: [#4](https://github.com/biplobsd/yst/issues/4)
 
 [![Use case](https://img.youtube.com/vi/EsouSNQOALQ/0.jpg)](https://youtu.be/EsouSNQOALQ)
 
-## Long Tutorial (In French Language)
+## Long Tutorial
+
+### French
 
 [![Comment transférer ses abonnements YouTube sur un autre compte](https://img.youtube.com/vi/lLRLc2C7M8s/0.jpg)](https://youtu.be/lLRLc2C7M8s)
 <br> Check out the article on [paradoxetemporel.fr](https://paradoxetemporel.fr/47853-comment-transferer-ses-abonnements-youtube-sur-un-autre-compte.html)
 <br> Thanks for the tutorial, [Zast](https://github.com/zast57) 
+
+## English
+
+[![Move YouTube subscriptions between accounts with Subscriptions Transfer plugin - Free / Working 2025](https://img.youtube.com/vi/TfYvUdLtONY/0.jpg)](https://youtu.be/TfYvUdLtONY)
+<br> Thanks for the review, [Peter Walker](https://www.youtube.com/@pwwuk) 
+
+
 
 ## Usage scenario
 ### Case 1 - Sharing with your friend
