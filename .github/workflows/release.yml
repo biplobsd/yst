@@ -82,8 +82,6 @@ jobs:
           path: ./dist/**
 
       - name: 🚀 Upload to GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: release_files/${{ env.output_name }}.zip
-          name: YST ${{ github.ref_name }}
-          generate_release_notes: true
