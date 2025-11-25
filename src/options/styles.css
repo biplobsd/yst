@@ -33,3 +33,17 @@
   height: 0.5em !important;
   background-color: transparent !important;
 }
+
+@keyframes progress {
+  0% {
+    width: 0%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+.progress-animation {
+  animation: progress 3s linear forwards;
+}

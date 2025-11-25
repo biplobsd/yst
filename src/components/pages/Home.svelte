@@ -19,6 +19,7 @@
   import { channelIDsSchema } from "src/utils/schema";
   import Done from "../Done.svelte";
   import Tutorial from "../Tutorial.svelte";
+  import StepCarousel from "../StepCarousel.svelte";
   import { YOUTUBE_CHANNELS_FEED_URL } from "src/utils/constants";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
@@ -676,7 +677,7 @@
   </div>
 {:else}
   <div
-    class="text-justify space-y-2 justify-center flex flex-col items-center w-full h-36"
+    class="text-justify space-y-5 justify-center flex flex-col items-center w-full h-[13rem]"
   >
     <a
       title="Click to open YouTube.com in a new tab"
@@ -693,9 +694,6 @@
       <ExternalLinkIcon />
       Open Subscriptions</a
     >
-    <span class="text-xs">
-      This page is not the YouTube subscriptions page. Click the button above to
-      open it in a new tab. Then reopen this extension for options.
-    </span>
+    <StepCarousel />
   </div>
 {/if}
