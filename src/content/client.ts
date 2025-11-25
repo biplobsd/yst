@@ -80,98 +80,6 @@ async function waitingForProgressEnd() {
   return false;
 }
 
-async function isDrawerOpened() {
-  if (!(await isXPathExpressionExists(xpathValues.DRAWER_OPENED))) {
-    // Try opening drawer
-    const threeLines = await getXpathFromElement(xpathValues.THREE_LINES);
-    if (!threeLines) {
-      runtime.send({
-        to: "option",
-        status: {
-          msg: "Unable to found three lines",
-          code: "error",
-        },
-      });
-      return false;
-    }
-    threeLines.click();
-    return false;
-  }
-  return true;
-}
-
-async function isExistAllSubscriptionsButton() {
-  const allSubButton = await getXpathFromElement(xpathValues.ALL_SUBSCRIPTIONS_BTN);
-  if (!allSubButton) {
-    await runtime.send({
-      to: "option",
-      status: {
-        msg: "Unable to found all subscription button in drawer",
-        code: "error",
-      },
-    });
-    return false;
-  }
-  allSubButton.click();
-
-  await runtime.send({
-    to: "option",
-    status: {
-      msg: "Please wait for page loading...",
-      code: "loading",
-    },
-  });
-
-  return await waitingForProgressEnd();
-}
-
-async function expendedButtonClick() {
-  const isAlreadyExpended = await isXPathExpressionExists(
-    xpathValues.IS_EXPENDEDABLE_EXPENDED,
-  );
-  if (
-    await isXPathExpressionExists(xpathValues.IS_EXPENDEDABLE) &&
-    !isAlreadyExpended
-  ) {
-    const expendedItemButton = await getXpathFromElement(
-      xpathValues.IS_EXPENDEDABLE_EXPENDED_BUTTON,
-    );
-    if (expendedItemButton) {
-      expendedItemButton.click();
-    }
-    await delay(1000);
-    return await isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS);
-  } else if (
-    isAlreadyExpended &&
-    await isXPathExpressionExists(xpathValues.SUB_CHANNELS_EXPENDED_ITEMS)
-  ) {
-    return true;
-  }
-  return false;
-}
-
-async function expendedItemsFound() {
-  for (let index = 0; index < 5; index++) {
-    if (await isStopping()) {
-      return false;
-    }
-    // checking expendedable
-    if (await expendedButtonClick()) {
-      return true;
-    }
-  }
-  return false;
-}
-
-async function drawerOpening() {
-  for (let index = 0; index < 3; index++) {
-    if (await isDrawerOpened()) {
-      return true;
-    }
-    await delay(500);
-  }
-  return false;
-}
 
 async function isStopping() {
   if (stop) {
@@ -187,56 +95,14 @@ async function isStopping() {
   return false;
 }
 
-async function checking() {
-  // checking is drawer open
-  if (!(await drawerOpening())) {
-    log.info("Drawer not opened");
-    // return false;
-  }
-
-  if (await isStopping()) {
-    return false;
-  }
-
-  // checking is there found subscriptions section
-  if (!(await isXPathExpressionExists(xpathValues.SUBSCRIPTIONS_SECTION))) {
-    runtime.send({
-      to: "option",
-      status: {
-        msg: "Unable to find Subscriptions lists",
-        code: "error",
-      },
-    });
-    return false;
-  }
-
-  if (await isStopping()) {
-    return false;
-  }
-
-  if (!(await expendedItemsFound())) {
-    log.info("Expended items not found");
-    // return false;
-  }
-
-  return !(await isStopping());
-}
-
 async function changeToAllSubscriptionsPage() {
   const targetURL = "https://www.youtube.com/feed/channels";
   if (window.location.href === targetURL) {
     return true;
   }
 
-  if (!(await checking())) {
-    return false;
-  }
-
-  if (await isStopping()) {
-    return false;
-  }
-
-  return await isExistAllSubscriptionsButton();
+  window.location.href = targetURL;
+  return false;
 }
 
 async function collectHref() {

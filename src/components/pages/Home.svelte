@@ -1,12 +1,11 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { SELECTED_URLS } from "src/utils/constants";
   import { delay, isRightSite } from "src/utils/helper";
   import { runtime, type RuntimeMessage } from "src/utils/communication";
   import {
     channelIDsWritable as channelIDs,
     closeTutorialWritable,
-    xpathsWritable
+    xpathsWritable,
   } from "src/utils/storage";
   import { blur, slide } from "svelte/transition";
   import log from "src/utils/logger";
@@ -272,7 +271,10 @@
     successCount = 0;
   }
 
-  async function parseData({ status, to }: RuntimeMessage, sender?: chrome.runtime.MessageSender) {
+  async function parseData(
+    { status, to }: RuntimeMessage,
+    sender?: chrome.runtime.MessageSender,
+  ) {
     if (to !== "option") {
       return;
     }
@@ -427,18 +429,20 @@
 
     channelsIdsParse($channelIDs);
 
-
     chrome.tabs.onActivated.addListener(async (activeInfo) => {
       if (activeInfo.tabId !== runtime.tabId) {
-        if(tabChangeToastId === -1) {
+        if (tabChangeToastId === -1) {
           tabChangeToastId = toast.loading("Tab changed...");
         }
-        toast.error("Please do not change the tab while using this extension.", {
-          id: tabChangeToastId,
-          duration: 10000,
-        });
-      }else{
-        if(tabChangeToastId !== -1) {
+        toast.error(
+          "Please do not change the tab while using this extension.",
+          {
+            id: tabChangeToastId,
+            duration: 10000,
+          },
+        );
+      } else {
+        if (tabChangeToastId !== -1) {
           toast.dismiss(tabChangeToastId);
           tabChangeToastId = -1;
         }
@@ -447,7 +451,7 @@
   });
 
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if(isRightSiteNow){
+    if (isRightSiteNow) {
       return;
     }
 
@@ -471,7 +475,7 @@
 {/if}
 
 {#if !$closeTutorialWritable}
-  <Tutorial bind:isRightSiteNow={isRightSiteNow} />
+  <Tutorial bind:isRightSiteNow />
 {/if}
 
 {#if isRightSiteNow}
@@ -674,15 +678,18 @@
       class="btn btn-success"
       target="_blank"
       rel="noreferrer"
-      href={SELECTED_URLS[1]}
-      onclick={() => window.close()}
+      href="https://www.youtube.com/feed/channels"
+      onclick={() => {
+        chrome.tabs.create({ url: "https://www.youtube.com/feed/channels" });
+        window.close();
+      }}
     >
       <ExternalLinkIcon />
-      Open Youtube</a
+      Open Subscriptions</a
     >
     <span class="text-xs">
-      This page is not a YouTube page. Click the button above to open
-      YouTube.com in a new tab. Then reopen this extension for options.
+      This page is not the YouTube subscriptions page. Click the button above to
+      open it in a new tab. Then reopen this extension for options.
     </span>
   </div>
 {/if}

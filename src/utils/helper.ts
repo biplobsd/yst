@@ -53,7 +53,7 @@ export async function isRightSite(isOptions = true) {
     return false;
   }
 
-  return SELECTED_URLS.includes(url.slice(0, 24));
+  return url.startsWith("https://www.youtube.com/feed/channels");
 }
 
 export async function getXpathFromElement(
