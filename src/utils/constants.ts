@@ -1,4 +1,5 @@
-export const SELECTED_URLS = ["https://www.youtube.com/", "https://www.youtube.com/feed/channels"];
+export const YOUTUBE_CHANNELS_FEED_URL = "https://www.youtube.com/feed/channels";
+export const SELECTED_URLS = ["https://www.youtube.com/", YOUTUBE_CHANNELS_FEED_URL];
 export const REPO_URL = "github.com/biplobsd/yst";
 export const XPATH_URL = `https://raw.githubusercontent.com/biplobsd/yst/main/data/xpaths/v1.8.5.json`;
 export const AUTH_URL = "https://accounts.google.com/o/oauth2/auth";

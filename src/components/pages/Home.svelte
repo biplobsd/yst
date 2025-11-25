@@ -19,6 +19,7 @@
   import { channelIDsSchema } from "src/utils/schema";
   import Done from "../Done.svelte";
   import Tutorial from "../Tutorial.svelte";
+  import { YOUTUBE_CHANNELS_FEED_URL } from "src/utils/constants";
 
   let lastStatusData: RuntimeMessage | undefined = undefined;
   let isRunning = $state(true);
@@ -254,6 +255,7 @@
     } finally {
       isSubRunning = false;
       isRunning = false;
+      isRightSiteNow = await isRightSite();
       // channelsIdsStringSave();
     }
   }
@@ -327,6 +329,9 @@
         setStatus(status.msg, true);
         return;
       case "tabChanged":
+        if (isRunning) {
+          return;
+        }
         isRightSiteNow = await isRightSite();
         if (!isRightSiteNow) {
           await stopFun();
@@ -678,9 +683,10 @@
       class="btn btn-success"
       target="_blank"
       rel="noreferrer"
-      href="https://www.youtube.com/feed/channels"
-      onclick={() => {
-        chrome.tabs.create({ url: "https://www.youtube.com/feed/channels" });
+      href={YOUTUBE_CHANNELS_FEED_URL}
+      onclick={(e) => {
+        e.preventDefault();
+        chrome.tabs.create({ url: YOUTUBE_CHANNELS_FEED_URL });
         window.close();
       }}
     >
