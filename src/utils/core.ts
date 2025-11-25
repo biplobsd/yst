@@ -47,7 +47,7 @@ export function createChromeStorage<T>(): SelfUpdateStorageInterface<T> {
     removeListener,
     getValue(key: string) {
       chrome.storage.sync.get([key], (result) => {
-        callListeners(key, result[key]);
+        callListeners(key, result[key] as T);
       });
     },
     setValue(key: string, value: T): void {

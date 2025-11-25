@@ -76,4 +76,4 @@ export const SettingsSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 export type SubscriptionsList = z.infer<typeof SubscriptionsListSchema>;
 export type Settings = z.infer<typeof SettingsSchema>;
-export const STORAGE_KEYS = SettingsSchema.keyof().Enum;
+export const STORAGE_KEYS = SettingsSchema.keyof().enum;

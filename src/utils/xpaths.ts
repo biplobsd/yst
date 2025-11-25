@@ -1,7 +1,7 @@
 import xpathJson from "../../data/xpaths/v1.8.5.json";
 import { z } from "zod";
 
-const LanguageSchema = z.record(z.string());
+const LanguageSchema = z.record(z.string(), z.string());
 
 const SameAsSchema = z.object({
   __same__: z.string().nullable(),
