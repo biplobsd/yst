@@ -16,7 +16,7 @@
   "ALL_SUBSCRIPTIONS_ITEMS": "//div[@id='notification-preference-button' and not(@invisible)]//span[text()='{{subscribed}}']/ancestor::ytd-channel-renderer//a[@href and @id='main-link']",
   "XPATH_ENABLE": true,
   "API_ENABLE": true,
-  "EXPIRE_DATE": 1764492960000,
+  "EXPIRE_DATE": 1767123420000,
   "SUPPORTED_LANGS": {
     "en": {
       "subscriptions": "Subscriptions",
