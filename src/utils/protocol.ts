@@ -75,3 +75,6 @@ export const runtimeMessageSchema = z.discriminatedUnion("to", [
     status: z.discriminatedUnion("code", [StatusSchema]),
   }),
 ]);
+
+export type FromMsg = z.infer<typeof fromMsgSchema>;
+export type RuntimeMessage = z.infer<typeof runtimeMessageSchema>;

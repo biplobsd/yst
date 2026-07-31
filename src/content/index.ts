@@ -1,6 +1,6 @@
-import Overlay from "../components/Content.svelte";
-import { mount } from "svelte";
+import { parseData, readySignalSend } from "./client";
+import { runtime } from "src/utils/communication";
 
-if (typeof document !== "undefined" && document.body) {
-  mount(Overlay, { target: document.body });
-}
+runtime.fromMsg = "content";
+runtime.addListener(parseData);
+readySignalSend();

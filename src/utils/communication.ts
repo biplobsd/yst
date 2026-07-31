@@ -1,10 +1,8 @@
 import { delay } from "./helper";
 import log from "./logger";
-import { fromMsgSchema, runtimeMessageSchema } from "./protocol";
-import { z } from "zod";
+import type { FromMsg, RuntimeMessage } from "./protocol";
 
-export type FromMsg = z.infer<typeof fromMsgSchema>;
-export type RuntimeMessage = z.infer<typeof runtimeMessageSchema>;
+export type { FromMsg, RuntimeMessage };
 
 interface RetryOptions {
   ms?: number;

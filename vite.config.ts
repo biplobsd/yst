@@ -74,6 +74,17 @@ export default defineConfig({
       closeBundle: updateManifest,
     },
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/zod")) {
+            return "zod-vendor";
+          }
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       src: srcDir,
