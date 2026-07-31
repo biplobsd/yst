@@ -3,13 +3,13 @@
   import Footer from "./Footer.svelte";
   import Header from "./Header.svelte";
   import Main from "./Main.svelte";
-  import Update_XPath from "src/components/Update_XPath.svelte";
+  import Update_XPath from "./Update_XPath.svelte";
   import { onMount } from "svelte";
   import { runtime } from "src/utils/communication";
   import { Toaster } from "svelte-sonner";
-  import ExpiredAlert from "src/components/Expired_Alert.svelte";
+  import ExpiredAlert from "./Expired_Alert.svelte";
   import { themeModeWritable } from "src/utils/storage";
-  import OverLayer from "src/components/Over_Layer.svelte";
+  import OverLayer from "./Over_Layer.svelte";
 
   onMount(() => {
     runtime.fromMsg = "option";

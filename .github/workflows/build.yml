@@ -18,23 +18,22 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # Step 2: Set up Bun
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22.13.0 # Use a version compatible with your dependencies
-          cache: 'npm'
+          bun-version: latest
 
       # Step 3: Install dependencies
       - name: Install Dependencies
-        run: npm install
+        run: bun install
 
       # Step 4: Build for the current environment
       - name: Build for ${{ matrix.browser_name }}
         env:
           VITE_BROWSER_NAME: ${{ matrix.browser_name }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-        run: npm run build
+        run: bun run build
 
       # Step 5: Package the build and set output
       - name: Package Build

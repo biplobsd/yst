@@ -23,20 +23,19 @@ jobs:
       - name: 📚 Git Checkout
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+      - name: 🍞 Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '22.13.0'
-          cache: 'npm'
+          bun-version: latest
 
       - name: 📦 Install Dependencies
-        run: npm install
+        run: bun install
 
       - name: 🛠️ Build for ${{ matrix.browser_name }}
         env:
           VITE_BROWSER_NAME: ${{ matrix.browser_name }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
-        run: npm run build
+        run: bun run build
 
       - name: 🧾 Extract version info
         id: version_info

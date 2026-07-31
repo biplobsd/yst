@@ -3,6 +3,7 @@
     "compilerOptions": {
         "composite": true,
         "noEmit": false,
+        "emitDeclarationOnly": true,
         "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
         "target": "ES2022",
         "lib": [
@@ -12,6 +13,7 @@
         "skipLibCheck": true,
         /* Bundler mode */
         "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
         "isolatedModules": true,
         "moduleDetection": "force",
         /* Linting */

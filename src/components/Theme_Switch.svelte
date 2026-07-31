@@ -1,7 +1,7 @@
 <script lang="ts">
   import { themeModeWritable } from "src/utils/storage";
   import { onMount } from "svelte";
-  import { MoonIcon, SunIcon } from "lucide-svelte";
+  import { Moon as MoonIcon, Sun as SunIcon } from "lucide-svelte";
   import { SETTINGS_DEFAULT } from "src/utils/default";
   import log from "src/utils/logger";
   import { createThemeTransition } from "src/utils/themeTransition";

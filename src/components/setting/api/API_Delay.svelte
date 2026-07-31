@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DocsLink from "src/components/Docs_Link.svelte";
+  import DocsLink from "../../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
   import { apiReqDelayWritable, workingModeWritable } from "src/utils/storage";
   import { toast } from "svelte-sonner";

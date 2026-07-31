@@ -1,7 +1,7 @@
 <script lang="ts">
   import { subscriptionsListWritable } from "src/utils/storage";
   import { blur } from "svelte/transition";
-  import ZipReaderAPI from "src/components/data/Zip_Reader_API.svelte";
+  import ZipReaderAPI from "../data/Zip_Reader_API.svelte";
 
   interface Props {
     subscriptionCount: number;

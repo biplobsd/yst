@@ -1,8 +1,8 @@
 <script>
   import { blur } from "svelte/transition";
   import SliderTips from "./tips/Slider_Tips.svelte";
-  import { XIcon } from "lucide-svelte";
-  import Confetti from "src/components/Confetti.svelte";
+  import { X as XIcon } from "lucide-svelte";
+  import Confetti from "./Confetti.svelte";
 
   let open = $state(true);
 </script>

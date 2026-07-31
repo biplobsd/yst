@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Settings from "src/components/pages/Setting.svelte";
-  import Home from "src/components/pages/Home.svelte";
-  import About from "src/components/pages/About.svelte";
+  import Settings from "./pages/Setting.svelte";
+  import Home from "./pages/Home.svelte";
+  import About from "./pages/About.svelte";
   import type { TabName } from "../utils/types";
   import { slide } from "svelte/transition";
   import Api from "./pages/API.svelte";
   import { workingModeWritable, xpathsWritable } from "src/utils/storage";
-  import FeatureUnavailable from "src/components/Feature_Unavailable.svelte";
+  import FeatureUnavailable from "./Feature_Unavailable.svelte";
 
   let tabName: TabName = $state("Home");
   let isFirefox = import.meta.env.VITE_BROWSER_NAME === "firefox";

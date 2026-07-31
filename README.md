@@ -165,18 +165,18 @@ By default, there is a 500 millisecond delay for every API request. This will no
 
 ```bash
 # install dependencies
-npm i
+bun install
 
 # build files to `/dist` directory
 # HMR for extension pages and content scripts
-npm run dev
+bun run dev
 ```
 
 ## Build
 
 ```bash
 # build files to `/dist` directory
-$ npm run build
+$ bun run build
 ```
 
 ## Load unpacked extensions
@@ -284,7 +284,7 @@ VITE_CLIENT_ID=
 VITE_API_KEY=
 ```
 
-Again, run `npm run build` and reload the extension from the browser extensions tab.
+Again, run `bun run build` and reload the extension from the browser extensions tab.
 
 ## Related information
 

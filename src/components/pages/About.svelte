@@ -2,7 +2,7 @@
   import { REPO_URL } from "src/utils/constants";
   import SliderTips from "../tips/Slider_Tips.svelte";
   import TutorialCard from "../Tutorial_Card.svelte";
-  import BDIcon from "src/components/icons/BD_Icon.svelte";
+  import BDIcon from "../icons/BD_Icon.svelte";
 
   const { name, version, author } = chrome.runtime.getManifest();
   const extensionID = chrome.runtime.id;

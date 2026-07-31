@@ -1,5 +1,5 @@
 import { defineManifest } from "@crxjs/vite-plugin";
-import packageJson from "../package.json";
+import packageJson from "../package.json" with { type: "json" };
 import { loadEnv } from "vite";
 
 const { version } = packageJson;
@@ -40,7 +40,7 @@ export default defineManifest({
   ],
   background: {
     service_worker: "src/background/index.ts",
-    scripts: ["src/background/index.ts"],
+    type: "module",
   },
   options_ui: {
     page: "src/options/options.html",
@@ -62,8 +62,9 @@ export default defineManifest({
     "tabs",
     "identity",
     "storage",
+    "unlimitedStorage",
     ...(isChrome ? ["sidePanel"] : []),
-  ] as chrome.runtime.ManifestPermissions[],
+  ] as chrome.runtime.ManifestPermission[],
   ...(isDev
     ? {
       host_permissions: ["<all_urls>"],

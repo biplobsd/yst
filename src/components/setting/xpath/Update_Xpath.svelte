@@ -7,10 +7,10 @@
   import { xpathsWritable } from "src/utils/storage";
   import { fetchXPathUpdate } from "src/background/helper";
   import { onMount } from "svelte";
-  import { RefreshCcwDotIcon } from "lucide-svelte";
-  import DocsLink from "src/components/Docs_Link.svelte";
+  import { RefreshCcwDot as RefreshCcwDotIcon } from "lucide-svelte";
+  import DocsLink from "../../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
-  import ExternalLink from "src/components/External_Link.svelte";
+  import ExternalLink from "../../External_Link.svelte";
 
   let isLoadingSave = $state(false);
   let isErrorSave = $state(false);

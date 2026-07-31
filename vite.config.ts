@@ -1,16 +1,16 @@
+import tailwindcss from "@tailwindcss/vite";
 import { crx } from "@crxjs/vite-plugin";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { join, resolve } from "path";
 import { defineConfig, loadEnv } from "vite";
-import manifest from "./src/manifest.config";
+import manifest from "./src/manifest.config.ts";
 import * as fs from "node:fs";
 
 const env = loadEnv("all", process.cwd());
 
 type Browser = "firefox" | "chrome";
-const srcDir = resolve(__dirname, "src");
+const srcDir = resolve(import.meta.dirname, "src");
 const browserName = env.VITE_BROWSER_NAME || "chrome";
-const isDev = process.env.NODE_ENV === "development";
 
 function updateManifest() {
   try {
@@ -66,6 +66,7 @@ function updateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     svelte(),
     crx({ manifest, browser: browserName as Browser }),
     {
@@ -81,15 +82,6 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
-    hmr: {
-      clientPort: 5173,
-    },
   },
-  ...(isDev
-    ? {
-      legacy: {
-        skipWebSocketTokenCheck: true,
-      },
-    }
-    : {}),
 });
+

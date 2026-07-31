@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Wrench } from "lucide-svelte";
   import { docs } from "src/utils/docs";
-  import ExternalLink from "src/components/External_Link.svelte";
+  import ExternalLink from "./External_Link.svelte";
   import { workingModeWritable } from "src/utils/storage";
   import { toast } from "svelte-sonner";
 

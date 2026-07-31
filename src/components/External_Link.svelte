@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ExternalLinkIcon } from "lucide-svelte";
+  import { ExternalLink as ExternalLinkIcon } from "lucide-svelte";
 
   interface Props {
       children?: import("svelte").Snippet;

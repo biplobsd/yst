@@ -3,17 +3,17 @@ import type { Settings } from "src/utils/schema";
 
 export const db = {
   async get<T extends keyof Settings>(key: T): Promise<Settings[T]> {
-    const result = await chrome.storage.sync.get([key]);
+    const result = await chrome.storage.local.get([key]);
     return (result[key] as Settings[T]) ?? SETTINGS_DEFAULT[key];
   },
   async set<T extends keyof Settings>(
     key: T,
     value: Settings[T]
   ): Promise<void> {
-    await chrome.storage.sync.set({ [key]: value });
+    await chrome.storage.local.set({ [key]: value });
   },
   async getAll(): Promise<Settings> {
-    const result = await chrome.storage.sync.get();
+    const result = await chrome.storage.local.get();
     return result as Settings;
   },
 };

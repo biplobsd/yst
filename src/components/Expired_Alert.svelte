@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ExternalLink from "src/components/External_Link.svelte";
+  import ExternalLink from "./External_Link.svelte";
   import { docs } from "src/utils/docs";
   import { xpathsWritable } from "src/utils/storage";
   import { onMount } from "svelte";
