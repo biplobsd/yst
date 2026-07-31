@@ -45,6 +45,7 @@ export async function parseData(
           to: "option",
           status: { code: "error", msg: "Background script is working ..." },
         });
+        return;
       }
 
       isWorking = true;
@@ -80,15 +81,37 @@ export async function parseData(
         });
 
         if (!redirectTokenUrl) {
+          await runtime.send({
+            tabId,
+            to: "option",
+            status: {
+              code: "error",
+              msg: "Error: OAuth flow did not return a redirect URL. The user may have cancelled or the auth window was blocked.",
+            },
+          });
           return;
         }
-        const tokenMatch = redirectTokenUrl.match(
-          /\#(?:access_token)\=([\S\s]*?)\&/,
-        );
-        if (!tokenMatch) {
+
+        let token: string | null = null;
+        try {
+          const redirectUrl = new URL(redirectTokenUrl);
+          const hashParams = new URLSearchParams(redirectUrl.hash.substring(1));
+          token = hashParams.get("access_token");
+        } catch (urlParseError) {
+          log.error(urlParseError, "Failed to parse OAuth redirect URL");
+        }
+
+        if (!token) {
+          await runtime.send({
+            tabId,
+            to: "option",
+            status: {
+              code: "error",
+              msg: "Error: Unable to extract the access token from the OAuth redirect URL.",
+            },
+          });
           return;
         }
-        const token = tokenMatch[1];
 
         await runtime.send({
           tabId,
