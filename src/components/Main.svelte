@@ -10,26 +10,27 @@
 
   let tabName: TabName = $state("Home");
   let isFirefox = import.meta.env.VITE_BROWSER_NAME === "firefox";
-
 </script>
 
 <main>
-  <div class="tabs tabs-lifted w-full flex items-stretch">
+  <div role="tablist" class="tabs tabs-lift w-full flex items-stretch tabs-xs">
     <button
-      class="tab tab-lifted w-full flex-1 {tabName === 'Home' && 'tab-active'}"
+      role="tab"
+      class="tab w-full flex-1 {tabName === 'Home' && 'tab-active'}"
       onclick={() => (tabName = "Home")}
-    >Home
+      >Home
     </button>
     <button
-      class="tab tab-lifted w-full flex-1 {tabName === 'Settings' &&
-        'tab-active'}"
+      role="tab"
+      class="tab w-full flex-1 {tabName === 'Settings' && 'tab-active'}"
       onclick={() => (tabName = "Settings")}
-    >Settings
+      >Settings
     </button>
     <button
-      class="tab tab-lifted w-full flex-1 {tabName === 'About' && 'tab-active'}"
+      role="tab"
+      class="tab w-full flex-1 {tabName === 'About' && 'tab-active'}"
       onclick={() => (tabName = "About")}
-    >About
+      >About
     </button>
   </div>
   <div class="my-2 w-full relative">
@@ -37,20 +38,16 @@
       <div transition:slide>
         {#if !$xpathsWritable.API_ENABLE && !$xpathsWritable.XPATH_ENABLE}
           <FeatureUnavailable />
-        {:else}
-          {#if $workingModeWritable === "xpath"}
-            {#if $xpathsWritable.XPATH_ENABLE}
-              <Home />
-            {:else}
-              <FeatureUnavailable featureName="XPath" />
-            {/if}
+        {:else if $workingModeWritable === "xpath"}
+          {#if $xpathsWritable.XPATH_ENABLE}
+            <Home />
           {:else}
-            {#if $xpathsWritable.API_ENABLE && !isFirefox}
-              <Api />
-            {:else}
-              <FeatureUnavailable featureName={isFirefox ? "" : "API"} />
-            {/if}
+            <FeatureUnavailable featureName="XPath" />
           {/if}
+        {:else if $xpathsWritable.API_ENABLE && !isFirefox}
+          <Api />
+        {:else}
+          <FeatureUnavailable featureName={isFirefox ? "" : "API"} />
         {/if}
       </div>
     {/if}

@@ -6,12 +6,7 @@
     children?: import("svelte").Snippet;
   }
 
-  let {
-    text,
-    href,
-    title,
-    children
-  }: Props = $props();
+  let { text, href, title, children }: Props = $props();
 </script>
 
 <a
@@ -19,7 +14,7 @@
   rel="noreferrer"
   {href}
   {title}
-  class="mx-1 flex justify-center flex-row h-32 w-[16.3rem] btn gap-3 p-3 btn-info"
+  class="mx-1 flex justify-center flex-col h-32 w-[16.3rem] btn gap-3 p-3 btn-info"
 >
   {@render children?.()}
   <div class="text-center space-y-2">

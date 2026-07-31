@@ -11,7 +11,7 @@
 <div class="my-2 gap-2 flex justify-center items-center mb-3">
   <ExternalLink>
     <a
-      class="btn btn-xs normal-case"
+      class="btn btn-xs"
       target="_blank"
       rel="noreferrer"
       href={docs.README}
@@ -28,7 +28,7 @@
   <ExternalLink>
     <a
       title="Buy me a coffee to support this extension"
-      class="btn btn-xs normal-case"
+      class="btn btn-xs"
       target="_blank"
       rel="noreferrer"
       href={BMC_LINK}
