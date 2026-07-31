@@ -39,10 +39,14 @@ export default defineManifest({
       run_at: "document_start",
     },
   ],
-  background: {
-    service_worker: "src/background/index.ts",
-    type: "module",
-  },
+  background: isChrome
+    ? {
+        service_worker: "src/background/index.ts",
+        type: "module",
+      }
+    : {
+        scripts: ["src/background/index.ts"],
+      },
   options_ui: {
     page: "src/options/options.html",
     open_in_tab: false,
