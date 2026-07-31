@@ -24,7 +24,7 @@ function getSubscribeButton(channelID: string) {
 }
 
 function replaceLang(str: string, supportedLangs: SupportedLangs) {
-  lang = document.documentElement.lang;
+  lang = typeof document !== "undefined" ? document.documentElement.lang : "en";
   return replaceLangKeys(supportedLangs, lang, str);
 }
 
@@ -66,18 +66,26 @@ async function switchChannel(channelID: string) {
   }
 }
 
+function isNavigationProgressActive(): boolean {
+  if (typeof document === "undefined") return false;
+  const el = document.querySelector("yt-page-navigation-progress");
+  if (!el) return false;
+  return !el.hasAttribute("hidden") && el.getAttribute("aria-valuenow") !== "100";
+}
+
 async function waitingForProgressEnd() {
-  await delay(100);
-  for (let index = 0; index < 50; index++) {
-    if (!await isXPathExpressionExists(xpathValues.NAVIGATION_PROGRESS)) {
+  await delay(50);
+  for (let index = 0; index < 25; index++) {
+    const progressActive = isNavigationProgressActive();
+    if (!progressActive) {
       return true;
     }
     if (isNotTabRegister) {
       isNotTabRegister = false;
     }
-    await delay(500);
+    await delay(50);
   }
-  return false;
+  return true;
 }
 
 
@@ -204,38 +212,44 @@ async function isAlreadySubscribe(channelID: string) {
     if (await isXPathExpressionExists(getAlreadySubscribeXpath(channelID))) {
       return true;
     }
-    await delay(500);
+    await delay(100);
   }
   return false;
 }
 
 async function subSubNow(channelID: string) {
+  let subButton: HTMLElement | undefined;
+
+  for (let index = 0; index < 3; index++) {
+    subButton = await getXpathFromElement(getSubscribeButton(channelID));
+    if (subButton) {
+      subButton.click();
+      break;
+    }
+    await delay(100);
+  }
+
+  if (subButton) {
+    await delay(150);
+    if (await isAlreadySubscribe(channelID)) {
+      await runtime.send({
+        to: "option",
+        status: {
+          msg: `Channel subscribe successful - ${channelID}`,
+          code: "subscribeSuccessful",
+        },
+      });
+      return;
+    }
+  }
+
+  // If subscribe button wasn't found, check if channel was already subscribed
   if (await isAlreadySubscribe(channelID)) {
     await runtime.send({
       to: "option",
       status: {
         msg: `Already subscribed - ${channelID}`,
         code: "error",
-      },
-    });
-    return;
-  }
-
-  for (let index = 0; index < 2; index++) {
-    const subButton = await getXpathFromElement(getSubscribeButton(channelID));
-    if (subButton) {
-      subButton.click();
-      break;
-    }
-    await delay(500);
-  }
-
-  if (await isAlreadySubscribe(channelID)) {
-    await runtime.send({
-      to: "option",
-      status: {
-        msg: `Channel subscribe successful - ${channelID}`,
-        code: "subscribeSuccessful",
       },
     });
     return;
@@ -259,18 +273,15 @@ async function unSubSubNow(channelID: string) {
     },
   };
 
-  if (await isXPathExpressionExists(getSubscribeButton(channelID))) {
-    await runtime.send({
-      to: "option",
-      status: {
-        msg: `Already unsubscribed - ${channelID}`,
-        code: "error",
-      },
-    });
-    return;
+  let unSubButton: HTMLElement | undefined;
+  for (let index = 0; index < 3; index++) {
+    unSubButton = await getXpathFromElement(getAlreadySubscribeXpath(channelID));
+    if (unSubButton) {
+      break;
+    }
+    await delay(100);
   }
 
-  const unSubButton = await getXpathFromElement(getAlreadySubscribeXpath(channelID));
   if (unSubButton) {
     unSubButton.click();
     await delay(50);
@@ -304,11 +315,23 @@ async function unSubSubNow(channelID: string) {
     }
   }
 
+  // If unsubscribe button was not found, check if it's because channel is already unsubscribed
+  if (await isXPathExpressionExists(getSubscribeButton(channelID))) {
+    await runtime.send({
+      to: "option",
+      status: {
+        msg: `Already unsubscribed - ${channelID}`,
+        code: "error",
+      },
+    });
+    return;
+  }
+
   await runtime.send(errorStatus);
 }
 
 async function isInSupportedLanguage() {
-  lang = document.documentElement.lang;
+  lang = typeof document !== "undefined" ? document.documentElement.lang : "en";
   return lang in xpathValues.SUPPORTED_LANGS;
 }
 

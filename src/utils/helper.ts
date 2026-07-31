@@ -10,13 +10,15 @@ const xpathCache = new Map<string, HTMLElement | undefined>();
 
 export async function isXPathExpressionExists(
   expression: string,
-  contextNode: Node = document,
+  contextNode?: Node,
 ): Promise<boolean> {
+  if (typeof document === "undefined") return false;
+  const ctx = contextNode || document;
   return new Promise((resolve) => {
     try {
       const result = document.evaluate(
         expression,
-        contextNode,
+        ctx,
         null,
         XPathResult.FIRST_ORDERED_NODE_TYPE,
         null,
@@ -46,7 +48,7 @@ export async function isRightSite(isOptions = true) {
       url = "";
     }
   } else {
-    url = window.location.href;
+    url = typeof window !== "undefined" ? window.location.href : "";
   }
 
   if (url.length === 0) {
@@ -58,17 +60,24 @@ export async function isRightSite(isOptions = true) {
 
 export async function getXpathFromElement(
   xpath: string,
-  contextNode: Node = document,
+  contextNode?: Node,
 ): Promise<HTMLElement | undefined> {
+  if (typeof document === "undefined") return undefined;
+  const ctx = contextNode || document;
+
   if (xpathCache.has(xpath)) {
-    return xpathCache.get(xpath);
+    const cached = xpathCache.get(xpath);
+    if (cached && cached.isConnected) {
+      return cached;
+    }
+    xpathCache.delete(xpath);
   }
 
   return new Promise((resolve) => {
     try {
       const dom = document.evaluate(
         xpath,
-        contextNode,
+        ctx,
         null,
         XPathResult.FIRST_ORDERED_NODE_TYPE,
         null,
@@ -77,7 +86,9 @@ export async function getXpathFromElement(
       const reactNode = dom.singleNodeValue;
       const result = reactNode instanceof HTMLElement ? reactNode : undefined;
 
-      xpathCache.set(xpath, result);
+      if (result) {
+        xpathCache.set(xpath, result);
+      }
 
       resolve(result);
     } catch (e) {
@@ -89,13 +100,16 @@ export async function getXpathFromElement(
 
 export async function getXpathFromElements(
   xpath: string,
-  contextNode: Node = document,
+  contextNode?: Node,
 ): Promise<HTMLElement[] | undefined> {
+  if (typeof document === "undefined") return undefined;
+  const ctx = contextNode || document;
+
   return new Promise((resolve) => {
     try {
       const dom = document.evaluate(
         xpath,
-        contextNode,
+        ctx,
         null,
         XPathResult.ORDERED_NODE_ITERATOR_TYPE,
         null,

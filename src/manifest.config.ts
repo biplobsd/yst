@@ -36,6 +36,7 @@ export default defineManifest({
     {
       matches: ["https://www.youtube.com/*"],
       js: ["src/content/index.ts"],
+      run_at: "document_start",
     },
   ],
   background: {

@@ -66,7 +66,6 @@
           isLoading = true;
           await handleFileSelect(file);
         } catch (error) {
-          console.log(error);
           toast.error(error as string);
         } finally {
           isLoading = false;
