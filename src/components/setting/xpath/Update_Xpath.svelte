@@ -7,7 +7,7 @@
   import { xpathsWritable } from "src/utils/storage";
   import { fetchXPathUpdate } from "src/background/helper";
   import { onMount } from "svelte";
-  import { RefreshCcwDot as RefreshCcwDotIcon } from "lucide-svelte";
+  import RefreshCcwDotIcon from "../../icons/RefreshCcwDot.svelte";
   import DocsLink from "../../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
   import ExternalLink from "../../External_Link.svelte";

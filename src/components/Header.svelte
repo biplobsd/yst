@@ -3,7 +3,7 @@
   import ThemeSwitch from "./Theme_Switch.svelte";
   import { blur } from "svelte/transition";
   import { workingModeWritable } from "src/utils/storage";
-  import { ExternalLink as ExternalLinkIcon } from "lucide-svelte";
+  import ExternalLinkIcon from "./icons/ExternalLink.svelte";
   import { toast } from "svelte-sonner";
   import { onMount } from "svelte";
   import { isSidePanelOpen } from "../utils/sidePanel";

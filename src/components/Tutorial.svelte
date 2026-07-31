@@ -1,6 +1,7 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
-  import { ExternalLink as ExternalLinkIcon, X } from "lucide-svelte";
+  import ExternalLinkIcon from "./icons/ExternalLink.svelte";
+  import X from "./icons/X.svelte";
   import { closeTutorialWritable } from "src/utils/storage";
   import TutorialCard from "./Tutorial_Card.svelte";
   import { onMount } from "svelte";

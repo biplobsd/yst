@@ -24,7 +24,7 @@
   import { SETTINGS_DEFAULT as ud } from "src/utils/default";
   import Done from "../Done.svelte";
   import Tutorial from "../Tutorial.svelte";
-  import { ExternalLink as ExternalLinkIcon } from "lucide-svelte";
+  import ExternalLinkIcon from "../icons/ExternalLink.svelte";
 
   let subscriptionsList = $subscriptionsListWritable;
   let subscriptionCount = $state($subscriptionsListWritable.length);

@@ -1,7 +1,7 @@
 <script>
   import { blur } from "svelte/transition";
   import SliderTips from "./tips/Slider_Tips.svelte";
-  import { X as XIcon } from "lucide-svelte";
+  import XIcon from "./icons/X.svelte";
   import Confetti from "./Confetti.svelte";
 
   let open = $state(true);

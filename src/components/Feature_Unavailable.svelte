@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Wrench } from "lucide-svelte";
+  import Wrench from "./icons/Wrench.svelte";
   import { docs } from "src/utils/docs";
   import ExternalLink from "./External_Link.svelte";
   import { workingModeWritable } from "src/utils/storage";

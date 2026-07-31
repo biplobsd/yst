@@ -3,7 +3,9 @@
   import AutoScroll from "embla-carousel-autoplay";
   import Item from "./Item.svelte";
   import CoffeeIcon from "../icons/Coffee_Icon.svelte";
-  import { Dot as DotIcon, GitFork as GitForkIcon, Star as StarIcon } from "lucide-svelte";
+  import DotIcon from "../icons/Dot.svelte";
+  import GitForkIcon from "../icons/GitFork.svelte";
+  import StarIcon from "../icons/Star.svelte";
   import { BMC_LINK, CHROME_WEB_STORE_REVIEW_LINK, REPO_URL } from "src/utils/constants";
   import type { EmblaCarouselType } from "embla-carousel";
   import { type EmblaPluginType } from "embla-carousel";

@@ -15,7 +15,8 @@
   import ZipReader from "../data/Zip_Reader.svelte";
   import DocsLink from "../Docs_Link.svelte";
   import { docs } from "src/utils/docs";
-  import { Copy as CopyIcon, ExternalLink as ExternalLinkIcon } from "lucide-svelte";
+  import CopyIcon from "../icons/Copy.svelte";
+  import ExternalLinkIcon from "../icons/ExternalLink.svelte";
   import { channelIDsSchema } from "src/utils/schema";
   import Done from "../Done.svelte";
   import Tutorial from "../Tutorial.svelte";

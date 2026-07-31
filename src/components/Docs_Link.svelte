@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { HelpCircle as HelpCircleIcon } from "lucide-svelte";
+  import HelpCircleIcon from "./icons/HelpCircle.svelte";
 
   interface Props {
     href: string;

@@ -5,7 +5,7 @@
   import { slide } from "svelte/transition";
   import SelectXpath from "../setting/xpath/Select_Xpath.svelte";
   import ModeSwitch from "../setting/Mode_Switch.svelte";
-  import { ChevronLeft as ChevronLeftIcon } from "lucide-svelte";
+  import ChevronLeftIcon from "../icons/ChevronLeft.svelte";
   import AccessKeys from "../setting/Access_Keys.svelte";
 
   let selected: SettingSelected = $state("-1");

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SettingSelected } from "src/utils/types";
-  import { ChevronRight as ChevronRightIcon } from "lucide-svelte";
+  import ChevronRightIcon from "../../icons/ChevronRight.svelte";
 
   interface Props {
     selected: SettingSelected;

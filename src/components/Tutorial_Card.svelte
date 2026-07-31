@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Video as YoutubeIcon } from "lucide-svelte";
+  import YoutubeIcon from "./icons/Video.svelte";
   import { API_MODE_VIDEO_TUTORIAL_LINK, TUTORIAL_LINK } from "src/utils/constants";
   import { workingModeWritable } from "src/utils/storage";
   import { onMount } from "svelte";
