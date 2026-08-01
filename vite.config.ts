@@ -4,6 +4,7 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { join, resolve } from "path";
 import { defineConfig, loadEnv } from "vite";
 import manifest from "./src/manifest.config.ts";
+import packageJson from "./package.json" with { type: "json" };
 import * as fs from "node:fs";
 
 const env = loadEnv("all", process.cwd());
@@ -26,7 +27,10 @@ function updateManifest() {
     const manifest = JSON.parse(manifestData);
 
     if (browserName === "firefox") {
-      const geckoId = manifest.author?.email || manifest.author;
+      const geckoId =
+        typeof packageJson.author === "object" && packageJson.author !== null
+          ? packageJson.author.email
+          : packageJson.author;
 
       manifest.browser_specific_settings = {
         gecko: {
@@ -49,10 +53,6 @@ function updateManifest() {
         default_panel: "src/sidebar/sidebar.html",
         open_at_install: false
       }
-    }
-
-    if (typeof manifest.author === "object" && "email" in manifest.author) {
-      manifest.author = manifest.author.email;
     }
 
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");

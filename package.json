@@ -6,6 +6,10 @@
     "type": "git",
     "url": "https://github.com/biplobsd/yst.git"
   },
+  "author": {
+    "name": "Biplob",
+    "email": "biplobsd11@gmail.com"
+  },
   "scripts": {
     "dev": "vite",
     "build": "bun run check && vite build",

@@ -22,9 +22,6 @@ export default defineManifest({
   name: "Youtube Subscriptions Transfer",
   description: "Transferring subscriptions from one YouTube account to another",
   version: `${major}.${minor}.${patch}`,
-  author: {
-    email: "biplobsd11@gmail.com",
-  },
   homepage_url: "https://biplobsd.github.io/apps/view/yst.md",
   icons: {
     "16": "src/assets/icons/icon16.png",

@@ -1,11 +1,15 @@
 <script>
+  import packageJson from "../../../package.json" with { type: "json" };
   import { REPO_URL } from "src/utils/constants";
   import SliderTips from "../tips/Slider_Tips.svelte";
   import TutorialCard from "../Tutorial_Card.svelte";
   import BDIcon from "../icons/BD_Icon.svelte";
 
-  const { name, version, author } = chrome.runtime.getManifest();
+  const { name, version } = chrome.runtime.getManifest();
   const extensionID = chrome.runtime.id;
+
+  const author = packageJson.author;
+  const authorEmail = typeof author === "object" && author !== null ? author.email : author;
 </script>
 
 <div class="text-xs">
@@ -16,9 +20,9 @@
     <span class="font-bold">Email:</span>
     <a
       class="link link-hover"
-      href={`mailto:${author}`}
+      href={`mailto:${authorEmail}`}
       rel="noreferrer"
-      target="_blank">{author}</a
+      target="_blank">{authorEmail}</a
     >
   </div>
   <div>
