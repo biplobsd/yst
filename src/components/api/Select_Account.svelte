@@ -33,12 +33,11 @@
   let primaryChannelName: string = $state("");
 
   async function waitingForResponse(msg: string, sec: number, ms: number) {
-    isReady = false;
     for (let index = sec; index >= 0; index--) {
       if (isReady || isStop) {
         return true;
       }
-      setStatus(msg + " T-" + index);
+      setStatus(`${msg} (${index}s remaining)`);
       await delay(ms);
     }
 
@@ -47,6 +46,9 @@
 
   async function waitingForResponseReady(msg: string, sec = 10, ms = 1000) {
     if (await waitingForResponse(msg, sec, ms)) {
+      if (isStop) {
+        setStatus("OAuth login cancelled.");
+      }
       return false;
     }
 
@@ -60,10 +62,13 @@
     }
 
     if (await waitingForResponse("[Retry wait] " + msg, sec, ms)) {
+      if (isStop) {
+        setStatus("OAuth login cancelled.");
+      }
       return false;
     }
 
-    setStatus("Error: Background script did not responding", true);
+    setStatus("OAuth login timed out or cancelled.", true);
 
     return true;
   }
@@ -89,6 +94,7 @@
           await revokeToken($firstOAuthKeyWritable);
           firstOAuthKeyWritable.set("");
           firstUserWritable.set(ud.firstUser);
+          setStatus("Account disconnected successfully.");
           return;
         }
       } else {
@@ -96,16 +102,19 @@
           await revokeToken($secondOAuthKeyWritable);
           secondOAuthKeyWritable.set("");
           secondUserWritable.set(ud.secondUser);
+          setStatus("Account disconnected successfully.");
           return;
         }
       }
+
+      isReady = false;
 
       await runtime.send({
         to: "background",
         status: { code: "getAuthToken", msg: "OAuth token get" },
       });
 
-      await waitingForResponseReady(`Waiting for the OAuth Token `, 30);
+      await waitingForResponseReady(`Please complete Google login in the pop-up window`, 60);
     } catch (error) {
       log.info(error);
       $primaryChannelWritable = "-1";

@@ -75,10 +75,27 @@ export async function parseData(
         const oAuth2Url = AUTH_URL + "?" + url;
         log.info({ oAuth2Url }, "oAuth2URL");
 
-        const redirectTokenUrl = await chrome.identity.launchWebAuthFlow({
-          url: oAuth2Url,
-          interactive: true,
-        });
+        let redirectTokenUrl: string | undefined;
+        try {
+          redirectTokenUrl = await chrome.identity.launchWebAuthFlow({
+            url: oAuth2Url,
+            interactive: true,
+          });
+        } catch (flowError: any) {
+          const flowMsg =
+            flowError?.message ||
+            "OAuth window was closed or cancelled by user.";
+          log.info("launchWebAuthFlow error:", flowMsg);
+          await runtime.send({
+            tabId,
+            to: "option",
+            status: {
+              code: "error",
+              msg: flowMsg,
+            },
+          });
+          return;
+        }
 
         if (!redirectTokenUrl) {
           await runtime.send({

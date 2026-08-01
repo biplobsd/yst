@@ -217,6 +217,7 @@
           return;
         }
 
+        isReady = true;
         setStatus("OAuth token receive. Getting user information");
         switch ($primaryChannelWritable) {
           case "0":
@@ -240,8 +241,6 @@
         }
 
         isRunning = false;
-        isReady = true;
-
         setStatus("OAuth token receive successful");
         isError = false;
         break;
