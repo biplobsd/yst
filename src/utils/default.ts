@@ -1,10 +1,11 @@
 import type { Settings } from "./schema";
 import xpathJson from "../../data/xpaths/v1.8.5.json";
+import { IS_REMOTE_DISABLED } from "./constants";
 
 export const SETTINGS_DEFAULT: Settings = {
   themeMode: "dark",
   channelIDs: [],
-  XPaths: { ...xpathJson, REMOTE_DISABLE: import.meta.env.DEV },
+  XPaths: { ...xpathJson, REMOTE_DISABLE: IS_REMOTE_DISABLED },
   workingMode: "xpath",
   firstOAuthKey: "",
   secondOAuthKey: "",

@@ -1,4 +1,3 @@
-import { SELECTED_URLS } from "./constants";
 import { type XPathModel } from "./xpaths";
 
 export type SupportedLangs = Record<

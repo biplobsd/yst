@@ -1,6 +1,6 @@
 {
   "name": "youtube-subscriptions-transfer",
-  "version": "1.8.9",
+  "version": "1.9.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "bun run check && vite build",
     "buildWatch": "bun run check && vite build --watch",
-    "check": "svelte-check-native",
+    "check": "svelte-check-native --fail-on-warnings --include-suggestions",
     "clean": "bunx rimraf node_modules package-lock.json pnpm-lock.yaml bun.lock dist",
     "postbuild": "bunx rimraf ./dist/.vite"
   },
@@ -20,7 +20,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@total-typescript/ts-reset": "^0.6.1",
     "@tsconfig/svelte": "^5.0.8",
-    "@types/chrome": "^0.2.2",
+    "@types/chrome": "^0.2.5",
     "@types/firefox-webext-browser": "^143.0.0",
     "@types/node": "^26.1.2",
     "@types/qs": "^6.15.1",

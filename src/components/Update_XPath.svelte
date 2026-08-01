@@ -4,6 +4,7 @@
   import { fetchXPathUpdate } from "src/popup/helper";
   import { xpathsWritable } from "src/utils/storage";
   import { delay } from "src/utils/helper";
+  import { IS_REMOTE_DISABLED } from "src/utils/constants";
 
   let isXPathUpdating = $state(false);
 
@@ -15,7 +16,7 @@
 
   onMount(async () => {
     await delay(1000);
-    if (!$xpathsWritable.REMOTE_DISABLE) {
+    if (!$xpathsWritable.REMOTE_DISABLE && !IS_REMOTE_DISABLED) {
       await xpathUpdateHandler();
     }
   });

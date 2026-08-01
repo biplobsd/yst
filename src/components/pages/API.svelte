@@ -55,7 +55,7 @@
 
   async function collectSubs() {
     if (isRunning) {
-      return false;
+      return;
     }
     reset();
     isRunning = true;
@@ -142,7 +142,9 @@
         if (isStop) {
           break;
         }
-        const { channelId, id, title } = copyList[index];
+        const item = copyList[index];
+        if (!item) continue;
+        const { channelId, id, title } = item;
         const response = mode
           ? await insertSubscription(channelId)
           : await deleteSubscription(id);

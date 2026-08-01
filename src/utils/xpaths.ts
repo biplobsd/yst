@@ -1,5 +1,6 @@
 import xpathJson from "../../data/xpaths/v1.8.5.json";
 import { z } from "zod";
+import { IS_REMOTE_DISABLED } from "./constants";
 
 const LanguageSchema = z.record(z.string(), z.string());
 
@@ -18,7 +19,7 @@ export const XPathModelSchema = z.object({
   UNSUB1: z.string().default(xpathJson.UNSUB1),
   UNSUB2: z.string().default(xpathJson.UNSUB2),
   UPDATE_DATE: z.string().optional(),
-  REMOTE_DISABLE: z.boolean().default(import.meta.env.DEV).optional(),
+  REMOTE_DISABLE: z.boolean().default(IS_REMOTE_DISABLED).optional(),
   SEARCH_INPUT_QUERY: z.string().default(xpathJson.SEARCH_INPUT_QUERY),
   NAVIGATION_PROGRESS: z.string().default(xpathJson.NAVIGATION_PROGRESS),
   ALL_SUBSCRIPTIONS_ITEMS: z

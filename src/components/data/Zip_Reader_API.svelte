@@ -77,7 +77,7 @@
   function handleFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
     let files = input.files ? Array.from(input.files) : [];
-    fileCheck(files[0]);
+    fileCheck(files[0] ?? null);
   }
 </script>
 

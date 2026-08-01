@@ -14,3 +14,13 @@ declare module "csv-iter-parse" {
   const ts: Apps;
   export = ts;
 }
+
+interface ImportMetaEnv {
+  readonly VITE_DISABLE_AUTO_XPATH_UPDATE?: string;
+  readonly VITE_REMOTE_DISABLE?: string;
+  readonly VITE_BROWSER_NAME?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

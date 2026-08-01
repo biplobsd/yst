@@ -59,7 +59,7 @@
               currentWindow: true,
             });
 
-            if (!tab.id) {
+            if (!tab || !tab.id) {
               toast.error("No active tab found to open the side panel.");
               return;
             }

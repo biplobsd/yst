@@ -17,3 +17,8 @@ export const CHROME_WEB_STORE_REVIEW_LINK = `${STORE_LINK}/reviews`;
 export const TUTORIAL_LINK = "https://youtu.be/EsouSNQOALQ";
 export const API_MODE_VIDEO_TUTORIAL_LINK =
   "https://github.com/biplobsd/yst?tab=readme-ov-file#screen-recording-instructions";
+
+export const IS_REMOTE_DISABLED =
+  import.meta.env.DEV ||
+  import.meta.env.VITE_DISABLE_AUTO_XPATH_UPDATE === "true" ||
+  import.meta.env.VITE_REMOTE_DISABLE === "true";

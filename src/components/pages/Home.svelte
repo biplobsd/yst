@@ -177,10 +177,12 @@
 
       const len = $channelIDs.length;
       lastChannelIDsTotal = len;
-      const copyList = Object.assign([], $channelIDs);
+      const copyList = [...$channelIDs];
 
       setStatus(`Starting to ${un}subscribe to the channels`);
       for (let indexMain = 0; indexMain < len; indexMain++) {
+        const currentChannelID = copyList[indexMain];
+        if (!currentChannelID) continue;
         // Sending webpage change action
         if (mode) {
           ready = false;
@@ -189,7 +191,7 @@
           mode &&
           !(await runtime.send({
             to: "content",
-            status: { code: "changeChannelID", channelID: copyList[indexMain] },
+            status: { code: "changeChannelID", channelID: currentChannelID },
           }))
         ) {
           setStatus("Unable to send messages to the client script", true);
@@ -200,7 +202,7 @@
           mode &&
           (isStop ||
             (await waitingForResponseReady(
-              `Waiting for the ready signal: ` + copyList[indexMain],
+              `Waiting for the ready signal: ` + currentChannelID,
             )))
         ) {
           return;
@@ -213,7 +215,7 @@
           !(await runtime.send({
             to: "content",
             status: {
-              channelID: (copyList[indexMain] as String).toLowerCase(),
+              channelID: currentChannelID.toLowerCase(),
               code: mode ? "subscribe" : "unsubscribe",
             },
           }))
@@ -457,7 +459,7 @@
     });
   });
 
-  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
     if (isRightSiteNow) {
       return;
     }

@@ -36,7 +36,7 @@ export const runtime: RuntimeModel = {
             active: true,
             currentWindow: true,
           });
-          tabId = tab.id;
+          tabId = tab?.id;
         }
 
         if (tabId) {
