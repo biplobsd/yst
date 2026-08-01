@@ -1,4 +1,4 @@
-import xpathJson from "../../data/xpaths/v1.8.5.json";
+import xpathJson from "../../data/xpaths/v1.9.json";
 import { z } from "zod";
 import { IS_REMOTE_DISABLED } from "./constants";
 
