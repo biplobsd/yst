@@ -547,7 +547,7 @@
           >
             <button
               disabled={isStop}
-              class="btn btn-xs flex"
+              class="btn btn-xs flex normal-case"
               onclick={stop}
             >
               <span class="loading loading-infinity"></span>

@@ -1,4 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
 import { crx } from "@crxjs/vite-plugin";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { join, resolve } from "path";
@@ -66,7 +65,6 @@ function updateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    tailwindcss(),
     svelte(),
     crx({ manifest, browser: browserName as Browser }),
     {

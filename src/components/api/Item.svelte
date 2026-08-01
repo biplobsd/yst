@@ -72,7 +72,7 @@
         await connectDisconnect(id);
         isLocalRunning = false;
       }}
-      class="btn btn-xs relative"
+      class="btn btn-xs normal-case relative"
     >
       {#if isLocalRunning}
         <span class="loading loading-spinner loading-xs absolute"></span>

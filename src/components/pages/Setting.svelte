@@ -28,7 +28,7 @@
     <div class="divider"></div>
     <APIDelay />
     <div class="divider"></div>
-    <AccessKeys />
+    <AccessKeys/>
   {/if}
 
   {#if selected === "xpath"}
