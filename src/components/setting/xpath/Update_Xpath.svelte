@@ -68,7 +68,7 @@
   }
 
   onMount(() => {
-    xpathsWritable.subscribe((v) => {
+    xpathsWritable.subscribe((v: any) => {
       userInput = JSON.stringify(v, null, 2);
     });
   });

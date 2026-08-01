@@ -33,6 +33,7 @@ jobs:
         env:
           VITE_BROWSER_NAME: ${{ matrix.browser_name }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          VITE_REMOTE_DISABLE: "true"
         run: bun run build
 
       # Step 5: Package the build and set output
