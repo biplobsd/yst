@@ -32,17 +32,17 @@ export default defineManifest({
   content_scripts: [
     {
       matches: ["https://www.youtube.com/*"],
-      js: ["src/content/index.ts"],
+      js: ["src/content/content_script.ts"],
       run_at: "document_start",
     },
   ],
   background: isChrome
     ? {
-        service_worker: "src/background/index.ts",
+        service_worker: "src/background/background_worker.ts",
         type: "module",
       }
     : {
-        scripts: ["src/background/index.ts"],
+        scripts: ["src/background/background_worker.ts"],
       },
   options_ui: {
     page: "src/options/options.html",
