@@ -207,16 +207,12 @@ async function acceptSignalSend() {
   });
 }
 
-async function isAlreadySubscribe(
-  channelID: string,
-  retries = 3,
-  delayMs = 100,
-) {
-  for (let index = 0; index < retries; index++) {
+async function isAlreadySubscribe(channelID: string) {
+  for (let index = 0; index < 2; index++) {
     if (await isXPathExpressionExists(getAlreadySubscribeXpath(channelID))) {
       return true;
     }
-    await delay(delayMs);
+    await delay(100);
   }
   return false;
 }
@@ -234,8 +230,8 @@ async function subSubNow(channelID: string) {
   }
 
   if (subButton) {
-    await delay(200);
-    if (await isAlreadySubscribe(channelID, 8, 150)) {
+    await delay(150);
+    if (await isAlreadySubscribe(channelID)) {
       await runtime.send({
         to: "option",
         status: {
@@ -247,26 +243,16 @@ async function subSubNow(channelID: string) {
     }
   }
 
-  if (await isAlreadySubscribe(channelID, 5, 150)) {
-    if (subButton) {
-      await runtime.send({
-        to: "option",
-        status: {
-          msg: `Channel subscribe successful - ${channelID}`,
-          code: "subscribeSuccessful",
-        },
-      });
-      return;
-    } else {
-      await runtime.send({
-        to: "option",
-        status: {
-          msg: `Already subscribed - ${channelID}`,
-          code: "error",
-        },
-      });
-      return;
-    }
+  // If subscribe button wasn't found, check if channel was already subscribed
+  if (await isAlreadySubscribe(channelID)) {
+    await runtime.send({
+      to: "option",
+      status: {
+        msg: `Already subscribed - ${channelID}`,
+        code: "error",
+      },
+    });
+    return;
   }
 
   await runtime.send({
