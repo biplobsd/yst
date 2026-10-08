@@ -10,7 +10,7 @@
   "SUBSCRIBE_BTN": "//*[translate(normalize-space(text()),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{{channelID}}']/ancestor::*[self::ytd-channel-renderer or self::yt-page-header-view-model or @id='info-section'][1]//*[normalize-space(text())=\"{{subscribe}}\"]/ancestor::button",
   "UNSUB1": "//yt-formatted-string[text()='{{unsubscribe}}']",
   "UNSUB2": "//*[@id='confirm-button']//button",
-  "SEARCH_INPUT_QUERY": "//input[@name='search_query' and not(contains(@id, 'search'))]",
+  "SEARCH_INPUT_QUERY": "//*[@name='search_query' and (self::input or self::textarea)]",
   "NAVIGATION_PROGRESS": "//yt-page-navigation-progress[not(@hidden)]",
   "ALL_SUBSCRIPTIONS_BTN": "//*[contains(normalize-space(), '{{allSubscriptions}}') and @id='endpoint']",
   "ALL_SUBSCRIPTIONS_ITEMS": "//div[@id='notification-preference-button' and not(@invisible)]//span[text()='{{subscribed}}']/ancestor::ytd-channel-renderer//a[@href and @id='main-link']",
